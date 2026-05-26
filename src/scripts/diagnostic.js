@@ -1,4 +1,4 @@
-// diagnostic.js - Cuestionario Autodiagnóstico ISO 38500 e Integrador n8n (PETI Valle)
+﻿// diagnostic.js - Cuestionario Autodiagnóstico ISO 38500 e Integrador n8n (PETI Valle)
 
 // Definición de las 10 Preguntas Hiper-Específicas
 window.diagnosticQuestions = [
@@ -180,12 +180,50 @@ window.initStaticDiagnosticListeners = function() {
         window.resetState();
         window.initDiagnosticConsole();
         
+        // Limpiar consola de n8n en localstorage
+        localStorage.removeItem('n8n_real_mode');
+        localStorage.removeItem('n8n_webhook_url');
+        localStorage.removeItem('n8n_recipient_email');
+        
+        const realModeToggle = document.getElementById('n8n-toggle-real-mode');
+        const webhookUrlInput = document.getElementById('n8n-webhook-url-input');
+        const emailInput = document.getElementById('n8n-recipient-email-input');
+        
+        if (realModeToggle) realModeToggle.checked = false;
+        if (webhookUrlInput) webhookUrlInput.value = '';
+        if (emailInput) emailInput.value = '';
+        
         // Cerrar modal de n8n si estuviera abierto
         const modal = document.getElementById('n8n-webhook-modal');
         if (modal) modal.classList.add('hidden');
         
-        window.showToast("Diagnóstico e indicadores de la Cruz Roja restablecidos al estado inicial (Madurez 2.8).", "Estado Inicial");
+        window.showToast("Diagnóstico, Consola n8n e indicadores de la Cruz Roja restablecidos.", "Restablecer");
       }
+    };
+  }
+
+  // Vinculaciones de la Consola n8n Real
+  const realModeToggle = document.getElementById('n8n-toggle-real-mode');
+  const webhookUrlInput = document.getElementById('n8n-webhook-url-input');
+  const emailInput = document.getElementById('n8n-recipient-email-input');
+
+  if (realModeToggle) {
+    realModeToggle.checked = localStorage.getItem('n8n_real_mode') === 'true';
+    realModeToggle.onchange = (e) => {
+      localStorage.setItem('n8n_real_mode', e.target.checked);
+      window.showToast(e.target.checked ? "Modo Integración n8n Activa habilitado." : "Modo Simulación n8n habilitado.", "Consola n8n");
+    };
+  }
+  if (webhookUrlInput) {
+    webhookUrlInput.value = localStorage.getItem('n8n_webhook_url') || '';
+    webhookUrlInput.oninput = (e) => {
+      localStorage.setItem('n8n_webhook_url', e.target.value.trim());
+    };
+  }
+  if (emailInput) {
+    emailInput.value = localStorage.getItem('n8n_recipient_email') || '';
+    emailInput.oninput = (e) => {
+      localStorage.setItem('n8n_recipient_email', e.target.value.trim());
     };
   }
 };
@@ -307,6 +345,15 @@ window.simulateN8nWebhook = function() {
   const modal = document.getElementById('n8n-webhook-modal');
   if (!modal) return;
 
+  const realMode = localStorage.getItem('n8n_real_mode') === 'true';
+  const webhookUrl = localStorage.getItem('n8n_webhook_url') || '';
+  const emailVal = localStorage.getItem('n8n_recipient_email') || 'tu-email@gmail.com';
+
+  if (realMode && !webhookUrl) {
+    window.showToast("Por favor ingresa la URL de Webhook en la Consola de n8n.", "URL Requerida");
+    return;
+  }
+
   // 1. Mostrar modal
   modal.classList.remove('hidden');
 
@@ -334,7 +381,8 @@ window.simulateN8nWebhook = function() {
     "computed_maturity": average,
     "conformance_status": average >= 4.0 ? "GOBERNANZA COMPLETA" : average >= 2.5 ? "GOBIERNO PARCIAL" : "RIESGO CRÍTICO",
     "recommended_directives_peti": recommendedProjects,
-    "estimated_investment_required": `$${totalCostVal}M COP`
+    "estimated_investment_required": `$${totalCostVal}M COP`,
+    "email": emailVal
   };
 
   // Mostrar Payload en modal
@@ -391,16 +439,18 @@ window.simulateN8nWebhook = function() {
 
   // Resetear estados visuales
   const steps = [
-    { id: 'n8n-exec-step-1', text: "Conectando con el Servidor local n8n Valle..." },
+    { id: 'n8n-exec-step-1', text: realMode ? "Conectando al Webhook Real n8n..." : "Conectando con el Servidor local n8n Valle..." },
     { id: 'n8n-exec-step-2', text: "Enviando respuestas del Cuestionario de Madurez..." },
-    { id: 'n8n-exec-step-3', text: "Flujo de n8n activo. Generando Reporte de Brechas..." },
-    { id: 'n8n-exec-step-4', text: "Escribiendo data.json local y enviando alertas de SLA..." }
+    { id: 'n8n-exec-step-3', text: realMode ? "n8n Procesando. Generando Alertas de Brechas..." : "Flujo de n8n activo. Generando Reporte de Brechas..." },
+    { id: 'n8n-exec-step-4', text: realMode ? "Enviando Correo Real y retornando JSON..." : "Escribiendo data.json local y enviando alertas de SLA..." }
   ];
 
   steps.forEach(s => {
     const el = document.getElementById(s.id);
     if (el) {
       el.className = "flex items-center gap-3 text-xs text-slate-500 font-bold py-1";
+      const txtSpan = el.querySelector('span:last-child') || el;
+      if (txtSpan) txtSpan.textContent = s.text;
       el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-regular fa-circle text-[10px]";
     }
   });
@@ -416,8 +466,7 @@ window.simulateN8nWebhook = function() {
 
   if (spinner) spinner.classList.remove('hidden');
   if (responseBox) responseBox.classList.add('hidden');
-  if (spinnerIcon) spinnerIcon.classList.add('fa-spin', 'fa-circle-notch');
-  if (spinnerIcon) spinnerIcon.classList.remove('fa-check-double', 'text-emerald-400');
+  if (spinnerIcon) spinnerIcon.className = "n8n-spinner-icon fa-solid fa-spinner animate-spin text-cyan-400 text-[10px]";
   if (execSpinner) execSpinner.classList.remove('hidden');
   if (execCompleted) execCompleted.classList.add('hidden');
   if (execSummary) execSummary.classList.add('hidden');
@@ -427,75 +476,240 @@ window.simulateN8nWebhook = function() {
     btnCloseFinish.classList.remove('flex');
   }
 
-  // Ejecución encadenada de animaciones
-  let delay = 300;
-  steps.forEach((step, idx) => {
-    setTimeout(() => {
-      const el = document.getElementById(step.id);
-      if (el) {
-        el.className = "flex items-center gap-3 text-xs text-cyan-400 font-bold py-1 animate-pulse";
-        el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-spinner animate-spin text-[10px]";
-      }
-    }, delay);
-    delay += 900;
-  });
-
-  // Finalizar e inyectar el response exitoso
-  setTimeout(() => {
-    steps.forEach(step => {
-      const el = document.getElementById(step.id);
-      if (el) {
-        el.className = "flex items-center gap-3 text-xs text-emerald-400 font-bold py-1";
-        el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-circle-check text-[10px]";
-      }
-    });
-
-    if (spinner) spinner.classList.add('hidden');
-    if (spinnerIcon) spinnerIcon.classList.remove('fa-spin', 'fa-circle-notch');
-    if (spinnerIcon) spinnerIcon.classList.add('fa-check-double', 'text-emerald-400');
-    if (execSpinner) execSpinner.classList.add('hidden');
-    if (execCompleted) execCompleted.classList.remove('hidden');
-    if (execSummary) execSummary.classList.remove('hidden');
-    if (waitingMsg) waitingMsg.classList.add('hidden');
-    if (btnCloseFinish) {
-      btnCloseFinish.classList.remove('hidden');
-      btnCloseFinish.classList.add('flex');
-    }
-
-    if (responseBox) {
-      responseBox.classList.remove('hidden');
-      
-      const n8nRespPayload = {
-        "status": "success",
-        "statusCode": 200,
-        "n8n_execution_id": "EX_" + Math.floor(Math.random() * 900000 + 100000),
-        "data": {
-          "alert_dispatched": average < 2.5 ? "SÍ (SLA Alerta Roja)" : "NO",
-          "email_report_sent_to": "jevgdg@gmail.com",
-          "data_json_updated": true,
-          "pdf_report_url": "drive://cruz-roja/peti/reporte_brechas_valle.pdf"
-        }
-      };
-      
-      document.getElementById('n8n-response-payload').textContent = JSON.stringify(n8nRespPayload, null, 2);
-    }
-
-    // Efecto de Toast de Éxito
-    window.showToast(`n8n procesó autodiagnóstico con éxito (Madurez ${average}). Reporte PDF enviado al CIO Valle.`, "Éxito Webhook n8n");
-  }, delay);
-
   // Cerrar modal al pulsar botones
   const closeModalFunc = () => {
     modal.classList.add('hidden');
   };
 
   const closeBtn = document.getElementById('close-n8n-webhook-modal');
-  if (closeBtn) {
-    closeBtn.onclick = closeModalFunc;
-  }
+  if (closeBtn) closeBtn.onclick = closeModalFunc;
+  if (btnCloseFinish) btnCloseFinish.onclick = closeModalFunc;
 
-  if (btnCloseFinish) {
-    btnCloseFinish.onclick = closeModalFunc;
+  if (!realMode) {
+    // --- MODO SIMULADOR POR DEFECTO ---
+    let delay = 300;
+    steps.forEach((step, idx) => {
+      setTimeout(() => {
+        const el = document.getElementById(step.id);
+        if (el) {
+          el.className = "flex items-center gap-3 text-xs text-cyan-400 font-bold py-1 animate-pulse";
+          el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-spinner animate-spin text-[10px]";
+        }
+      }, delay);
+      delay += 900;
+    });
+
+    setTimeout(() => {
+      steps.forEach(step => {
+        const el = document.getElementById(step.id);
+        if (el) {
+          el.className = "flex items-center gap-3 text-xs text-emerald-400 font-bold py-1";
+          el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-circle-check text-[10px]";
+        }
+      });
+
+      if (spinner) spinner.classList.add('hidden');
+      if (execSpinner) execSpinner.classList.add('hidden');
+      if (execCompleted) execCompleted.classList.remove('hidden');
+      if (execSummary) execSummary.classList.remove('hidden');
+      if (waitingMsg) waitingMsg.classList.add('hidden');
+      if (btnCloseFinish) {
+        btnCloseFinish.classList.remove('hidden');
+        btnCloseFinish.classList.add('flex');
+        btnCloseFinish.className = "ml-auto px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-emerald-500/20 cursor-pointer flex items-center gap-1.5";
+      }
+
+      if (responseBox) {
+        responseBox.classList.remove('hidden');
+        const mockResponse = {
+          "status": "success",
+          "statusCode": 200,
+          "n8n_execution_id": "EX_" + Math.floor(Math.random() * 900000 + 100000),
+          "data": {
+            "alert_dispatched": average < 2.5 ? "SÍ (SLA Alerta Roja)" : "NO",
+            "email_report_sent_to": emailVal,
+            "data_json_updated": true,
+            "pdf_report_url": "drive://cruz-roja/peti/reporte_brechas_valle.pdf"
+          }
+        };
+        document.getElementById('n8n-response-payload').textContent = JSON.stringify(mockResponse, null, 2);
+      }
+
+      window.showToast(`Simulador n8n completado con éxito (Madurez ${average}). Correo ejecutivo enviado.`, "Simulación Exitosa");
+    }, delay);
+  } else {
+    // --- MODO REAL WEBHOOK FETCH ---
+    const updateStepUI = (stepId, status, errorMsg = "") => {
+      const el = document.getElementById(stepId);
+      if (!el) return;
+      if (status === 'loading') {
+        el.className = "flex items-center gap-3 text-xs text-cyan-400 font-bold py-1 animate-pulse";
+        el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-spinner animate-spin text-[10px]";
+      } else if (status === 'success') {
+        el.className = "flex items-center gap-3 text-xs text-emerald-400 font-bold py-1";
+        el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-circle-check text-[10px]";
+      } else if (status === 'error') {
+        el.className = "flex items-center gap-3 text-xs text-red-500 font-bold py-1";
+        el.querySelector('.n8n-exec-icon').className = "n8n-exec-icon fa-solid fa-triangle-exclamation text-[10px]";
+        if (errorMsg) {
+          const txt = el.querySelector('span:last-child') || el;
+          txt.textContent = errorMsg;
+        }
+      }
+    };
+
+    // Comenzar ejecución secuencial
+    updateStepUI('n8n-exec-step-1', 'loading');
+
+    setTimeout(() => {
+      updateStepUI('n8n-exec-step-1', 'success');
+      updateStepUI('n8n-exec-step-2', 'loading');
+
+      // Realizar el HTTP fetch real a n8n
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payloadObj)
+      })
+      .then(async response => {
+        if (!response.ok) {
+          const errText = await response.text().catch(() => '');
+          throw new Error(`HTTP ${response.status}: ${errText.slice(0,200) || 'Sin cuerpo'}`);
+        }
+        updateStepUI('n8n-exec-step-2', 'success');
+        updateStepUI('n8n-exec-step-3', 'loading');
+        // Safe JSON parse — n8n puede responder vacio si el flujo no esta configurado
+        const rawText = await response.text();
+        if (!rawText || rawText.trim() === '') {
+          throw new Error('n8n respondio con cuerpo vacio. Asegurate de que el nodo "Responder al Webhook" este en el flujo y activo.');
+        }
+        try {
+          return JSON.parse(rawText);
+        } catch(e) {
+          throw new Error('n8n no devolvio JSON valido: ' + rawText.slice(0, 200));
+        }
+      })
+      .then(data => {
+        updateStepUI('n8n-exec-step-3', 'success');
+        updateStepUI('n8n-exec-step-4', 'loading');
+
+        setTimeout(() => {
+          updateStepUI('n8n-exec-step-4', 'success');
+
+          // Cargar datos reales retornados por n8n en el modal
+          if (spinner) spinner.classList.add('hidden');
+          if (execSpinner) execSpinner.classList.add('hidden');
+          if (execCompleted) {
+            execCompleted.classList.remove('hidden');
+            const completedTitle = execCompleted.querySelector('span');
+            if (completedTitle) completedTitle.textContent = "¡n8n Real Procesado!";
+            const completedText = execCompleted.querySelector('p');
+            if (completedText) completedText.textContent = `La automatización real en n8n finalizó con éxito. La alerta y el reporte de correo se han enviado a: ${emailVal}`;
+          }
+          if (execSummary) execSummary.classList.remove('hidden');
+          if (waitingMsg) waitingMsg.classList.add('hidden');
+          if (btnCloseFinish) {
+            btnCloseFinish.classList.remove('hidden');
+            btnCloseFinish.classList.add('flex');
+            btnCloseFinish.textContent = "✓ Integración Completa - Cerrar";
+            btnCloseFinish.className = "ml-auto px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-emerald-500/20 cursor-pointer flex items-center gap-1.5";
+          }
+
+          if (responseBox) {
+            responseBox.classList.remove('hidden');
+            document.getElementById('n8n-response-payload').textContent = JSON.stringify(data, null, 2);
+          }
+
+          // Actualizar etiquetas en caliente en la UI
+          const executionId = data.n8n_execution_id || ("EX_" + Math.floor(Math.random() * 900000 + 100000));
+          const syncStatusEl = document.getElementById('sync-status');
+          if (syncStatusEl) {
+            syncStatusEl.textContent = `Conectado a n8n Real • Exec ID: ${executionId}`;
+            syncStatusEl.className = "text-[10px] text-emerald-500 font-bold font-mono tracking-wider uppercase mt-2";
+          }
+
+          // Actualizar e inyectar variables de estado superior en vivo
+          window.appState.top_kpis.madurez_digital.value = average;
+          if (typeof window.recalculateAndRender === 'function') {
+            window.recalculateAndRender();
+          }
+
+          window.showToast(`n8n real completado con éxito (Exec: ${executionId}). Correo despachado.`, "Webhook n8n en Vivo");
+        }, 800);
+      })
+      .catch(err => {
+        // Manejar errores de conexión y CORS
+        console.error("n8n Webhook Error:", err);
+        
+        updateStepUI('n8n-exec-step-2', 'error', "Error en el envío de datos");
+        updateStepUI('n8n-exec-step-3', 'error', "n8n inaccesible o bloqueado");
+        updateStepUI('n8n-exec-step-4', 'error', "Revisa la consola de desarrollador");
+
+        if (spinner) spinner.classList.add('hidden');
+        if (execSpinner) execSpinner.classList.add('hidden');
+        if (waitingMsg) waitingMsg.classList.add('hidden');
+        if (btnCloseFinish) {
+          btnCloseFinish.classList.remove('hidden');
+          btnCloseFinish.classList.add('flex');
+          btnCloseFinish.textContent = "Cerrar con Error";
+          btnCloseFinish.className = "ml-auto px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all cursor-pointer flex items-center gap-1.5";
+        }
+
+        if (responseBox) {
+          responseBox.classList.remove('hidden');
+          const errorPayload = {
+            "status": "error_connection",
+            "message": "No se pudo establecer comunicación con n8n.",
+            "error_details": err.toString(),
+            "possible_causes": [
+              "1. Tu servidor de n8n no está corriendo localmente en el puerto indicado.",
+              "2. Olvidaste activar el switch de 'Active' en el flujo imported en n8n.",
+              "3. n8n está bloqueando las solicitudes externas por políticas de seguridad (CORS).",
+              "4. Estás usando la URL de 'Webhook Producción' de n8n sin haber activado el flujo (deberías usar la de 'Test Webhook' para pruebas rápidas)."
+            ],
+            "solucion": "Verifica tu servidor n8n, asegúrate que responda a peticiones HTTP POST, y que el flujo esté Activo o en escucha (Listen for Test)."
+          };
+          document.getElementById('n8n-response-payload').textContent = JSON.stringify(errorPayload, null, 2);
+        }
+
+        window.showToast("No se pudo conectar a tu servidor n8n. Revisa la URL y estado.", "Error de Webhook");
+      });
+    }, 600);
+  }
+};
+
+
+// === RENDERIZADOR DE RESULTADOS IA GEMINI EN EL DASHBOARD ===
+window.renderAIResults = function(data) {
+  const panel = document.getElementById('ai-results-panel');
+  if (!panel) return;
+  panel.classList.remove('hidden');
+  setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+  const execIdEl = document.getElementById('ai-exec-id');
+  if (execIdEl) execIdEl.textContent = 'Exec ID: ' + (data.n8n_execution_id || '-') + ' � Analizado por Gemini AI';
+  const badge = document.getElementById('ai-risk-badge');
+  if (badge && data.data) {
+    const colorMap = { red: 'bg-red-950/60 text-red-400 border-red-700', amber: 'bg-amber-950/60 text-amber-400 border-amber-700', green: 'bg-emerald-950/60 text-emerald-400 border-emerald-700' };
+    const nivel = data.data.nivel_riesgo || '-';
+    const color = data.data.color_riesgo || 'red';
+    badge.textContent = nivel;
+    badge.className = 'px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border ' + (colorMap[color] || colorMap.red);
+  }
+  if (!data.data) return;
+  const d = data.data;
+  const setText = (id, text) => { const el = document.getElementById(id); if (el && text) el.textContent = text; };
+  setText('ai-resumen', d.resumen_ejecutivo);
+  setText('ai-next-step', d.siguiente_paso);
+  setText('ai-junta', d.mensaje_junta);
+  const brechasEl = document.getElementById('ai-brechas');
+  if (brechasEl && d.brechas_criticas && d.brechas_criticas.length) {
+    brechasEl.innerHTML = d.brechas_criticas.map(function(b) { return '<div class="bg-red-950/20 border border-red-900/40 p-3 rounded-xl space-y-1"><div class="flex items-center justify-between gap-2"><span class="text-xs font-black text-red-400">' + b.dimension + '</span><span class="font-mono text-xs font-black text-red-500 bg-red-950/60 px-2 py-0.5 rounded border border-red-900/40">' + b.score + '/5</span></div><p class="text-[10.5px] text-slate-400 leading-relaxed">' + b.impacto_negocio + '</p><p class="text-[10.5px] text-amber-400 font-bold">? ' + b.accion_inmediata + '</p></div>'; }).join('');
+  }
+  const planEl = document.getElementById('ai-plan');
+  if (planEl && d.plan_priorizado && d.plan_priorizado.length) {
+    planEl.innerHTML = d.plan_priorizado.slice(0,5).map(function(p) { return '<div class="flex items-start gap-3 bg-cyan-950/15 border border-cyan-900/30 p-3 rounded-xl"><span class="w-6 h-6 bg-brand-red text-white rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5">' + p.prioridad + '</span><div class="flex-1 min-w-0"><span class="text-xs font-black text-slate-200 block">' + p.proyecto + '</span><div class="flex flex-wrap gap-2 mt-1"><span class="text-[9.5px] font-bold text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-900/40">' + p.inversion_estimada + '</span><span class="text-[9.5px] font-bold text-emerald-400 bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-900/40">' + p.plazo + '</span></div><p class="text-[10px] text-slate-400 mt-1">' + p.roi_esperado + '</p></div></div>'; }).join('');
   }
 };
 
