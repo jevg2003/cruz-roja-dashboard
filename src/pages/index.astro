@@ -32,17 +32,17 @@ import '../styles/global.css';
       <header class="glass-panel rounded-2xl p-5 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-brand-red-neon shadow-lg w-full">
         <div class="flex items-center gap-4">
           <!-- Institutional Shield (Red Cross SVG Shield) -->
-          <div class="relative w-14 h-14 bg-red-600 rounded-xl flex items-center justify-center shadow-md shadow-red-900/50 animate-pulse">
-            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <div class="relative w-14 h-14 bg-white border border-slate-200 rounded-xl flex items-center justify-center shadow-lg shadow-slate-300/40 hover:scale-105 transition-all duration-300 cursor-pointer group">
+            <svg class="w-9 h-9 text-brand-red group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 10.5h-5.5V5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v5.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h5.5V19c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5.5H19c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z"/>
             </svg>
-            <div class="absolute -inset-1 border border-brand-red-neon/30 rounded-xl pointer-events-none scale-105"></div>
+            <div class="absolute -inset-1 border border-white rounded-xl pointer-events-none shadow-[0_0_10px_rgba(15,23,42,0.03)]"></div>
           </div>
           <div>
-            <h1 class="cyber-title text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
+            <h1 class="cyber-title text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-slate-800 to-slate-600">
               Dashboard Estratégico CIO
             </h1>
-            <p class="text-xs md:text-sm font-semibold text-brand-red-neon tracking-widest cyber-title mt-0.5">
+            <p class="text-xs md:text-sm font-semibold text-brand-red tracking-widest cyber-title mt-0.5">
               CRUZ ROJA COLOMBIA • SECCIONAL VALLE DEL CAUCA • PETI 2026-2030
             </p>
           </div>
@@ -50,9 +50,9 @@ import '../styles/global.css';
 
         <!-- Executive Date & Prescriptive Tag -->
         <div class="flex flex-col items-end text-right">
-          <div class="flex items-center gap-2 bg-red-950/45 px-3.5 py-1.5 rounded-full border border-brand-red-neon/40 shadow-inner">
-            <span class="w-2.5 h-2.5 bg-brand-red-neon rounded-full animate-ping"></span>
-            <span class="text-xs font-mono font-bold tracking-widest text-brand-red-neon cyber-title">ABRIL 2026</span>
+          <div class="flex items-center gap-2 bg-red-50 px-3.5 py-1.5 rounded-full border border-red-200 shadow-sm">
+            <span class="w-2.5 h-2.5 bg-brand-red rounded-full animate-ping"></span>
+            <span class="text-xs font-mono font-bold tracking-widest text-brand-red cyber-title">ABRIL 2026</span>
           </div>
           <span class="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-2" id="sync-status">
             Sincronizado vía n8n: 13:25 (Local)
@@ -60,181 +60,6 @@ import '../styles/global.css';
         </div>
       </header>
 
-      <!-- TWO COLUMN LAYOUT (Left Column: ISO 38500 Console / Right Column: Dashboards) -->
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start w-full">
-        
-        <!-- ================= LEFT PANEL: CONSOLA GOBIERNO TI ISO 38500 ================= -->
-        <aside class="xl:col-span-4 space-y-6 xl:sticky xl:top-6">
-          <div class="glass-panel p-5 rounded-2xl border-t-4 border-brand-red shadow-2xl relative overflow-hidden">
-            
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3 gap-2">
-              <div class="flex items-center gap-1.5">
-                <i class="fa-solid fa-scale-balanced text-brand-red-neon"></i>
-                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider cyber-title">Gobernanza ISO 38500</h3>
-              </div>
-              <button id="btn-reset-data" class="text-[9px] font-bold text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 bg-slate-800/80 px-2 py-1 rounded transition-all cursor-pointer flex items-center gap-1 flex-shrink-0">
-                <i class="fa-solid fa-rotate-left"></i> Restablecer
-              </button>
-            </div>
-            
-            <p class="text-[10px] text-slate-400 mt-2.5 leading-relaxed">
-              Gobierna la infraestructura de la Cruz Roja evaluando necesidades, dirigiendo planes y monitoreando resultados en tiempo real según la norma **ISO/IEC 38500**.
-            </p>
-
-            <!-- ISO 38500 STEPS (EVALUATE, DIRECT, MONITOR) -->
-            <div class="space-y-4 mt-4">
-              
-              <!-- STEP 1: EVALUAR (Auditorías de TI) -->
-              <div class="bg-slate-900/40 border border-slate-850 p-4 rounded-xl space-y-3">
-                <span class="text-[9px] font-black text-cyan-400 uppercase tracking-widest cyber-title block flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></span> 1. EVALUAR (Auditoría e Incidentes)
-                </span>
-                
-                <div class="space-y-2 text-xs">
-                  <!-- Question A -->
-                  <label class="flex items-start gap-2.5 cursor-pointer text-slate-300 hover:text-slate-100">
-                    <input type="checkbox" id="audit-servidores" class="mt-0.5 accent-brand-red-neon" />
-                    <div>
-                      <span class="font-semibold block text-[11px]">Auditar Servidores Locales</span>
-                      <span class="text-[9px] text-slate-500 block leading-tight">Detecta obsolescencia crítica y riesgos de caídas del Hemocentro.</span>
-                    </div>
-                  </label>
-                  
-                  <!-- Question B -->
-                  <label class="flex items-start gap-2.5 cursor-pointer text-slate-300 hover:text-slate-100">
-                    <input type="checkbox" id="audit-seguridad" class="mt-0.5 accent-brand-red-neon" />
-                    <div>
-                      <span class="font-semibold block text-[11px]">Auditar Ciberseguridad e ISO 27001</span>
-                      <span class="text-[9px] text-slate-500 block leading-tight">Evidencia vulnerabilidades a Ransomware y multas de Ley 1581.</span>
-                    </div>
-                  </label>
-
-                  <!-- Question C -->
-                  <label class="flex items-start gap-2.5 cursor-pointer text-slate-300 hover:text-slate-100">
-                    <input type="checkbox" id="audit-procesos" class="mt-0.5 accent-brand-red-neon" />
-                    <div>
-                      <span class="font-semibold block text-[11px]">Encuesta de Satisfacción Voluntarios</span>
-                      <span class="text-[9px] text-slate-500 block leading-tight">Evalúa la brecha de apropiación digital en las misiones.</span>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- STEP 2: DIRIGIR (Aprobación de Proyectos PETI) -->
-              <div class="bg-slate-900/40 border border-slate-850 p-4 rounded-xl space-y-3">
-                <span class="text-[9px] font-black text-brand-red-neon uppercase tracking-widest cyber-title block flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 bg-brand-red-neon rounded-full"></span> 2. DIRIGIR (Aprobaciones PETI)
-                </span>
-                
-                <div class="space-y-3">
-                  <!-- Project B1 -->
-                  <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <div>
-                      <span class="font-semibold text-slate-200 text-[11px] block">Aprobar B1: CISO & SOC</span>
-                      <span class="text-[9px] text-slate-500">Costo: <strong class="text-slate-400 font-mono">$45M</strong> | Mitiga ciberriesgos</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="dirigir-b1" class="sr-only peer" />
-                      <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-450 after:border-slate-350 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600 peer-checked:after:bg-white"></div>
-                    </label>
-                  </div>
-
-                  <!-- Project B2 -->
-                  <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <div>
-                      <span class="font-semibold text-slate-200 text-[11px] block">Aprobar B2: Azure Cloud Hybrid</span>
-                      <span class="text-[9px] text-slate-500">Costo: <strong class="text-slate-400 font-mono">$80M</strong> | Resiliencia y Uptime</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="dirigir-b2" class="sr-only peer" />
-                      <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-450 after:border-slate-350 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600 peer-checked:after:bg-white"></div>
-                    </label>
-                  </div>
-
-                  <!-- Project B3 -->
-                  <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <div>
-                      <span class="font-semibold text-slate-200 text-[11px] block">Aprobar B3: API Gateway HL7</span>
-                      <span class="text-[9px] text-slate-500">Costo: <strong class="text-slate-400 font-mono">$55M</strong> | Integra HeVa/Siesa</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="dirigir-b3" class="sr-only peer" />
-                      <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-450 after:border-slate-350 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600 peer-checked:after:bg-white"></div>
-                    </label>
-                  </div>
-
-                  <!-- Project B7 -->
-                  <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <div>
-                      <span class="font-semibold text-slate-200 text-[11px] block">Aprobar B7: Gobierno Datos</span>
-                      <span class="text-[9px] text-slate-500">Costo: <strong class="text-slate-400 font-mono">$12M</strong> | Catálogo y roles</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="dirigir-b7" class="sr-only peer" />
-                      <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-450 after:border-slate-350 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600 peer-checked:after:bg-white"></div>
-                    </label>
-                  </div>
-
-                  <!-- Project B8 -->
-                  <div class="flex items-center justify-between border-b border-slate-900 pb-2">
-                    <div>
-                      <span class="font-semibold text-slate-200 text-[11px] block">Aprobar B8: Capacitación Teams</span>
-                      <span class="text-[9px] text-slate-500">Costo: <strong class="text-slate-400 font-mono">$15M</strong> | Eleva madurez a 4.2</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="dirigir-b8" class="sr-only peer" />
-                      <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-450 after:border-slate-350 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600 peer-checked:after:bg-white"></div>
-                    </label>
-                  </div>
-
-                  <!-- Project B5 -->
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <span class="font-semibold text-slate-200 text-[11px] block flex items-center gap-1">
-                        Aprobar B5: Hemocentro 4.0
-                      </span>
-                      <span class="text-[9px] text-slate-500">Costo: <strong class="text-slate-400 font-mono">$75M</strong> | Portal Donación + App</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="dirigir-b5" class="sr-only peer" />
-                      <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-450 after:border-slate-350 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-600 peer-checked:after:bg-white"></div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <!-- STEP 3: MONITOREAR (Alineación Financiera y Conformance) -->
-              <div class="bg-slate-900/40 border border-slate-850 p-4 rounded-xl space-y-3">
-                <span class="text-[9px] font-black text-neon-green uppercase tracking-widest cyber-title block flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 bg-neon-green rounded-full"></span> 3. MONITOREAR (Presupuesto & ISO 38500)
-                </span>
-                
-                <!-- Financial Check in Control Panel -->
-                <div class="space-y-2">
-                  <div class="flex justify-between text-xs font-semibold">
-                    <span class="text-slate-400 text-[10px]">Inversión Ejecutada PETI:</span>
-                    <span class="font-mono text-slate-200 font-bold" id="sim-budget-cost">$60M / $330M</span>
-                  </div>
-                  <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden relative">
-                    <div id="sim-budget-progress" class="h-full bg-neon-green" style="width: 18%;"></div>
-                  </div>
-                  <!-- Budget SLA warning message -->
-                  <div id="sim-budget-warning" class="text-[9px] font-bold text-red-500 hidden bg-red-950/20 border border-red-900/30 p-1.5 rounded leading-tight">
-                    ⚠️ SOBRE-EJECUCIÓN: Ha excedido el límite presupuestal del PETI de $330M COP. Ajuste sus directivas.
-                  </div>
-                </div>
-
-                <!-- ISO 38500 Directive Compliance Rating -->
-                <hr class="border-slate-800" />
-                <div class="flex items-center justify-between text-xs pt-1">
-                  <span class="text-slate-300 font-bold text-[9px] uppercase tracking-wider cyber-title">Cumplimiento ISO 38500:</span>
-                  <span id="iso-38500-rating" class="font-mono font-bold text-red-500 bg-red-950/45 px-2 py-0.5 rounded border border-red-900/60 uppercase tracking-widest text-[9px]">EVALUANDO</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </aside>
 
         <!-- ================= RIGHT PANEL: INTERACTIVE VIEWPORTS ================= -->
         <main class="xl:col-span-8 space-y-6 w-full">
@@ -242,46 +67,46 @@ import '../styles/global.css';
           <!-- TOP METRIC STRIP (Now wider and responsive) -->
           <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
             <!-- Madurez Digital -->
-            <div class="glass-panel p-4 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-madurez">
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Madurez Digital</span>
-              <div class="flex items-baseline gap-1 mt-1">
-                <span class="cyber-value text-2xl font-black text-red-500" id="strip-madurez-val">2.8</span>
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-madurez">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Madurez Digital</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-red-500" id="strip-madurez-val">2.8</span>
                 <span class="text-xs text-slate-500">/5.0</span>
               </div>
             </div>
             <!-- ISO 27001 -->
-            <div class="glass-panel p-4 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-iso">
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Cumpl. ISO 27001</span>
-              <div class="flex items-baseline gap-1 mt-1">
-                <span class="cyber-value text-2xl font-black text-red-500" id="strip-iso-val">45%</span>
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-iso">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Cumpl. ISO 27001</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-red-500" id="strip-iso-val">45%</span>
               </div>
             </div>
             <!-- Disp. Hemocentro -->
-            <div class="glass-panel p-4 rounded-xl border-b-2 border-emerald-500/50 flex flex-col justify-between" id="strip-uptime">
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Disp. Hemocentro</span>
-              <div class="flex items-baseline gap-1 mt-1">
-                <span class="cyber-value text-2xl font-black text-emerald-400 animate-pulse" id="strip-uptime-val">99.1%</span>
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-emerald-500/50 flex flex-col justify-between" id="strip-uptime">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Disp. Hemocentro</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-emerald-400 animate-pulse" id="strip-uptime-val">99.1%</span>
               </div>
             </div>
-            <!-- Ejec. Presupuestal -->
-            <div class="glass-panel p-4 rounded-xl border-b-2 border-amber-500/50 flex flex-col justify-between" id="strip-presupuesto">
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Ejec. Presupuestal TI</span>
-              <div class="flex items-baseline gap-1 mt-1">
-                <span class="cyber-value text-2xl font-black text-amber-400" id="strip-presupuesto-val">67%</span>
+            <!-- Ejec. Presupuesto -->
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-amber-500/50 flex flex-col justify-between" id="strip-presupuesto">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Ejec. Presupuestal TI</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-amber-400" id="strip-presupuesto-val">67%</span>
               </div>
             </div>
             <!-- CISO -->
-            <div class="glass-panel p-4 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-ciso">
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">CISO Designado</span>
-              <div class="flex items-baseline gap-1 mt-1">
-                <span class="cyber-value text-2xl font-black text-red-500" id="strip-ciso-val">NO</span>
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-ciso">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">CISO Designado</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-red-500" id="strip-ciso-val">NO</span>
               </div>
             </div>
             <!-- Ingresos -->
-            <div class="glass-panel p-4 rounded-xl border-b-2 border-emerald-500/50 flex flex-col justify-between">
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Ingresos Hemocentro</span>
-              <div class="flex items-baseline gap-1 mt-1">
-                <span class="cyber-value text-2xl font-black text-emerald-400" id="strip-ingresos-val">$771M</span>
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-emerald-500/50 flex flex-col justify-between">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Ingresos Hemocentro</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-emerald-400" id="strip-ingresos-val">$771M</span>
                 <span class="text-xs text-slate-500">COP</span>
               </div>
             </div>
@@ -289,7 +114,10 @@ import '../styles/global.css';
 
           <!-- NAVIGATION TABS -->
           <nav class="glass-panel rounded-xl p-1.5 flex flex-wrap md:flex-nowrap gap-1 w-full">
-            <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer flex items-center justify-center gap-2 bg-red-600/90 text-white glow-red" data-tab="mapa">
+            <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer flex items-center justify-center gap-2 bg-red-600/90 text-white glow-red" data-tab="autodiagnostico">
+              <i class="fa-solid fa-brain text-cyan-300 animate-pulse"></i> Autodiagnóstico IA
+            </button>
+            <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer text-slate-400 hover:text-white" data-tab="mapa">
               <i class="fa-solid fa-map-location-dot"></i> Mapa BSC
             </button>
             <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer text-slate-400 hover:text-white" data-tab="financiero">
@@ -304,6 +132,9 @@ import '../styles/global.css';
             <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer text-slate-400 hover:text-white" data-tab="aprendizaje">
               <i class="fa-solid fa-graduation-cap"></i> Aprendizaje
             </button>
+            <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer text-slate-400 hover:text-white" data-tab="gobernanza">
+              <i class="fa-solid fa-scale-balanced"></i> Directivas ISO 38500
+            </button>
             <button class="nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer text-slate-400 hover:text-brand-red-neon border border-transparent hover:border-brand-red-neon/30" data-tab="prescripcion">
               <i class="fa-solid fa-bolt"></i> Prescripción
             </button>
@@ -312,8 +143,45 @@ import '../styles/global.css';
           <!-- VIEWPORT CONTAINER -->
           <div class="w-full relative">
 
+            <!-- VIEW 0: AUTODIAGNÓSTICO IA -->
+            <section id="view-autodiagnostico" class="tab-view block space-y-6 w-full">
+              
+              <!-- Explanatory Box -->
+              <div class="glass-panel p-5 rounded-2xl border-l-4 border-cyan-400 shadow-md w-full relative overflow-hidden bg-slate-900/10">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3 gap-2">
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-brain text-cyan-400 animate-pulse text-lg"></i>
+                    <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider cyber-title">Autodiagnóstico de Gobernanza TI</h3>
+                  </div>
+                  <button id="btn-reset-data" class="text-xs font-bold text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 bg-slate-800/80 px-2.5 py-1 rounded transition-all cursor-pointer flex items-center gap-1 flex-shrink-0">
+                    <i class="fa-solid fa-rotate-left"></i> Restablecer
+                  </button>
+                </div>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Evalúa las 10 dimensiones de la norma <strong>ISO 38500</strong>. Selecciona una calificación del <strong>0 al 5</strong>. Tus respuestas inyectarán de forma automática los proyectos aprobados, auditorías activas y modificarán todas las variables del PETI de de inmediato.
+                </p>
+              </div>
+
+              <!-- 10 Questions Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="diagnostic-questions-grid">
+                <!-- Loaded dynamically by diagnostic.js -->
+              </div>
+
+              <!-- Action Bar at the bottom -->
+              <div class="glass-panel p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+                <div>
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block cyber-title">Sincronización con Automatización local</span>
+                  <p class="text-xs text-slate-500 mt-1 font-semibold">Envía tus respuestas al servidor de n8n para generar el reporte de brechas PDF ejecutivo.</p>
+                </div>
+                <button id="btn-send-n8n-webhook" class="w-full sm:w-auto py-3 px-6 rounded-xl text-xs font-bold uppercase tracking-wider border border-cyan-500/40 bg-cyan-950/20 hover:bg-cyan-950/40 text-cyan-400 shadow-md hover:scale-[1.01] transition-all cursor-pointer flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-paper-plane animate-bounce"></i> Enviar Diagnóstico a n8n
+                </button>
+              </div>
+
+            </section>
+
             <!-- VIEW 1: MAPA BSC -->
-            <section id="view-mapa" class="tab-view block space-y-6 w-full">
+            <section id="view-mapa" class="tab-view hidden space-y-6 w-full">
               
               <!-- Route Filtration Console -->
               <div class="glass-panel p-4 rounded-xl flex flex-col lg:flex-row items-center justify-between gap-4 w-full">
@@ -923,6 +791,182 @@ import '../styles/global.css';
               </div>
             </section>
 
+            <!-- VIEW 5.5: DIRECTIVAS DE GOBERNANZA ISO 38500 -->
+            <section id="view-gobernanza" class="tab-view hidden space-y-6 w-full">
+              
+              <!-- Explanatory Box -->
+              <div class="glass-panel p-5 rounded-2xl border-l-4 border-cyan-400 shadow-md w-full relative overflow-hidden bg-slate-900/10">
+                <h4 class="text-sm font-bold text-cyan-400 uppercase tracking-wider cyber-title flex items-center gap-2">
+                  <i class="fa-solid fa-scale-balanced text-cyan-400 animate-pulse"></i> Directivas y Proyectos de Gobierno TI (ISO 38500)
+                </h4>
+                <p class="text-sm text-slate-200 mt-2 leading-relaxed">
+                  Las auditorías, aprobaciones presupuestarias y monitoreo del PETI de la Cruz Roja Valle se configuran de forma <strong>100% automática</strong>. Al modificar las calificaciones del <strong>Autodiagnóstico</strong> en la barra lateral, la IA inyecta las directivas y evalúa el cumplimiento en tiempo real.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-start">
+                
+                <!-- Left Sub-column: Directives checklist (3 columns) -->
+                <div class="lg:col-span-8 space-y-6">
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- STEP 1: EVALUAR (Auditorías) -->
+                    <div class="glass-panel p-5 rounded-2xl border-t-2 border-cyan-400 shadow-lg space-y-4 bg-slate-950/20 flex flex-col justify-between">
+                      <div>
+                        <span class="text-xs font-black text-cyan-400 uppercase tracking-widest cyber-title block flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></span> 1. EVALUAR
+                        </span>
+                        
+                        <div class="space-y-4 text-xs mt-4">
+                          <!-- Question A -->
+                          <div class="flex items-center justify-between border-b border-slate-900 pb-2.5 text-slate-300">
+                            <div>
+                              <span class="font-bold block text-[13px]">Auditar Servidores</span>
+                              <span class="text-[11px] text-slate-400 block leading-normal mt-0.5">Detecta riesgos en el Hemocentro.</span>
+                            </div>
+                            <span id="badge-audit-servidores" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">INACTIVO</span>
+                          </div>
+                          
+                          <!-- Question B -->
+                          <div class="flex items-center justify-between border-b border-slate-900 pb-2.5 text-slate-300">
+                            <div>
+                              <span class="font-bold block text-[13px]">Auditar Ciberseguridad</span>
+                              <span class="text-[11px] text-slate-400 block leading-normal mt-0.5">Evidencia fallos y multas de Ley 1581.</span>
+                            </div>
+                            <span id="badge-audit-seguridad" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">INACTIVO</span>
+                          </div>
+
+                          <!-- Question C -->
+                          <div class="flex items-center justify-between text-slate-300">
+                            <div>
+                              <span class="font-bold block text-[13px]">Auditar Voluntarios</span>
+                              <span class="text-[11px] text-slate-400 block leading-normal mt-0.5">Mide brechas de apropiación digital.</span>
+                            </div>
+                            <span id="badge-audit-procesos" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">INACTIVO</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- STEP 2: DIRIGIR (Aprobaciones) -->
+                    <div class="glass-panel p-5 rounded-2xl border-t-2 border-brand-red-neon shadow-lg space-y-4 bg-slate-950/20">
+                      <span class="text-xs font-black text-brand-red-neon uppercase tracking-widest cyber-title block flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-brand-red-neon rounded-full"></span> 2. DIRIGIR (PETI)
+                      </span>
+                      
+                      <div class="space-y-3.5 mt-4">
+                        <!-- Project B1 -->
+                        <div class="flex items-center justify-between border-b border-slate-900 pb-2.5">
+                          <div>
+                            <span class="font-bold text-slate-200 text-xs block">Aprobar B1: CISO & SOC</span>
+                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5">$45M COP | Mitiga ciberriesgos</span>
+                          </div>
+                          <span id="badge-dirigir-b1" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">PENDIENTE</span>
+                        </div>
+
+                        <!-- Project B2 -->
+                        <div class="flex items-center justify-between border-b border-slate-900 pb-2.5">
+                          <div>
+                            <span class="font-bold text-slate-200 text-xs block">Aprobar B2: Azure Cloud Hybrid</span>
+                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5">$80M COP | Resiliencia y Uptime</span>
+                          </div>
+                          <span id="badge-dirigir-b2" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">PENDIENTE</span>
+                        </div>
+
+                        <!-- Project B3 -->
+                        <div class="flex items-center justify-between border-b border-slate-900 pb-2.5">
+                          <div>
+                            <span class="font-bold text-slate-200 text-xs block">Aprobar B3: API Gateway</span>
+                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5">$55M COP | Integra HeVa/Siesa</span>
+                          </div>
+                          <span id="badge-dirigir-b3" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">PENDIENTE</span>
+                        </div>
+
+                        <!-- Project B7 -->
+                        <div class="flex items-center justify-between border-b border-slate-900 pb-2.5">
+                          <div>
+                            <span class="font-bold text-slate-200 text-xs block">Aprobar B7: Gob. Datos</span>
+                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5">$12M COP | Catálogo y roles</span>
+                          </div>
+                          <span id="badge-dirigir-b7" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">PENDIENTE</span>
+                        </div>
+
+                        <!-- Project B8 -->
+                        <div class="flex items-center justify-between border-b border-slate-900 pb-2.5">
+                          <div>
+                            <span class="font-bold text-slate-200 text-xs block">Aprobar B8: Cap. Teams</span>
+                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5">$15M COP | Eleva madurez digital</span>
+                          </div>
+                          <span id="badge-dirigir-b8" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">PENDIENTE</span>
+                        </div>
+
+                        <!-- Project B5 -->
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <span class="font-bold text-slate-200 text-xs block">Aprobar B5: Hemocentro 4.0</span>
+                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5">$75M COP | Portal Donación + App</span>
+                          </div>
+                          <span id="badge-dirigir-b5" class="font-mono text-[9.5px] font-bold px-2 py-0.5 rounded border border-slate-700 text-slate-400 bg-slate-900/40 flex-shrink-0">PENDIENTE</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- STEP 3: MONITOREAR -->
+                    <div class="glass-panel p-5 rounded-2xl border-t-2 border-neon-green shadow-lg space-y-4 bg-slate-950/20 flex flex-col justify-between">
+                      <div>
+                        <span class="text-xs font-black text-neon-green uppercase tracking-widest cyber-title block flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 bg-neon-green rounded-full"></span> 3. MONITOREAR
+                        </span>
+                        
+                        <div class="space-y-4 mt-4">
+                          <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-bold">
+                              <span class="text-slate-300">Inversión Ejecutada:</span>
+                              <span class="font-mono text-slate-200 font-bold" id="sim-budget-cost">$60M / $330M</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden relative">
+                              <div id="sim-budget-progress" class="h-full bg-neon-green animate-pulse" style="width: 18%;"></div>
+                            </div>
+                            <div id="sim-budget-warning" class="text-[10px] font-bold text-red-400 hidden bg-red-950/20 border border-red-900/30 p-2 rounded leading-relaxed">
+                              ⚠️ SOBRE-EJECUCIÓN: Excedió el límite presupuestal de $330M.
+                            </div>
+                          </div>
+
+                          <hr class="border-slate-800 my-2" />
+                          
+                          <div class="space-y-1.5">
+                            <span class="text-slate-300 font-bold text-[10px] uppercase tracking-wider block cyber-title">Cumplimiento ISO 38500</span>
+                            <span id="iso-38500-rating" class="font-mono font-bold text-red-500 bg-red-950/45 px-2.5 py-1 rounded border border-red-900/60 uppercase tracking-widest text-[10px] block text-center">EVALUANDO</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Right Sub-column: Recommendations (Hot Evaluation) -->
+                <div class="lg:col-span-4 space-y-6">
+                  
+                  <!-- Dynamic Diagnostic Evaluation Box -->
+                  <div class="glass-panel p-5 rounded-2xl border-t-2 border-cyan-400 shadow-lg flex flex-col justify-between min-h-[360px] bg-slate-950/20">
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider cyber-title flex items-center gap-1.5 border-b border-slate-800 pb-2">
+                        <i class="fa-solid fa-magnifying-glass-chart text-cyan-400"></i> Diagnóstico en Caliente
+                      </h4>
+                      
+                      <div class="space-y-4 mt-4" id="diagnostic-ai-recommendations">
+                        <!-- Loaded dynamically by diagnostic.js -->
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </section>
+
           </div>
 
         </main>
@@ -940,1248 +984,173 @@ import '../styles/global.css';
       </div>
     </div>
 
-    <!-- CORE CLIENT JS LOGIC (Bundled dynamically by Astro/Vite) -->
-    <script>
-      let appState = null;
-      let charts = {};
+    <!-- N8N WEBHOOK SIMULATOR MODAL (HOLOGRAPHIC CYBERPUNK HUD) -->
+    <div id="n8n-webhook-modal" class="fixed inset-0 z-[150] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+      <div class="glass-panel w-full max-w-4xl rounded-2xl border border-cyan-500/30 overflow-hidden shadow-2xl relative bg-slate-950">
+        <!-- Close Button -->
+        <button id="close-n8n-webhook-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer z-20">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
 
-      // FALLBACK DE BASE DE DATOS DE GOBIERNO DE TI CRUZ ROJA
-      const localFallbackData = {
-        "last_updated": "2026-05-26T13:11:23-05:00",
-        "top_kpis": {
-          "madurez_digital": { "value": 2.8, "target": 5.0, "status": "critical" },
-          "iso_27001": { "value": 45, "target": 90, "status": "critical" },
-          "disponibilidad_hemocentro": { "value": 99.1, "target": 99.8, "status": "success" },
-          "ejecucion_presupuesto": { "value": 67, "target": 100, "status": "warning" },
-          "ciso_designado": { "value": "NO", "status": "danger" },
-          "ingresos_hemocentro": { "value": "$771M COP", "status": "success" }
-        },
-        "perspectiva_financiera": {
-          "ingresos_totales": { "amount": "$1.240M COP", "subtitle": "Ingresos Totales 2024", "description": "Hemocentro 62% - Educación 5% - Lotería/Otros 33%", "progress": 100 },
-          "presupuesto_ti": { "amount": "67%", "subtitle": "Presupuesto TI Ejecutado", "description": "Meta: desviación ≤ 10% | PETI 2026-2030", "status_text": "En seguimiento", "status": "warning" },
-          "ahorro_makaia": { "amount": "50-100%", "subtitle": "Ahorro Makaia (Licencias)", "description": "646 licencias Microsoft 365 - Programa Nonprofit", "status_text": "Activo y renovado", "status": "success" },
-          "activos_tecnologicos": { "amount": "$321M COP", "subtitle": "Activos Tecnológicos (Valor Hist.)", "description": "Servidores obsoletos > 5 años - Riesgo operativo", "status_text": "Infraestructura en riesgo", "status": "danger" },
-          "fuentes_ingreso": [
-            { "name": "Hemocentro", "value": 62, "color": "#ff3344" },
-            { "name": "Lotería y Otros", "value": 33, "color": "#4b5563" },
-            { "name": "Educación", "value": 5, "color": "#ffab00" }
-          ],
-          "inversiones_peti": [
-            { "proyecto": "Infraestructura Cloud (B2)", "monto": "$80M", "prioridad": "Alta" },
-            { "proyecto": "API Gateway / Integración (B3)", "monto": "$55M", "prioridad": "Media" },
-            { "proyecto": "Analítica Institucional (B4)", "monto": "$60M", "prioridad": "Alta" },
-            { "proyecto": "Ciberseguridad / SOC (B1)", "monto": "$45M", "prioridad": "Crítica" },
-            { "proyecto": "Hemocentro 4.0 + Portal (B5)", "monto": "$75M", "prioridad": "Crítica" },
-            { "proyecto": "Capacitación Digital (B8)", "monto": "$15M", "prioridad": "Media" }
-          ],
-          "total_inversion_peti": "$330M"
-        },
-        "perspectiva_clientes": {
-          "hemocentro": {
-            "titulo": "Hemocentro — Motor Crítico de la Organización",
-            "descripcion": "Mayor generador de ingresos - 60% de los ingresos totales - Servicio 24/7",
-            "ingresos": "$771M COP",
-            "kpis": [
-              { "id": "c1", "name": "Disponibilidad Servicios", "value": "99.1%", "target": "Meta 99.8%", "status": "success", "action": "Migrar HeVa a Azure para alcanzar el 99.8% y eliminar riesgo de servidor físico obsoleto." },
-              { "id": "c2", "name": "App Móvil Donantes", "value": "0%", "target": "Meta: Lanzar Q4 2028", "status": "danger", "action": "Proyecto Hemocentro 4.0 debe iniciarse en Q2 2027 usando Azure (F2) + datos donantes (F6)." },
-              { "id": "c3", "name": "Trazabilidad Hemocomponentes", "value": "72%", "target": "Meta 100%", "status": "warning", "action": "API Gateway con estándar HL7/FHIR integra HeVa con hospitales aliados para trazabilidad total." },
-              { "id": "c4", "name": "% Trámites Digitalizados", "value": "30%", "target": "Meta 90% en 2030", "status": "danger", "action": "Portal transaccional PSE + agendamiento online reduce carga manual y mejora experiencia donante." }
-            ]
-          },
-          "educacion": {
-            "titulo": "Instituto de Educación y Estudiantes",
-            "ingresos": "$61M COP",
-            "portal_avance": "0%",
-            "status": "danger",
-            "status_text": "Riesgo alto",
-            "action": "SENA y plataformas gratuitas (Coursera, YouTube) son sustitutos directos. El portal educativo con PSE es un Quick Win que debe lanzarse en Q2 2028 para retener estudiantes y abrir nuevos mercados B2B sin requerir infraestructura adicional."
-          },
-          "hospitales_b2b": {
-            "titulo": "Pacientes y Hospitales Aliados (B2B)",
-            "confiabilidad": "70%",
-            "target": "Meta: 85% en 2028",
-            "status": "warning",
-            "status_text": "En desarrollo",
-            "action": "La certificación ISO 27001 (hoy en 45%) es el principal factor que hospitales y EPS evalúan para confiar servicios críticos de hemocomponentes a la Cruz Roja. Elevarla al 90% en 2027 genera ventaja competitiva directa."
-          },
-          "satisfaccion_soporte": {
-            "titulo": "KPI de Satisfacción de Usuarios TI",
-            "global_csat": { "value": 7.5, "max": 10, "target": 9.0, "status": "warning", "status_text": "En seguimiento", "action": "Mesa de ayuda con SLA formal + portal de autoservicio reduce tiempos de respuesta y mejora percepción." },
-            "tickets_positivos": { "value": 80, "target": 90, "status": "success", "status_text": "Estable", "action": "Reforzar capacitaciones de soporte de primer nivel y automatizar las encuestas en n8n." },
-            "confianza_digital": { "value": 70, "target": 90, "status": "warning", "status_text": "Construyendo", "action": "SOC + ISO 27001 + comunicación institucional sobre ciberseguridad elevan percepción de confianza." }
-          }
-        },
-        "perspectiva_procesos": {
-          "kpis": [
-            { "name": "Cumplimiento ISO 27001", "value": "45%", "target": "Meta 2026: 70%", "status": "danger", "status_text": "Crítico", "action": "Nombrar CISO, implementar política de escritorio limpio y DRP probado antes de Q2 2026." },
-            { "name": "% Cumplimiento RTO/RPO Servicios Críticos", "value": "40%", "target": "Meta 90%", "status": "danger", "status_text": "Sin DRP", "action": "Backups inmutables en Azure con retención 90 días. Prueba DRP semestral obligatoria." },
-            { "name": "% Integración Sistemas (API Gateway)", "value": "0%", "target": "Meta 100% en Q4 2027", "status": "danger", "status_text": "Islas", "action": "Proyecto B3: API Gateway con HL7/FHIR conecta Siesa ↔ HeVa ↔ Q-Symphony. Presupuesto: $55M." },
-            { "name": "Cumplimiento SLA Servicios TI", "value": "75%", "target": "Meta 95%", "status": "warning", "status_text": "Parcial", "action": "Mesa de ayuda con catálogo formal de servicios y asignación automática mediante triggers de n8n." }
-          ],
-          "radar_amenazas": [
-            { "id": "A1", "name": "Ransomware – Amenaza Crítica", "weight": "25% importancia", "description": "Sin CISO ni SOC, un ataque podría paralizar el Hemocentro y el Laboratorio. Sectores salud son el objetivo #1 a nivel global.", "prescription": "Backups inmutables Azure + SOC + MFA como prioridad absoluta antes de cualquier digitalización nueva. Plazo: Q2 2026.", "status": "danger" },
-            { "id": "D2", "name": "Servidores físicos obsoletos (>5 años)", "weight": "20% importancia", "description": "Si falla un servidor local del Hemocentro o del Laboratorio, los servicios críticos de salud se detienen sin tiempo de recuperación definido.", "prescription": "Migración progresiva Cloud First (Azure híbrido) – Proyecto B2, $80M. Plazo: Q2 2027.", "status": "danger" },
-            { "id": "A2", "name": "Sanciones Ley 1581 – Riesgo Legal", "weight": "15% importancia", "description": "Datos de pacientes, donantes y estudiantes sin protección adecuada (solo 45% ISO 27001) expone a sanciones millonarias y daño reputacional.", "prescription": "Auditoría de datos personales + implementar MSPI + completar controles ISO 27001. Plazo: Q4 2026.", "status": "warning" },
-            { "id": "A4", "name": "Desintermediación EdTech (SENA, Coursera)", "weight": "15% importancia", "description": "Sin portal educativo, los ingresos de $61M del Instituto están en riesgo de migrar a plataformas gratuitas.", "prescription": "Portal educativo con PSE como Quick Win Q2 2028. Diferenciador: certificaciones Cruz Roja con validez internacional.", "status": "warning" },
-            { "id": "A3", "name": "Dependencia tecnológica de HeVa y Siesa", "weight": "15% importancia", "description": "Alto costo de cambio. Si el proveedor sube precios o descontinúa el producto, la operación queda en riesgo.", "prescription": "Evaluar OpenMRS como alternativa open-source. API Gateway reduce el lock-in al crear capa neutral.", "status": "warning" },
-            { "id": "D4", "name": "Sin CISO formal ni modelo de ciberseguridad", "weight": "10% importancia", "description": "La ausencia de un responsable de seguridad deja sin gobernanza la protección de datos clínicos y financieros.", "prescription": "Designar CISO es el primer paso del PETI 2026-2030, antes de cualquier otro proyecto de digitalización.", "status": "danger" }
-          ]
-        },
-        "perspectiva_aprendizaje": {
-          "madurez_digital": { "value": 2.8, "target": 4.2, "max": 5.0, "status_text": "Brecha crítica", "status": "danger", "action": "Plan de microaprendizaje con Teams (B8) – capacitar personal de campo en apps institucionales sin salones presenciales." },
-          "personal_certificado": { "value": "70%", "target": "95% ITIL/COBIT", "description": "Certificaciones básicas: 70% | ITIL 4 avanzado: 20%", "status_text": "Base", "status": "warning", "action": "Programa de recertificación ITIL 4 + COBIT 2019 con presupuesto $15M del PETI. Plazo Q1 2027." },
-          "practicas_cobit": { "value": "40%", "target": "Meta: 80%", "status_text": "Inicial", "status": "danger", "action": "Documentación en SharePoint + rutas de carrera TI para retener talento y reducir riesgo de rotación." },
-          "roadmap_proyectos": [
-            { "id": "B7", "name": "Gobierno de Datos Institucional", "cronograma": "Q1 2026", "status": "EN EJECUCIÓN", "monto": "$12M", "color": "#ffab00", "description": "Políticas, roles, catálogo de datos y modelo formal de gestión." },
-            { "id": "B1", "name": "Ciberseguridad Humanitaria (SOC + DRP)", "cronograma": "Q2 2026", "status": "PRIORIDAD #1", "monto": "$45M", "color": "#ff3344", "description": "Centro de Operaciones de Seguridad + autenticación multifactor + DRP semestral." },
-            { "id": "B8", "name": "Capacitación Digital del Personal", "cronograma": "Q1 2027", "status": "PLANIFICADO", "monto": "$15M", "color": "#4b5563", "description": "Microaprendizaje con Teams. Elevar madurez de 2.8 a 4.2/5.0." },
-            { "id": "B2", "name": "Migración Cloud (Infraestructura Azure)", "cronograma": "Q2 2027", "status": "PLANIFICADO", "monto": "$80M", "color": "#4b5563", "description": "Migración de servidores locales obsoletos a nube híbrida de Azure." }
-          ],
-          "radar_chart": {
-            "labels": ["Disponibilidad Servicios", "Madurez Digital", "Trámites Digitales", "Integración Sistemas", "Cumplimiento ISO 27001", "Satisfacción Usuarios"],
-            "actual": [99.1, 56, 30, 0, 45, 75],
-            "target": [99.8, 84, 90, 100, 90, 90]
-          }
-        },
-        "prescripciones": {
-          "acciones_inmediatas": [
-            { "id": "01", "title": "Designar CISO y activar el SOC", "badge": "P1", "description": "Con solo 45% de cumplimiento ISO 27001 y ransomware como amenaza #1 (25% importancia), cualquier ataque detendría el Hemocentro. El CISO debe nombrarse antes de cualquier otro proyecto. Presupuesto: incluido en $45M de ciberseguridad." },
-            { "id": "02", "title": "Implementar backups inmutables en Azure (DRP)", "badge": "P1", "description": "Los servidores físicos tienen más de 5 años y no existe DRP probado. Un fallo en el servidor del Hemocentro paraliza $771M de ingresos. Azure ya está operativo (B2) – solo se necesita activar retención inmutable a 90 días. Tiempo de implementación: 4-6 semanas." },
-            { "id": "03", "title": "Establecer el Gobierno de Datos Institucional", "badge": "P1", "description": "Sin gobierno de datos no hay analítica, ni cumplimiento Ley 1581, ni integración posible. Es la base que habilita todos los demás proyectos del PETI. Costo: $12M. Plazo: Q1 2026." }
-          ],
-          "acciones_estrategicas": [
-            { "id": "04", "title": "Migrar infraestructura a Azure (Cloud First)", "badge": "P2", "description": "Los servidores físicos obsoletos son el cuello de botella que impide alcanzar el 99.8% de disponibilidad que exige el Hemocentro. La migración progresiva con modelo pay-as-you-go elimina el riesgo sin CAPEX masivo inicial. Presupuesto: $80M." },
-            { "id": "05", "title": "Construir el API Gateway con HL7/FHIR", "badge": "P2", "description": "Siesa, HeVa y Q-Symphony operan como islas. La integración es la palanca que habilita el dato único del paciente, la analítica institucional y la interoperabilidad con hospitales aliados. Sin este paso, los proyectos de IA y Analítica son inviables. Presupuesto: $55M." },
-            { "id": "06", "title": "Programa de capacitación digital (madurez 2.8 → 4.2)", "badge": "P2", "description": "Sin apropiación tecnológica del personal, ningún sistema nuevo se usa correctamente. Microaprendizaje con Teams, sin salones presenciales, usando los smartphones que ya tienen. Presupuesto: $15M – la mejor relación costo/impacto del PETI." }
-          ],
-          "foda": {
-            "diagnostico": "Los factores internos son débiles (score 0.8) mientras los externos son favorables (score 1.2). Esto ubica a la organización en el cuadrante DO: las oportunidades del entorno existen pero las debilidades internas impiden aprovecharlas.",
-            "debilidades": ["Sin CISO", "45% ISO 27001", "Servidores obsoletos", "Islas de datos", "Madurez 2.8"],
-            "oportunidades": ["Azure activo", "MAKAIA", "Alta demanda cursos", "HL7/FHIR", "Decreto 767"]
-          }
-        }
-      };
-
-      // BSC DETAILED TOOLTIPS
-      const bscObjectives = {
-        "c1": { title: "Elevar experiencia del donante y disponibilidad Hemocentro 24/7", perspective: "Clientes y Beneficiarios", value: "99.1% disp.", target: "Meta: 99.8%", impact: "El Hemocentro representa el 60% de los ingresos totales de la organización ($771M COP). Su disponibilidad 24/7 es crítica para el abastecimiento hospitalario en el Valle.", action: "Aprobar Proyecto B2 (Azure) para garantizar migración, elevando la disponibilidad al 99.8% en la consola de dirección.", path: "R1 - Hemocentro" },
-        "c2": { title: "Fortalecer confianza de hospitales y EPS aliados", perspective: "Clientes y Beneficiarios", value: "70%", target: "Meta: 85%", impact: "Los clientes B2B de hemocomponentes exigen garantías máximas de disponibilidad, ciberseguridad e ISO 27001.", action: "La acreditación ISO 27001 (hoy en 45%) es el principal habilitador de esta confianza estratégica.", path: "R2 - Ciberseguridad" },
-        "c3": { title: "Retener y escalar mercado educativo con oferta digital", perspective: "Clientes y Beneficiarios", value: "0%", target: "Meta: 90% (2030)", impact: "El Instituto de Educación es una fuente clave de ingresos no asistenciales ($61M COP) en riesgo debido a la competencia digital gratuita.", action: "Lanzar el portal transaccional con PSE (Aprobar B5) para evitar desintermediación y capturar mercados B2B.", path: "R3 - Educación" },
-        "p1": { title: "Migrar infraestructura crítica a Cloud Azure híbrido", perspective: "Procesos Internos", value: "En progreso", target: "Meta: Q2 2027", impact: "Elimina el riesgo físico de servidores obsoletos mayores a 5 años del Hemocentro. Elimina costos de mantenimiento físico.", action: "Dirigir la aprobación del Proyecto B2 (Azure) en la Consola ISO 38500 para migrar servidores y subir Uptime.", path: "R1 - Hemocentro" },
-        "p2": { title: "Implementar ciberseguridad integral (SOC, DRP, ISO 27001)", perspective: "Procesos Internos", value: "45% ISO", target: "Meta 2026: 70%", impact: "El ransomware es la amenaza #1 del sector salud a nivel mundial. Sin CISO ni SOC, un incidente podría detener por completo al Hemocentro.", action: "Aprobar B1 (CISO & SOC) para elevar cumplimiento normativo de ciberseguridad al 90% y mitigar ransomware.", path: "R2 - Ciberseguridad" },
-        "p3": { title: "API Gateway: eliminar islas de información", perspective: "Procesos Internos", value: "0% integr.", target: "Meta: 100% (2027)", impact: "Siesa, HeVa y Q-Symphony operan aislados, impidiendo la trazabilidad del paciente y bloqueando la analítica de datos.", action: "Aprobar Proyecto B3 (API Gateway) para integrar bases de datos institucionales con estándares HL7/FHIR.", path: "R1 ↔ R3" },
-        "p4": { title: "Digitalizar procesos educativos y soporte al estudiante", perspective: "Procesos Internos", value: "30%", target: "Meta: 95%", impact: "Facilita la retención estudiantil reduciendo fricciones administrativas y automatizando la matrícula del Instituto.", action: "Integrar pasarelas de pago y matrículas en línea aprobando el Proyecto B5 (Hemocentro 4.0).", path: "R3 - Educación" },
-        "a1": { title: "Elevar madurez digital del personal de 2.8 a 4.2", perspective: "Aprendizaje y Crecimiento", value: "2.8 / 5.0", target: "Meta: 4.2 / 5.0", impact: "Las herramientas avanzadas no aportarán valor si los voluntarios y el personal no se apropian digitalmente de ellas.", action: "Evaluar competencias de voluntarios y dirigir la aprobación del Proyecto B8 (Capacitación digital de personal).", path: "R1 ↔ R3" },
-        "a2": { title: "Establecer gobierno TI formal (CISO, COBIT, ITIL)", perspective: "Aprendizaje y Crecimiento", value: "40% COBIT", target: "Meta: 80%", impact: "La gobernanza formal previene incidentes, reduce rotación de personal técnico clave y alinea TI con la misión humanitaria.", action: "Dirigir el nombramiento del CISO (B1) y formalizar la documentación de procesos en SharePoint (Auditoría C).", path: "R2 - Ciberseguridad" },
-        "a3": { title: "Fomentar cultura de innovación y pilotos tecnológicos", perspective: "Aprendizaje y Crecimiento", value: "1 Iniciativa", target: "Meta: 5 / año", impact: "Permite probar soluciones de automatización de bajo costo (como n8n y no-code) antes de inversiones masivas.", action: "Evaluar brecha y coordinar pilotos de automatización de procesos mediante personal capacitado.", path: "R1 - Hemocentro" },
-        "f1": { title: "Asegurar disponibilidad TI crítica del Hemocentro", perspective: "Financiero", value: "99.1% disp.", target: "Meta 2030: 99.8%", impact: "Es la base que habilita el 60% de los ingresos de la seccional. Sin disponibilidad TI, la captación y distribución de sangre se paraliza.", action: "Garantizar redundancia de conectividad a internet local aprobando el proyecto de migración Azure (B2).", path: "R1 - Hemocentro" },
-        "f2": { title: "Optimizar ejecución presupuestal TI (desviación < 10%)", perspective: "Financiero", value: "67% ejec.", target: "Meta: ≤10% desv.", impact: "Garantiza que la asignación del PETI se gaste eficientemente y no se pierdan recursos por retrasos en compras o despliegues.", action: "Evaluar desviaciones contables y aprobar convenios estratégicos que optimicen costos operativos.", path: "R2 - Ciberseguridad" },
-        "f3": { title: "Reducir costo operativo TI con Cloud y n8n", perspective: "Financiero", value: "50% ahorro", target: "Meta: 100% conv.", impact: "El licenciamiento en ONGs mediante MAKAIA y Microsoft permite liberar presupuesto administrativo para misiones humanitarias.", action: "Migrar el 100% de licencias al convenio Makaia y automatizar reportes con n8n para reducir horas de personal administrativo.", path: "R3 - Educación" }
-      };
-
-      // INTERACTIVE STATE (Unified ISO 38500 Matrix Decisions)
-      let decisions = {
-        audit_servidores: false,
-        audit_seguridad: false,
-        audit_procesos: false,
-        b1_ciso: false,
-        b2_azure: false,
-        b3_api: false,
-        b5_portal: false,
-        b7_datos: false,
-        b8_capacitacion: false
-      };
-
-      // WINDOW LOAD INITS
-      window.addEventListener('DOMContentLoaded', async () => {
-        appState = JSON.parse(JSON.stringify(localFallbackData));
-        
-        initNavigation();
-        initBscInteractions();
-        initISO38500Console();
-        
-        // Initial recalculation & render
-        recalculateAndRender();
-      });
-
-      // CONSOLE CONTROLS WIRE UP (ISO 38500 Evaluaciones & Directivas)
-      function initISO38500Console() {
-        
-        // Restablecer Button
-        const resetBtn = document.getElementById('btn-reset-data');
-        if (resetBtn) {
-          resetBtn.addEventListener('click', () => {
-            // Reset all decisions
-            Object.keys(decisions).forEach(key => {
-              decisions[key] = false;
-              const el = document.getElementById(key.replace('_', '-'));
-              if (el) {
-                if (el.type === 'checkbox') el.checked = false;
-              }
-            });
-
-            // Trigger recalc
-            recalculateAndRender();
-
-            // Success feedback toast
-            showToast("Métricas y directivas del PETI de la Cruz Roja restablecidas al estado base oficial.", "Éxito Gobierno TI");
-          });
-        }
-
-        // Checklist/Checkbox selectors
-        const inputs = ['audit_servidores', 'audit_seguridad', 'audit_procesos', 'b1_ciso', 'b2_azure', 'b3_api', 'b5_portal', 'b7_datos', 'b8_capacitacion'];
-        
-        inputs.forEach(id => {
-          const el = document.getElementById(id.replace('_', '-'));
-          if (el) {
-            el.addEventListener('change', () => {
-              decisions[id] = el.checked;
-              recalculateAndRender();
-            });
-          }
-        });
-
-        // Forced SLA trigger button
-        const forceBtn = document.getElementById('trigger-sim-n8n');
-        if (forceBtn) {
-          forceBtn.addEventListener('click', () => {
-            const currentUptime = appState.top_kpis.disponibilidad_hemocentro.value;
-            if (currentUptime < 99.5) {
-              showToast(`CRÍTICO: Disponibilidad del Hemocentro en ${currentUptime}% violó el SLA del 99.5%. Correo enviado automáticamente al CIO.`, "Alerta n8n Activada");
-            } else {
-              showToast(`ESTABLE: Disponibilidad correcta al ${currentUptime}%. n8n verificó SLA estable.`, "Monitoreo n8n");
-            }
-          });
-        }
-      }
-
-      // MATHEMATICAL RECALCULATOR & RENDER (The absolute core of reactive architecture!)
-      function recalculateAndRender() {
-        if (!appState) return;
-
-        // Reset state to fallback base
-        appState = JSON.parse(JSON.stringify(localFallbackData));
-
-        // 1. CALCULATE BUDGET INVERSION (PETI Project allocation)
-        // Base executed budget already spent is $60M (contratos vigentes de operación)
-        let totalCost = 60;
-        if (decisions.b1_ciso) totalCost += 45;
-        if (decisions.b2_azure) totalCost += 80;
-        if (decisions.b3_api) totalCost += 55;
-        if (decisions.b5_portal) totalCost += 75;
-        if (decisions.b7_datos) totalCost += 12;
-        if (decisions.b8_capacitacion) totalCost += 15;
-
-        const budgetPercent = Math.round((totalCost / 330) * 100);
-        appState.top_kpis.ejecucion_presupuesto.value = budgetPercent;
-        appState.perspectiva_financiera.presupuesto_ti.amount = `${budgetPercent}%`;
-        
-        // Budget SLA condition: executed budget cannot exceed 100% of $330M
-        const budgetWarning = document.getElementById('sim-budget-warning');
-        if (totalCost > 330) {
-          appState.top_kpis.ejecucion_presupuesto.status = 'danger';
-          if (budgetWarning) budgetWarning.classList.remove('hidden');
-        } else {
-          appState.top_kpis.ejecucion_presupuesto.status = budgetPercent >= 90 ? 'success' : 'warning';
-          if (budgetWarning) budgetWarning.classList.add('hidden');
-        }
-
-        // Sync Sidebar budget strip
-        const budgetCostEl = document.getElementById('sim-budget-cost');
-        if (budgetCostEl) budgetCostEl.textContent = `$${totalCost}M / $330M`;
-        const budgetProgressEl = document.getElementById('sim-budget-progress');
-        if (budgetProgressEl) {
-          const barWidth = Math.min((totalCost / 330) * 100, 100);
-          budgetProgressEl.style.width = `${barWidth}%`;
-          if (totalCost > 330) {
-            budgetProgressEl.className = "h-full bg-red-650";
-          } else {
-            budgetProgressEl.className = "h-full bg-neon-green";
-          }
-        }
-
-        // 2. RECALCULATE LEARNING (Maturity calculated based on audits and training)
-        let digitalMaturity = 2.8;
-        if (decisions.audit_procesos) digitalMaturity += 0.2; // Audit satisfaction voluntaries gives awareness
-        if (decisions.b8_capacitacion) digitalMaturity += 1.2; // Project B8 capacitación raises it directly!
-        appState.top_kpis.madurez_digital.value = parseFloat(digitalMaturity.toFixed(1));
-        
-        appState.top_kpis.madurez_digital.status = digitalMaturity >= 4.0 ? 'success' : digitalMaturity >= 3.0 ? 'warning' : 'danger';
-        
-        if (decisions.b8_capacitacion) {
-          appState.perspectiva_aprendizaje.personal_certificado.value = "95%";
-          appState.perspectiva_aprendizaje.practicas_cobit.value = "80%";
-          appState.perspectiva_aprendizaje.personal_certificado.status = "success";
-          appState.perspectiva_aprendizaje.practicas_cobit.status = "success";
-        }
-
-        // 3. RECALCULATE UPTIME (Azure migration impact)
-        let currentUptime = 99.1;
-        if (decisions.audit_servidores) currentUptime = 99.1; // Audit alone doesn't raise uptime
-        if (decisions.b2_azure) currentUptime = 99.8; // Aproved cloudAzure hybrid raises uptime to 99.8%!
-        appState.top_kpis.disponibilidad_hemocentro.value = currentUptime;
-        appState.top_kpis.disponibilidad_hemocentro.status = currentUptime >= 99.5 ? 'success' : 'danger';
-
-        // 4. RECALCULATE SECURITY & COMPLIANCE (CISO & SOC impact)
-        let currentISO = 45;
-        if (decisions.audit_seguridad) currentISO = 45;
-        if (decisions.b1_ciso) currentISO = 90; // Approved CISO SOC raises compliance immediately to 90%!
-        appState.top_kpis.iso_27001.value = currentISO;
-        appState.top_kpis.iso_27001.status = currentISO >= 90 ? 'success' : currentISO >= 70 ? 'warning' : 'danger';
-        appState.top_kpis.ciso_designado.value = decisions.b1_ciso ? "SÍ" : "NO";
-        appState.top_kpis.ciso_designado.status = decisions.b1_ciso ? "success" : "danger";
-
-        // Hospitals perception of reliability B2B linked to ISO 27001
-        appState.perspectiva_clientes.hospitales_b2b.confiabilidad = `${currentISO}%`;
-        appState.perspectiva_clientes.hospitales_b2b.status = currentISO >= 90 ? 'success' : currentISO >= 70 ? 'warning' : 'danger';
-        appState.perspectiva_clientes.hospitales_b2b.status_text = currentISO >= 90 ? 'Excelente' : currentISO >= 70 ? 'En desarrollo' : 'Riesgo alto';
-
-        // 5. RECALCULATE INTEGRATIONS (API Gateway & Data Governance)
-        let systemIntegration = 0;
-        if (decisions.b3_api) systemIntegration += 80;
-        if (decisions.b7_datos) systemIntegration += 20;
-        appState.perspectiva_procesos.kpis[2].value = `${systemIntegration}%`;
-        appState.perspectiva_procesos.kpis[2].status = systemIntegration >= 100 ? 'success' : systemIntegration >= 50 ? 'warning' : 'danger';
-        appState.perspectiva_procesos.kpis[2].status_text = systemIntegration >= 100 ? 'Estable' : systemIntegration >= 20 ? 'Islas' : 'Inexistente';
-
-        // 6. RECALCULATE CLIENTS & PORTAL B5 (Adoption & App)
-        let digitalTramites = 30;
-        let appProgress = "0%";
-        if (decisions.b5_portal) {
-          // Principle of Strategy / Acquisition ISO 38500 Constraint:
-          // Aproved portal B5 needs Azure B2 (infrastructure) and CISO B1 (security) to perform successfully.
-          if (decisions.b2_azure && decisions.b1_ciso) {
-            digitalTramites = 90;
-            appProgress = "100%";
-            appState.perspectiva_clientes.hemocentro.kpis[1].status = 'success';
-            appState.perspectiva_clientes.hemocentro.kpis[3].status = 'success';
-            appState.perspectiva_clientes.educacion.portal_avance = '100%';
-            appState.perspectiva_clientes.educacion.status = 'success';
-            appState.perspectiva_clientes.educacion.status_text = 'Estable';
-          } else {
-            digitalTramites = 50; // Portal launched on unsafe servers - Partial
-            appProgress = "0% (Bloqueado)";
-            appState.perspectiva_clientes.hemocentro.kpis[1].status = 'danger';
-            appState.perspectiva_clientes.hemocentro.kpis[3].status = 'warning';
-            appState.perspectiva_clientes.educacion.portal_avance = '0% (Falla)';
-            appState.perspectiva_clientes.educacion.status = 'danger';
-            appState.perspectiva_clientes.educacion.status_text = 'Falla de seguridad';
-          }
-        }
-        appState.perspectiva_clientes.hemocentro.kpis[1].value = appProgress;
-        appState.perspectiva_clientes.hemocentro.kpis[3].value = `${digitalTramites}%`;
-        appState.perspectiva_procesos.kpis[3].value = `${digitalTramites}%`;
-        appState.perspectiva_procesos.kpis[3].status = digitalTramites >= 80 ? 'success' : 'warning';
-
-        // 7. CLIENT DYNAMIC RECOMMENDATIONS CONSOLE (Under ISO 38500)
-        let clientRecText = "";
-        if (!decisions.b5_portal) {
-          clientRecText = "📢 **EVALUAR Y DIRIGIR:** El portal educativo de matrículas y la App de donaciones del Hemocentro se encuentran inactivos. Se recomienda coordinar la aprobación del **Proyecto B5 (Hemocentro 4.0)** en la consola de dirección para mitigar la desintermediación del Instituto y modernizar los trámites.";
-        } else if (decisions.b5_portal && (!decisions.b2_azure || !decisions.b1_ciso)) {
-          clientRecText = "⚠️ **INCUMPLIMIENTO GRAVE ISO 38500:** El portal y la app móvil de donación se han lanzado al público, pero la infraestructura física está obsoleta (sin servidores en Azure) y se carece de gobernanza de seguridad (sin CISO). **Riesgo crítico de caída de servicio y brecha de datos de pacientes**. Directiva del CIO Valle: suspender de inmediato el portal PSE hasta garantizar infraestructura segura.";
-        } else {
-          clientRecText = "✅ **MONITOREAR - ALINEACIÓN TI-NEGOCIO COMPLETA:** Se ha consolidado el lanzamiento seguro de la App Móvil y el portal transaccional PSE del Hemocentro en la nube de Azure y bajo el monitoreo activo del SOC del CISO Valle. Satisfacción del donante al 99.8% certificada por auditoría. La interoperabilidad digital con hospitales funciona exitosamente.";
-        }
-        
-        const cliRecEl = document.getElementById('client-dynamic-recommendation');
-        if (cliRecEl) cliRecEl.innerHTML = clientRecText;
-
-        // 8. ISO 38500 DIRECTIVE RATING RATER
-        let totalEvaluations = (decisions.audit_servidores ? 1 : 0) + (decisions.audit_seguridad ? 1 : 0) + (decisions.audit_procesos ? 1 : 0);
-        let totalDirections = (decisions.b1_ciso ? 1 : 0) + (decisions.b2_azure ? 1 : 0) + (decisions.b3_api ? 1 : 0) + (decisions.b5_portal ? 1 : 0) + (decisions.b7_datos ? 1 : 0) + (decisions.b8_capacitacion ? 1 : 0);
-
-        const ratingEl = document.getElementById('iso-38500-rating');
-        if (ratingEl) {
-          if (totalEvaluations === 0) {
-            ratingEl.textContent = "EVALUANDO";
-            ratingEl.className = "font-mono font-bold text-red-500 bg-red-950/45 px-2 py-0.5 rounded border border-red-900/60 uppercase tracking-widest text-[9px]";
-          } else if (totalCost > 330) {
-            ratingEl.textContent = "SOBRE-PRESUPUESTO";
-            ratingEl.className = "font-mono font-bold text-red-500 bg-red-950/45 px-2 py-0.5 rounded border border-red-900/60 uppercase tracking-widest text-[9px]";
-          } else if (decisions.b5_portal && (!decisions.b2_azure || !decisions.b1_ciso)) {
-            ratingEl.textContent = "INCUMPLIMIENTO RIESGO";
-            ratingEl.className = "font-mono font-bold text-red-500 bg-red-950/45 px-2 py-0.5 rounded border border-red-900/60 uppercase tracking-widest text-[9px]";
-          } else if (totalEvaluations >= 2 && totalDirections >= 5) {
-            ratingEl.textContent = "GOBERNANZA COMPLETA";
-            ratingEl.className = "font-mono font-bold text-emerald-455 bg-emerald-950/45 px-2 py-0.5 rounded border border-emerald-900/60 uppercase tracking-widest text-[9px]";
-          } else {
-            ratingEl.textContent = "GOBIERNO PARCIAL";
-            ratingEl.className = "font-mono font-bold text-amber-400 bg-amber-950/45 px-2 py-0.5 rounded border border-amber-900/60 uppercase tracking-widest text-[9px]";
-          }
-        }
-
-        // Render everything to UI
-        renderDashboard();
-      }
-
-      // RENDER BASE TEMPLATES
-      function renderDashboard() {
-        if (!appState) return;
-
-        // Update Top Strip Metrics (Values and colors)
-        updateTopKpi('madurez', appState.top_kpis.madurez_digital.value, '/5.0', appState.top_kpis.madurez_digital.status);
-        updateTopKpi('iso', appState.top_kpis.iso_27001.value + '%', '', appState.top_kpis.iso_27001.status);
-        updateTopKpi('uptime', appState.top_kpis.disponibilidad_hemocentro.value + '%', '', appState.top_kpis.disponibilidad_hemocentro.status);
-        updateTopKpi('presupuesto', appState.top_kpis.ejecucion_presupuesto.value + '%', '', appState.top_kpis.ejecucion_presupuesto.status);
-        updateTopKpi('ciso', appState.top_kpis.ciso_designado.value, '', appState.top_kpis.ciso_designado.status);
-        
-        // Update BSC Map Card Badges
-        updateBscCardKpi('c1', `${appState.top_kpis.disponibilidad_hemocentro.value}% disp.`, appState.top_kpis.disponibilidad_hemocentro.status);
-        updateBscCardKpi('c2', `Confianza ${appState.perspectiva_clientes.hospitales_b2b.confiabilidad}`, appState.perspectiva_clientes.hospitales_b2b.status);
-        updateBscCardKpi('c3', `Portal ${appState.perspectiva_clientes.educacion.portal_avance}`, appState.perspectiva_clientes.educacion.status);
-        updateBscCardKpi('p2', `ISO ${appState.top_kpis.iso_27001.value}%`, appState.top_kpis.iso_27001.status);
-        updateBscCardKpi('p3', `Integración ${appState.perspectiva_procesos.kpis[2].value}`, appState.perspectiva_procesos.kpis[2].status);
-        updateBscCardKpi('p4', `Trámites ${appState.perspectiva_procesos.kpis[3].value}`, appState.perspectiva_procesos.kpis[3].status);
-        updateBscCardKpi('a1', `Madurez ${appState.top_kpis.madurez_digital.value}`, appState.top_kpis.madurez_digital.status);
-        updateBscCardKpi('a2', appState.top_kpis.ciso_designado.value === 'SÍ' ? 'CISO Activo' : 'Sin CISO', appState.top_kpis.ciso_designado.status);
-        updateBscCardKpi('f1', `Disp. ${appState.top_kpis.disponibilidad_hemocentro.value}%`, appState.top_kpis.disponibilidad_hemocentro.status);
-        updateBscCardKpi('f2', `Ejecuc. ${appState.top_kpis.ejecucion_presupuesto.value}%`, appState.top_kpis.ejecucion_presupuesto.status);
-
-        // PERSPECTIVA FINANCIERA VIEWS
-        const fin = appState.perspectiva_financiera;
-        document.getElementById('fin-ingresos').textContent = fin.ingresos_totales.amount;
-        document.getElementById('fin-ingresos-desc').textContent = fin.ingresos_totales.description;
-        
-        const finPres = document.getElementById('fin-presupuesto');
-        if (finPres) {
-          finPres.textContent = appState.top_kpis.ejecucion_presupuesto.value + '%';
-          const presBar = document.getElementById('fin-presupuesto-bar');
-          if (presBar) presBar.style.width = appState.top_kpis.ejecucion_presupuesto.value + '%';
-          
-          const presBadge = document.getElementById('fin-presupuesto-badge');
-          const presCard = document.getElementById('card-fin-presupuesto');
-          if (presBadge && presCard) {
-            presBadge.className = getBadgeClass(appState.top_kpis.ejecucion_presupuesto.status);
-            presBadge.textContent = appState.top_kpis.ejecucion_presupuesto.status === 'success' ? 'Estable' : 'Sobre-ejecutado';
-            presCard.className = `glass-panel p-5 rounded-2xl border-t-2 ${getBorderColorClass(appState.top_kpis.ejecucion_presupuesto.status)} shadow-lg`;
-          }
-        }
-
-        const finActivos = document.getElementById('fin-activos');
-        if (finActivos) {
-          finActivos.textContent = fin.activos_tecnologicos.amount;
-          const actBar = document.getElementById('fin-activos-bar');
-          if (actBar) {
-            actBar.style.width = appState.top_kpis.ciso_designado.value === 'SÍ' ? '20%' : '75%';
-          }
-          const actBadge = document.getElementById('fin-activos-badge');
-          const actCard = document.getElementById('card-fin-activos');
-          if (actBadge && actCard) {
-            if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-              actBadge.textContent = 'Riesgo mitigado';
-              actBadge.className = getBadgeClass('success');
-              actCard.className = `glass-panel p-5 rounded-2xl border-t-2 border-emerald-500 shadow-lg`;
-            } else {
-              actBadge.textContent = 'Infraestructura en riesgo';
-              actBadge.className = getBadgeClass('danger');
-              actCard.className = `glass-panel p-5 rounded-2xl border-t-2 border-red-500 shadow-lg`;
-            }
-          }
-        }
-
-        // Render Investment Table
-        const tableBody = document.getElementById('fin-investment-rows');
-        if (tableBody) {
-          tableBody.innerHTML = '';
-          fin.inversiones_peti.forEach(item => {
-            let priorityBadge = '';
-            if (item.prioridad === 'Crítica') priorityBadge = 'bg-red-950/50 text-red-500 border-red-900/50';
-            else if (item.prioridad === 'Alta') priorityBadge = 'bg-amber-950/50 text-amber-500 border-amber-900/50';
-            else priorityBadge = 'bg-blue-950/50 text-blue-500 border-blue-900/50';
-            
-            tableBody.innerHTML += `
-              <tr class="border-b border-slate-900 hover:bg-slate-900/20">
-                <td class="py-3 font-semibold text-slate-200">${item.proyecto}</td>
-                <td class="py-3 text-center">
-                  <span class="text-[9px] border px-2 py-0.5 rounded font-bold uppercase tracking-wider ${priorityBadge}">${item.prioridad}</span>
-                </td>
-                <td class="py-3 text-right font-mono font-bold text-slate-100">${item.monto}</td>
-              </tr>
-            `;
-          });
-        }
-
-        // PERSPECTIVA CLIENTES VIEWS
-        const cliHemo = appState.perspectiva_clientes.hemocentro;
-        const cliHemoKpisGrid = document.getElementById('client-hemo-kpis');
-        if (cliHemoKpisGrid) {
-          cliHemoKpisGrid.innerHTML = '';
-          cliHemo.kpis.forEach(kpi => {
-            let value = kpi.value;
-            let status = kpi.status;
-            let target = kpi.target;
-
-            // React to live control panel
-            if (kpi.id === 'c1') {
-              value = appState.top_kpis.disponibilidad_hemocentro.value + '%';
-              status = appState.top_kpis.disponibilidad_hemocentro.status;
-            } else if (kpi.id === 'c4') {
-              value = appState.perspectiva_clientes.hemocentro.kpis[3].value;
-              status = appState.perspectiva_clientes.hemocentro.kpis[3].status;
-            }
-
-            cliHemoKpisGrid.innerHTML += `
-              <div class="glass-panel p-4 rounded-xl border border-slate-800/40 relative">
-                <div class="flex justify-between items-center">
-                  <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${kpi.name}</span>
-                  <span class="w-2.5 h-2.5 rounded-full ${status === 'success' ? 'bg-emerald-500 shadow-md shadow-emerald-500/30' : status === 'warning' ? 'bg-amber-500 shadow-md shadow-amber-500/30' : 'bg-red-600 shadow-md shadow-red-600/30 animate-ping'}"></span>
-                </div>
-                <div class="flex items-baseline gap-2 mt-2">
-                  <span class="cyber-value text-2xl font-black ${status === 'success' ? 'text-emerald-400' : status === 'warning' ? 'text-amber-400' : 'text-red-500'}">${value}</span>
-                  <span class="text-[9px] text-slate-500 font-mono">${target}</span>
-                </div>
-                <p class="text-[10px] text-slate-350 leading-relaxed border-t border-slate-900 mt-2.5 pt-2 italic">
-                  <strong class="text-brand-red-neon block not-italic uppercase tracking-wider text-[8px] cyber-title">Acción CIO:</strong> ${kpi.action}
-                </p>
-              </div>
-            `;
-          });
-        }
-
-        // Education & Hospitals Cards
-        const edu = appState.perspectiva_clientes.educacion;
-        document.getElementById('client-edu-progress').textContent = edu.portal_avance;
-        document.getElementById('client-edu-action').textContent = edu.action;
-        const eduBadge = document.getElementById('client-edu-badge');
-        const eduCard = document.getElementById('card-client-edu');
-        if (eduBadge && eduCard) {
-          eduBadge.className = getBadgeClass(edu.status);
-          eduBadge.textContent = edu.status_text;
-          eduCard.className = `glass-panel p-5 rounded-2xl border-t-2 ${getBorderColorClass(edu.status)} flex flex-col justify-between`;
-        }
-
-        const hosp = appState.perspectiva_clientes.hospitales_b2b;
-        document.getElementById('client-hosp-conf').textContent = hosp.confiabilidad;
-        document.getElementById('client-hosp-action').textContent = hosp.action;
-        const hospBadge = document.getElementById('client-hosp-badge');
-        const hospCard = document.getElementById('card-client-hosp');
-        if (hospBadge && hospCard) {
-          hospBadge.className = getBadgeClass(hosp.status);
-          hospBadge.textContent = hosp.status_text;
-          hospCard.className = `glass-panel p-5 rounded-2xl border-t-2 ${getBorderColorClass(hosp.status)} flex flex-col justify-between`;
-        }
-
-        // CSAT Support metrics
-        const csatGrid = document.getElementById('client-csat-kpis');
-        if (csatGrid) {
-          csatGrid.innerHTML = '';
-          const csat = appState.perspectiva_clientes.satisfaccion_soporte;
-          
-          // CSAT Global
-          const csatVal = appState.perspectiva_clientes.satisfaccion_soporte.global_csat.value;
-          const csatStatus = appState.perspectiva_clientes.satisfaccion_soporte.global_csat.status;
-          csatGrid.innerHTML += renderCsatItem("Índice de Satisfacción Global TI", `${csatVal}/10`, csat.global_csat.target, csat.global_csat.status_text, csatStatus, csat.global_csat.action, csatVal * 10);
-          
-          // Tickets Positivos
-          csatGrid.innerHTML += renderCsatItem("% Tickets con Evaluación Positiva", `${csat.tickets_positivos.value}%`, csat.tickets_positivos.target, csat.tickets_positivos.status_text, csat.tickets_positivos.status, csat.tickets_positivos.action, csat.tickets_positivos.value);
-          
-          // Confianza Digital
-          csatGrid.innerHTML += renderCsatItem("Confianza Digital Institucional", `${csat.confianza_digital.value}%`, csat.confianza_digital.target, csat.confianza_digital.status_text, csat.confianza_digital.status, csat.confianza_digital.action, csat.confianza_digital.value);
-        }
-
-        // PERSPECTIVA PROCESOS VIEWS
-        const procKpisGrid = document.getElementById('process-strip-kpis');
-        if (procKpisGrid) {
-          procKpisGrid.innerHTML = '';
-          
-          let isoVal = appState.top_kpis.iso_27001.value;
-          let isoStatus = appState.top_kpis.iso_27001.status;
-          let rtoVal = appState.perspectiva_procesos.kpis[1].value;
-          let rtoStatus = appState.perspectiva_procesos.kpis[1].status;
-          
-          if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-            rtoVal = '90%';
-            rtoStatus = 'success';
-          }
-
-          appState.perspectiva_procesos.kpis.forEach((kpi, idx) => {
-            let activeVal = kpi.value;
-            let activeStatus = kpi.status;
-            let activeStatusText = kpi.status_text;
-            
-            if (idx === 0) {
-              activeVal = isoVal + '%';
-              activeStatus = isoStatus;
-              activeStatusText = isoStatus === 'success' ? 'Estable' : 'Crítico';
-            } else if (idx === 1) {
-              activeVal = rtoVal;
-              activeStatus = rtoStatus;
-              activeStatusText = rtoStatus === 'success' ? 'Mitigado' : 'Sin DRP';
-            } else if (idx === 3) {
-              activeVal = appState.perspectiva_procesos.kpis[3].value;
-              activeStatus = appState.perspectiva_procesos.kpis[3].status;
-              activeStatusText = appState.perspectiva_procesos.kpis[3].status === 'success' ? 'Estable' : 'Parcial';
-            }
-
-            procKpisGrid.innerHTML += `
-              <div class="glass-panel p-5 rounded-2xl border-t-2 ${getBorderColorClass(activeStatus)} shadow-lg flex flex-col justify-between">
-                <div>
-                  <div class="flex justify-between items-center">
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider cyber-title">${kpi.name}</span>
-                    <span class="${getBadgeClass(activeStatus)} text-[8px] font-bold px-2 py-0.5 rounded uppercase">${activeStatusText}</span>
-                  </div>
-                  <span class="cyber-value text-3xl font-black mt-2 block ${activeStatus === 'success' ? 'text-emerald-400' : activeStatus === 'warning' ? 'text-amber-400' : 'text-red-500'}">${activeVal}</span>
-                  <p class="text-[10px] text-slate-400 mt-1">${kpi.target}</p>
-                </div>
-                <hr class="border-slate-800/85 my-3.5" />
-                <p class="text-[10px] text-slate-300 leading-relaxed">
-                  <strong class="text-brand-red-neon block uppercase tracking-wider text-[8px] cyber-title mb-0.5">Correctiva:</strong> ${kpi.action}
-                </p>
-              </div>
-            `;
-          });
-        }
-
-        // Threats Radar Breakdown
-        const threatsGrid = document.getElementById('process-threats-grid');
-        if (threatsGrid) {
-          threatsGrid.innerHTML = '';
-          appState.perspectiva_procesos.radar_amenazas.forEach(threat => {
-            let status = threat.status;
-            
-            // Reactive risks mitigation
-            if (threat.id === 'A1' || threat.id === 'D2' || threat.id === 'D4') {
-              if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-                status = 'success';
-              }
-            }
-            if (threat.id === 'A2') {
-              status = appState.top_kpis.iso_27001.status;
-            }
-
-            threatsGrid.innerHTML += `
-              <div class="glass-panel p-4 rounded-xl border border-slate-800/60 bg-slate-900/10 flex flex-col justify-between">
-                <div>
-                  <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                      <span class="font-mono font-black text-xs px-2 py-0.5 rounded ${status === 'success' ? 'bg-emerald-950/80 border border-emerald-900 text-emerald-400' : status === 'warning' ? 'bg-amber-950/80 border border-amber-900 text-amber-400' : 'bg-red-950/80 border border-red-900 text-red-500'}">${threat.id}</span>
-                      <h5 class="text-xs font-bold text-slate-100">${threat.name}</h5>
-                    </div>
-                    <span class="text-[9px] text-slate-500 font-mono">${threat.weight}</span>
-                  </div>
-                  <p class="text-[10px] text-slate-350 leading-relaxed mt-2.5">${threat.description}</p>
-                </div>
-                <div class="mt-3.5 pt-3 border-t border-slate-900">
-                  <div class="flex gap-2">
-                    <i class="fa-solid fa-wrench text-[10px] ${status === 'success' ? 'text-emerald-400' : 'text-brand-red-neon'} mt-0.5"></i>
-                    <p class="text-[10px] text-slate-300 leading-relaxed">
-                      <strong class="font-bold ${status === 'success' ? 'text-emerald-400' : 'text-brand-red-neon'}">Acción:</strong> 
-                      ${status === 'success' ? 'Prescripción de Gobierno de TI implementada con éxito.' : threat.prescription}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-        }
-
-        // PERSPECTIVA APRENDIZAJE VIEWS
-        const learn = appState.perspectiva_aprendizaje;
-        document.getElementById('learn-madurez-val').textContent = appState.top_kpis.madurez_digital.value;
-        
-        // Resize maturity digital bars
-        const madActualBar = document.getElementById('learn-madurez-bar-actual');
-        if (madActualBar) {
-          madActualBar.style.height = `${(appState.top_kpis.madurez_digital.value / 5.0) * 100}px`;
-        }
-
-        const learnMaduCard = document.getElementById('card-learn-madurez');
-        const learnMaduBadge = document.getElementById('learn-madurez-badge');
-        if (learnMaduCard && learnMaduBadge) {
-          learnMaduCard.className = `glass-panel p-5 rounded-2xl border-t-2 ${getBorderColorClass(appState.top_kpis.madurez_digital.status)} shadow-md flex flex-col justify-between`;
-          learnMaduBadge.className = getBadgeClass(appState.top_kpis.madurez_digital.status);
-          learnMaduBadge.textContent = appState.top_kpis.madurez_digital.status === 'success' ? 'Alineado' : 'Brecha Crítica';
-        }
-
-        // Certification & Cobit Check
-        const learnCertCard = document.getElementById('card-learn-cert');
-        const learnCobitCard = document.getElementById('card-learn-cobit');
-        if (learnCertCard && learnCobitCard) {
-          if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-            document.getElementById('learn-cert-val').textContent = '95%';
-            document.getElementById('learn-cobit-val').textContent = '80%';
-            
-            const certBar = document.getElementById('learn-cert-bar');
-            if (certBar) certBar.style.width = '95%';
-            const cobitBar = document.getElementById('learn-cobit-bar');
-            if (cobitBar) cobitBar.style.width = '80%';
-
-            learnCertCard.className = `glass-panel p-5 rounded-2xl border-t-2 border-emerald-500 shadow-md animate-none`;
-            learnCobitCard.className = `glass-panel p-5 rounded-2xl border-t-2 border-emerald-500 shadow-md`;
-          } else {
-            document.getElementById('learn-cert-val').textContent = '70%';
-            document.getElementById('learn-cobit-val').textContent = '40%';
-            
-            const certBar = document.getElementById('learn-cert-bar');
-            if (certBar) certBar.style.width = '70%';
-            const cobitBar = document.getElementById('learn-cobit-bar');
-            if (cobitBar) cobitBar.style.width = '40%';
-            
-            learnCertCard.className = `glass-panel p-5 rounded-2xl border-t-2 border-amber-500 shadow-md animate-none`;
-            learnCobitCard.className = `glass-panel p-5 rounded-2xl border-t-2 border-red-500 shadow-md`;
-          }
-        }
-
-        // Learning Roadmap
-        const roadmapEl = document.getElementById('learn-roadmap-timeline');
-        if (roadmapEl) {
-          roadmapEl.innerHTML = '';
-          learn.roadmap_proyectos.forEach(proj => {
-            let activeStatus = proj.status;
-            let activeColor = proj.color;
-            if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-              if (proj.id === 'B7' || proj.id === 'B1') {
-                activeStatus = 'COMPLETADO';
-                activeColor = '#00e676';
-              }
-            }
-
-            roadmapEl.innerHTML += `
-              <div class="flex items-start gap-4">
-                <div class="relative flex items-center justify-center mt-1">
-                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black font-mono border" style="background-color: ${activeColor}20; color: ${activeColor}; border-color: ${activeColor}50">
-                    ${proj.id}
-                  </div>
-                </div>
-                <div class="flex-1 bg-slate-900/35 border border-slate-900 p-3 rounded-xl flex items-center justify-between gap-4">
-                  <div>
-                    <h5 class="text-xs font-bold text-slate-100">${proj.name}</h5>
-                    <p class="text-[9px] text-slate-500 font-mono mt-0.5">${proj.cronograma} • ${proj.description}</p>
-                  </div>
-                  <div class="text-right flex flex-col items-end gap-1 flex-shrink-0">
-                    <span class="text-[9px] font-bold px-2 py-0.5 rounded border" style="background-color: ${activeColor}15; color: ${activeColor}; border-color: ${activeColor}30">${activeStatus}</span>
-                    <span class="text-[9px] font-mono text-slate-500">${proj.monto}</span>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-        }
-
-        // PRESCRIPTION TAB VIEWS
-        const presImmediate = document.getElementById('pres-immediate-actions');
-        if (presImmediate) {
-          presImmediate.innerHTML = '';
-          appState.prescripciones.acciones_inmediatas.forEach(act => {
-            let status = 'danger';
-            let desc = act.description;
-            if (act.id === '01' || act.id === '02') {
-              if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-                status = 'success';
-                desc = 'Acción implementada con éxito. El CISO se encuentra liderando el SOC humanitario de la seccional, y las directivas de backup inmutable en Azure están 100% integradas.';
-              }
-            }
-
-            presImmediate.innerHTML += `
-              <div class="flex items-start gap-3 bg-slate-900/45 border border-slate-850 p-4 rounded-xl">
-                <span class="font-mono font-black text-xs px-2.5 py-1 rounded bg-slate-800 ${status === 'success' ? 'text-emerald-400 border border-emerald-900/40' : 'text-red-500 border border-red-900/40'}">${act.id}</span>
-                <div>
-                  <h5 class="text-xs font-bold ${status === 'success' ? 'text-slate-500 line-through' : 'text-slate-200'}">${act.title}</h5>
-                  <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">${desc}</p>
-                </div>
-              </div>
-            `;
-          });
-        }
-
-        const presStrategic = document.getElementById('pres-strategic-actions');
-        if (presStrategic) {
-          presStrategic.innerHTML = '';
-          appState.prescripciones.acciones_estrategicas.forEach(act => {
-            presStrategic.innerHTML += `
-              <div class="flex items-start gap-3 bg-slate-900/45 border border-slate-850 p-4 rounded-xl">
-                <span class="font-mono font-black text-xs px-2.5 py-1 rounded bg-slate-800 text-amber-500 border border-amber-900/40">${act.id}</span>
-                <div>
-                  <h5 class="text-xs font-bold text-slate-200">${act.title}</h5>
-                  <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">${act.description}</p>
-                </div>
-              </div>
-            `;
-          });
-        }
-
-        document.getElementById('pres-foda-diag').textContent = appState.prescripciones.foda.diagnostico;
-        
-        const fodaDebs = document.getElementById('pres-foda-debilidades');
-        if (fodaDebs) {
-          fodaDebs.innerHTML = '';
-          appState.prescripciones.foda.debilidades.forEach(d => {
-            let strikethrough = '';
-            if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-              if (d === 'Sin CISO' || d === '45% ISO 27001') strikethrough = 'line-through text-slate-500';
-            }
-            fodaDebs.innerHTML += `<li class="flex items-center gap-1.5 ${strikethrough}"><i class="fa-solid fa-circle-minus text-red-500/80 text-[9px]"></i> ${d}</li>`;
-          });
-        }
-        
-        const fodaOports = document.getElementById('pres-foda-oportunidades');
-        if (fodaOports) {
-          fodaOports.innerHTML = '';
-          appState.prescripciones.foda.oportunidades.forEach(o => {
-            fodaOports.innerHTML += `<li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-plus text-emerald-500/80 text-[9px]"></i> ${o}</li>`;
-          });
-        }
-
-        // Executive summary indicators strip
-        const execSummary = document.getElementById('pres-executive-summary');
-        if (execSummary) {
-          execSummary.innerHTML = '';
-          
-          let uptimeVal = appState.top_kpis.disponibilidad_hemocentro.value;
-          let uptimeStatus = appState.top_kpis.disponibilidad_hemocentro.status;
-          let madurezVal = appState.top_kpis.madurez_digital.value;
-          let madurezStatus = appState.top_kpis.madurez_digital.status;
-          let isoVal = appState.top_kpis.iso_27001.value;
-          let isoStatus = appState.top_kpis.iso_27001.status;
-
-          if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-            isoVal = 90;
-            isoStatus = 'success';
-          }
-
-          execSummary.innerHTML += renderSummaryItem("Disponibilidad servicios misionales", `${uptimeVal}%`, "99.8%", uptimeStatus);
-          execSummary.innerHTML += renderSummaryItem("Índice madurez digital", `${madurezVal}/5.0`, "4.2/5.0", madurezStatus);
-          execSummary.innerHTML += renderSummaryItem("Trámites completamente digitales", `${appState.perspectiva_clientes.hemocentro.kpis[3].value}`, "90%", appState.perspectiva_clientes.hemocentro.kpis[3].status);
-          execSummary.innerHTML += renderSummaryItem("Integración de sistemas", appState.top_kpis.ciso_designado.value === 'SÍ' ? "100%" : "0%", "100%", appState.top_kpis.ciso_designado.value === 'SÍ' ? "success" : "danger");
-          execSummary.innerHTML += renderSummaryItem("Cumplimiento ISO 27001", `${isoVal}%`, "90%", isoStatus);
-          execSummary.innerHTML += renderSummaryItem("Presupuesto TI (desviación)", appState.top_kpis.ejecucion_presupuesto.value + '% ejec.', "≤10% desv.", appState.top_kpis.ejecucion_presupuesto.status);
-        }
-
-        // RENDER CHARTS
-        renderCharts();
-      }
-
-      // SUB-RENDERERS & HELPERS
-      function updateTopKpi(id, value, suffix, status) {
-        const valEl = document.getElementById(`strip-${id}-val`);
-        const stripEl = document.getElementById(`strip-${id}`);
-        if (valEl) valEl.textContent = value;
-        if (stripEl) {
-          let borderCol = 'border-red-500/50';
-          if (status === 'success') borderCol = 'border-emerald-500/50';
-          else if (status === 'warning') borderCol = 'border-amber-500/50';
-          
-          stripEl.className = `glass-panel p-4 rounded-xl border-b-2 ${borderCol} flex flex-col justify-between`;
-        }
-      }
-
-      function updateBscCardKpi(id, text, status) {
-        const el = document.getElementById(`card-${id}-kpi`);
-        const cardEl = document.getElementById(`node-${id}`);
-        if (el) {
-          el.textContent = text;
-          if (status === 'success') el.className = 'text-xs font-mono font-bold text-emerald-400';
-          else if (status === 'warning') el.className = 'text-xs font-mono font-bold text-amber-400';
-          else el.className = 'text-xs font-mono font-bold text-red-500';
-        }
-        if (cardEl) {
-          let borderCol = 'border-red-500';
-          if (status === 'success') borderCol = 'border-emerald-500';
-          else if (status === 'warning') borderCol = 'border-amber-500';
-          else if (status === 'neutral') borderCol = 'border-slate-600';
-          
-          cardEl.className = `bsc-card glass-panel p-4 rounded-xl border-l-4 ${borderCol} cursor-pointer shadow-lg hover:translate-y-[-2px]`;
-        }
-      }
-
-      function renderCsatItem(title, value, target, statusText, status, action, percentWidth) {
-        return `
-          <div class="space-y-2">
-            <div class="flex justify-between items-center text-xs font-semibold">
-              <span class="text-slate-350 font-bold uppercase tracking-wider text-[9px] cyber-title">${title}</span>
-              <span class="${getBadgeClass(status)} text-[8px] font-bold px-1.5 py-0.5 rounded uppercase">${statusText}</span>
+        <!-- Header -->
+        <div class="bg-cyan-950/30 border-b border-slate-900 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-cyan-500/10 border border-cyan-500/40 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-network-wired text-cyan-400 animate-pulse text-lg"></i>
             </div>
-            <div class="flex items-baseline gap-2 mt-1">
-              <span class="cyber-value text-2xl font-black ${status === 'success' ? 'text-emerald-400' : status === 'warning' ? 'text-amber-400' : 'text-red-500'}">${value}</span>
-              <span class="text-[9px] text-slate-500 font-mono">Meta: ${target}</span>
-            </div>
-            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div class="h-full ${status === 'success' ? 'bg-emerald-500' : status === 'warning' ? 'bg-neon-amber' : 'bg-red-500'}" style="width: ${percentWidth}%;"></div>
-            </div>
-            <p class="text-[9px] text-slate-400 leading-relaxed italic border-t border-slate-900 pt-1.5 mt-1.5">
-              <strong class="text-brand-red-neon block not-italic uppercase tracking-wider text-[8px] cyber-title">Plan:</strong> ${action}
-            </p>
-          </div>
-        `;
-      }
-
-      function renderSummaryItem(title, val, target, status) {
-        let textCol = 'text-red-500';
-        let bgCol = 'bg-red-500';
-        if (status === 'success') {
-          textCol = 'text-emerald-400';
-          bgCol = 'bg-emerald-500';
-        } else if (status === 'warning') {
-          textCol = 'text-amber-400';
-          bgCol = 'bg-neon-amber';
-        }
-
-        return `
-          <div class="flex items-center justify-between text-xs py-2.5 border-b border-slate-900 hover:bg-slate-900/10">
-            <span class="text-slate-300 font-semibold">${title}</span>
-            <div class="flex items-center gap-2">
-              <span class="font-mono font-black ${textCol}">${val}</span>
-              <i class="fa-solid fa-arrow-right text-[9px] text-slate-600"></i>
-              <span class="font-mono font-bold text-slate-400">${target}</span>
-              <span class="w-2 h-2 rounded-full ${bgCol} animate-pulse"></span>
+            <div>
+              <h3 class="text-sm font-black text-slate-100 uppercase tracking-widest cyber-title">n8n Live Webhook Simulator</h3>
+              <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Enrutando Diagnóstico ISO 38500 al API Gateway local</p>
             </div>
           </div>
-        `;
-      }
-
-      function getBadgeClass(status) {
-        if (status === 'success') return 'bg-emerald-950/80 border border-emerald-900/60 text-emerald-400';
-        if (status === 'warning') return 'bg-amber-950/80 border border-amber-900/60 text-amber-400';
-        return 'bg-red-950/80 border border-red-900/60 text-red-500';
-      }
-
-      function getBorderColorClass(status) {
-        if (status === 'success') return 'border-emerald-500';
-        if (status === 'warning') return 'border-amber-500';
-        return 'border-red-500';
-      }
-
-      // CHARTJS RENDERERS
-      function renderCharts() {
-        if (!appState) return;
-
-        // 1. Income Donut Chart
-        const donutCtx = document.getElementById('incomeDonutChart');
-        if (donutCtx) {
-          if (charts.income) charts.income.destroy();
-          charts.income = new Chart(donutCtx, {
-            type: 'doughnut',
-            data: {
-              labels: appState.perspectiva_financiera.fuentes_ingreso.map(x => x.name),
-              datasets: [{
-                data: appState.perspectiva_financiera.fuentes_ingreso.map(x => x.value),
-                backgroundColor: ['#ff3344', '#3b4352', '#ffab00'],
-                borderWidth: 2,
-                borderColor: '#12121c',
-                hoverOffset: 4
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    color: '#94a3b8',
-                    font: { family: 'Outfit', size: 10, weight: 'bold' }
-                  }
-                }
-              },
-              cutout: '65%'
-            }
-          });
-        }
-
-        // 2. Radar KPI Chart
-        const radarCtx = document.getElementById('radarKpiChart');
-        if (radarCtx) {
-          if (charts.radar) charts.radar.destroy();
           
-          let currentRadar = [...appState.perspectiva_aprendizaje.radar_chart.actual];
-          let targetRadar = [...appState.perspectiva_aprendizaje.radar_chart.target];
-          
-          // Dynamic updates based on state
-          currentRadar[0] = (appState.top_kpis.disponibilidad_hemocentro.value - 95) * 20; // scale to 0-100
-          currentRadar[1] = (appState.top_kpis.madurez_digital.value / 5.0) * 100;
-          currentRadar[2] = parseInt(appState.perspectiva_clientes.hemocentro.kpis[3].value);
-          currentRadar[4] = appState.top_kpis.iso_27001.value;
-          currentRadar[5] = appState.perspectiva_clientes.satisfaccion_soporte.global_csat.value * 10;
-          
-          if (appState.top_kpis.ciso_designado.value === 'SÍ') {
-            currentRadar[3] = 100; // Integration
-            currentRadar[4] = 90;  // ISO 27001
-          } else {
-            currentRadar[3] = (decisions.b3_api ? 80 : 0) + (decisions.b7_datos ? 20 : 0);
-          }
+          <!-- Tab Toggle (Executive vs Technical) -->
+          <div class="flex bg-slate-950 border border-slate-800 rounded-xl p-1 mr-8 shadow-inner">
+            <button id="n8n-toggle-executive" class="px-4 py-1.5 text-xs font-bold rounded-lg cursor-pointer transition-all bg-cyan-500 text-slate-950 flex items-center gap-1.5">
+              <i class="fa-solid fa-gauge-high"></i> Resumen Ejecutivo
+            </button>
+            <button id="n8n-toggle-technical" class="px-4 py-1.5 text-xs font-bold rounded-lg cursor-pointer text-slate-400 hover:text-slate-200 transition-all flex items-center gap-1.5">
+              <i class="fa-solid fa-code"></i> Código (JSON)
+            </button>
+          </div>
+        </div>
 
-          charts.radar = new Chart(radarCtx, {
-            type: 'radar',
-            data: {
-              labels: appState.perspectiva_aprendizaje.radar_chart.labels,
-              datasets: [
-                {
-                  label: 'Estado Actual 2026',
-                  data: currentRadar,
-                  fill: true,
-                  backgroundColor: 'rgba(211, 47, 47, 0.15)',
-                  borderColor: 'rgba(211, 47, 47, 0.85)',
-                  pointBackgroundColor: '#ff3344',
-                  pointBorderColor: '#fff',
-                  pointHoverBackgroundColor: '#fff',
-                  pointHoverBorderColor: 'rgba(211, 47, 47, 1)'
-                },
-                {
-                  label: 'Meta PETI 2030',
-                  data: targetRadar,
-                  fill: true,
-                  backgroundColor: 'rgba(0, 230, 118, 0.05)',
-                  borderColor: 'rgba(0, 230, 118, 0.75)',
-                  pointBackgroundColor: '#00e676',
-                  pointBorderColor: '#fff',
-                  pointHoverBackgroundColor: '#fff',
-                  pointHoverBorderColor: 'rgba(0, 230, 118, 1)'
-                }
-              ]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    color: '#94a3b8',
-                    font: { family: 'Outfit', size: 10, weight: 'bold' }
-                  }
-                }
-              },
-              scales: {
-                r: {
-                  grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                  angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
-                  pointLabels: {
-                    color: '#94a3b8',
-                    font: { family: 'Outfit', size: 9, weight: 'bold' }
-                  },
-                  ticks: { display: false },
-                  min: 0,
-                  max: 100
-                }
-              }
-            }
-          });
-        }
-      }
+        <!-- Body Container -->
+        <div class="relative bg-slate-950 min-h-[460px] flex flex-col justify-between">
 
-      // NAVIGATION TABS IMPLEMENT
-      function initNavigation() {
-        const tabs = document.querySelectorAll('.nav-tab');
-        const views = document.querySelectorAll('.tab-view');
-
-        tabs.forEach(tab => {
-          tab.addEventListener('click', () => {
-            const target = tab.getAttribute('data-tab');
-
-            // Set active class on buttons
-            tabs.forEach(t => {
-              t.className = "nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer text-slate-400 hover:text-white";
-            });
-            tab.className = "nav-tab px-4 py-2.5 rounded-lg text-xs md:text-sm font-semibold flex-1 text-center transition-all cyber-title cursor-pointer bg-red-600/90 text-white glow-red";
-
-            // Show view
-            views.forEach(v => {
-              v.classList.add('hidden');
-              v.classList.remove('block');
-            });
+          <!-- 1. EXECUTIVE VIEW (Simplified for Non-Programmers) -->
+          <div id="n8n-view-executive" class="p-6 space-y-6 flex flex-col justify-between h-[460px] overflow-y-auto">
             
-            const targetView = document.getElementById(`view-${target}`);
-            if (targetView) {
-              targetView.classList.remove('hidden');
-              targetView.classList.add('block');
-            }
-
-            // Redraw Laser Paths on MAP BSC load
-            if (target === 'mapa') {
-              setTimeout(drawLaserPaths, 150);
-            }
-          });
-        });
-      }
-
-      // MAP BSC INTERACTIVES & CONNECTION DRAW ENGINE
-      function initBscInteractions() {
-        const cards = document.querySelectorAll('.bsc-card');
-        const detailsBox = document.getElementById('bsc-details-box');
-        
-        cards.forEach(card => {
-          card.addEventListener('click', () => {
-            const objId = card.getAttribute('data-obj');
-            const data = bscObjectives[objId];
-            
-            if (data && detailsBox) {
-              document.getElementById('details-perspective').textContent = data.perspective;
-              document.getElementById('details-title').textContent = data.title;
-              document.getElementById('details-impact').textContent = data.impact;
-              document.getElementById('details-action').textContent = data.action;
-              document.getElementById('details-path').textContent = `Cadena: ${data.path}`;
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+              <!-- Left side: Simulation Status Steps -->
+              <div class="space-y-4">
+                <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider block cyber-title flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-notch animate-spin text-[10px]" id="n8n-spinner-icon"></i> Estado del Envío n8n
+                </span>
+                
+                <div class="bg-slate-900/40 border border-slate-850 rounded-2xl p-5 space-y-3">
+                  <div id="n8n-exec-step-1" class="flex items-center gap-3 text-xs text-slate-500 font-bold py-1">
+                    <i class="n8n-exec-icon fa-regular fa-circle text-[10px]"></i>
+                    <span>Conectando con el Servidor local n8n Valle...</span>
+                  </div>
+                  <div id="n8n-exec-step-2" class="flex items-center gap-3 text-xs text-slate-500 font-bold py-1">
+                    <i class="n8n-exec-icon fa-regular fa-circle text-[10px]"></i>
+                    <span>Enviando respuestas del Cuestionario de Madurez...</span>
+                  </div>
+                  <div id="n8n-exec-step-3" class="flex items-center gap-3 text-xs text-slate-500 font-bold py-1">
+                    <i class="n8n-exec-icon fa-regular fa-circle text-[10px]"></i>
+                    <span>Flujo de n8n activo. Generando Reporte de Brechas...</span>
+                  </div>
+                  <div id="n8n-exec-step-4" class="flex items-center gap-3 text-xs text-slate-500 font-bold py-1">
+                    <i class="n8n-exec-icon fa-regular fa-circle text-[10px]"></i>
+                    <span>Escribiendo data.json local y enviando alertas de SLA...</span>
+                  </div>
+                </div>
+              </div>
               
-              // Handle reactive dynamic value updates in details panel
-              let activeVal = data.value;
-              if (objId === 'c1' || objId === 'f1') {
-                activeVal = appState.top_kpis.disponibilidad_hemocentro.value + '%';
-              } else if (objId === 'f2') {
-                activeVal = appState.top_kpis.ejecucion_presupuesto.value + '%';
-              } else if (objId === 'c2') {
-                activeVal = appState.perspectiva_clientes.hospitales_b2b.confiabilidad;
-              } else if (objId === 'p2') {
-                activeVal = appState.top_kpis.iso_27001.value + '%';
-              } else if (objId === 'a1') {
-                activeVal = appState.top_kpis.madurez_digital.value + '';
-              } else if (objId === 'c4' || objId === 'p4') {
-                activeVal = appState.perspectiva_clientes.hemocentro.kpis[3].value;
-              } else if (objId === 'p3') {
-                activeVal = appState.perspectiva_procesos.kpis[2].value;
-              }
-              document.getElementById('details-value').textContent = activeVal;
+              <!-- Right side: Visual progress / Successful badge -->
+              <div class="flex flex-col items-center justify-center bg-slate-900/20 border border-slate-850/60 p-6 rounded-2xl shadow-inner text-center">
+                <!-- Exec Spinner (Loading) -->
+                <div id="n8n-exec-spinner" class="flex flex-col items-center py-4">
+                  <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-4xl"></i>
+                  <span class="text-xs text-cyan-400 font-bold uppercase tracking-widest cyber-title mt-4 animate-pulse">Automatización n8n en marcha...</span>
+                </div>
+                
+                <!-- Exec Completed Panel (Hidden initially) -->
+                <div id="n8n-exec-completed" class="hidden flex flex-col items-center space-y-3">
+                  <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/40 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20 animate-bounce">
+                    <i class="fa-solid fa-check text-emerald-400 text-3xl"></i>
+                  </div>
+                  <span class="text-base font-black text-emerald-400 uppercase tracking-wider block cyber-title">¡Diagnóstico Procesado!</span>
+                  <p class="text-xs text-slate-300 max-w-xs leading-relaxed font-semibold">
+                    El flujo de automatización en n8n finalizó exitosamente. El reporte ejecutivo PDF ha sido depositado en el almacenamiento del CIO.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Executive Summary Section (Displays fully when completed) -->
+            <div id="n8n-exec-summary" class="hidden bg-slate-950/45 border border-slate-850/80 p-5 rounded-2xl space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center divide-y md:divide-y-0 md:divide-x divide-slate-800">
+                <div class="py-2 md:py-0">
+                  <span class="text-xs text-slate-400 font-bold block uppercase tracking-wider">Madurez Digital Calculada</span>
+                  <span id="n8n-exec-maturity" class="text-3xl font-black text-red-500 font-mono block mt-1">2.8</span>
+                  <span id="n8n-exec-status-badge" class="inline-block text-[9px] font-bold px-2 py-0.5 rounded bg-red-950/60 text-red-400 border border-red-900/40 uppercase mt-1">Riesgo Crítico</span>
+                </div>
+                <div class="py-2 md:py-0">
+                  <span class="text-xs text-slate-400 font-bold block uppercase tracking-wider">Inversión Sugerida PETI</span>
+                  <span id="n8n-exec-cost" class="text-3xl font-black text-cyan-400 font-mono block mt-1">$342M COP</span>
+                  <span class="text-[10px] text-slate-500 font-bold block mt-1 uppercase">Aprobación Directa Requerida</span>
+                </div>
+                <div class="py-2 md:py-0">
+                  <span class="text-xs text-slate-400 font-bold block uppercase tracking-wider">Acción n8n (Simulación)</span>
+                  <span class="text-xs font-black text-emerald-400 block mt-2">Reporte Ejecutivo PDF Emitido</span>
+                  <div class="text-[10px] text-slate-300 block mt-1.5 font-semibold leading-relaxed">
+                    Copia simulada a: <span class="text-emerald-400">jevgdg@gmail.com</span><br/>
+                    <span class="text-amber-400 font-bold block mt-1.5"><i class="fa-solid fa-circle-info"></i> Para recibir correos reales:</span>
+                    Importa <code class="bg-slate-900 px-1 py-0.5 rounded text-cyan-300 text-[9px] font-mono">n8n_workflow.json</code> en tu servidor n8n y configura las credenciales SMTP o Gmail.
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              detailsBox.classList.remove('hidden');
-              detailsBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-          });
-        });
+            <!-- Bottom bar (glowing close button when finished, or status message) -->
+            <div class="flex justify-between items-center pt-2 border-t border-slate-900/50">
+              <span id="n8n-exec-waiting-msg" class="text-xs text-slate-500 italic font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 bg-cyan-500 rounded-full animate-ping"></span> Esperando que finalice la sincronización con el servidor...
+              </span>
+              <button id="n8n-btn-finish-close" class="hidden ml-auto px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-emerald-500/20 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check"></i> ✓ Entendido - Cerrar Simulador
+              </button>
+            </div>
+          </div>
 
-        // Close details box
-        const closeBtn = document.getElementById('close-bsc-details');
-        if (closeBtn && detailsBox) {
-          closeBtn.addEventListener('click', () => {
-            detailsBox.classList.add('hidden');
-          });
-        }
+          <!-- 2. TECHNICAL VIEW (Code JSON, Initially Hidden) -->
+          <div id="n8n-view-technical" class="hidden grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-900 h-[460px] bg-slate-950/20">
+            <!-- Left side: JSON Request -->
+            <div class="p-5 flex flex-col justify-between h-full overflow-hidden">
+              <div class="overflow-hidden flex flex-col h-full">
+                <span class="text-xs text-cyan-400 font-bold uppercase tracking-widest cyber-title block mb-2">HTTP POST REQUEST PAYLOAD</span>
+                <div class="bg-slate-950/85 border border-slate-900 rounded-xl p-4 font-mono text-[9.5px] text-cyan-300 leading-normal overflow-y-auto flex-1 h-full shadow-inner scrollbar-thin">
+                  <pre id="n8n-payload-code" class="whitespace-pre-wrap break-all select-all">Generando payload...</pre>
+                </div>
+              </div>
+            </div>
 
-        // Route filters highlight
-        const filters = document.querySelectorAll('.route-filter');
-        filters.forEach(filter => {
-          filter.addEventListener('click', () => {
-            filters.forEach(f => {
-              f.className = "route-filter px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase border border-slate-700 bg-slate-800/80 text-white cursor-pointer";
-            });
+            <!-- Right side: JSON Response -->
+            <div class="p-5 flex flex-col justify-between h-full overflow-hidden">
+              <div class="overflow-hidden flex flex-col h-full">
+                <span class="text-xs text-emerald-400 font-bold uppercase tracking-widest cyber-title block mb-2">HTTP RESPONSE (data.json)</span>
+                
+                <!-- Loader / Response box -->
+                <div class="flex-1 flex flex-col justify-center min-h-[160px] h-full overflow-hidden">
+                  <!-- Loading spinner -->
+                  <div id="n8n-spinner" class="flex flex-col items-center justify-center py-4">
+                    <i class="fa-solid fa-spinner animate-spin text-cyan-400 text-3xl"></i>
+                    <span class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest cyber-title mt-3 animate-pulse">Procesando en n8n...</span>
+                  </div>
 
-            const route = filter.getAttribute('data-route');
-            if (route === 'all') {
-              filter.className = "route-filter px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase border border-slate-700 bg-slate-800/80 text-white cursor-pointer active";
-            } else if (route === 'r1') {
-              filter.className = "route-filter px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase border border-emerald-900/60 bg-emerald-950/60 text-emerald-400 cursor-pointer";
-            } else if (route === 'r2') {
-              filter.className = "route-filter px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase border border-red-900/60 bg-red-950/60 text-brand-red-neon cursor-pointer";
-            } else if (route === 'r3') {
-              filter.className = "route-filter px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase border border-amber-900/60 bg-amber-950/60 text-amber-400 cursor-pointer";
-            }
+                  <!-- Response JSON view -->
+                  <div id="n8n-response-box" class="hidden flex flex-col h-full overflow-hidden">
+                    <div class="bg-slate-950/85 border border-slate-900 rounded-xl p-4 font-mono text-[9.5px] text-emerald-400 leading-normal overflow-y-auto flex-1 h-full shadow-inner scrollbar-thin">
+                      <pre id="n8n-response-payload" class="whitespace-pre-wrap select-all">Alineación exitosa...</pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            drawLaserPaths(route);
-          });
-        });
+        </div>
+      </div>
+    </div>
 
-        // SVG lines resize handle
-        window.addEventListener('resize', () => {
-          const activeFilter = document.querySelector('.route-filter.active') || document.querySelector('.route-filter[class*="bg-"]');
-          const route = activeFilter ? activeFilter.getAttribute('data-route') : 'all';
-          drawLaserPaths(route);
-        });
-
-        // Draw initial paths
-        setTimeout(drawLaserPaths, 400);
-      }
-
-      // LASER LINE RENDERING ENGINE (Recalculates anchors dynamically on resize)
-      function drawLaserPaths(activeRoute = 'all') {
-        const svg = document.getElementById('svg-paths');
-        if (!svg) return;
-
-        // Clear existing paths
-        svg.querySelectorAll('path').forEach(p => p.remove());
-
-        // Connections Definitions
-        const connections = [
-          // R1: Hemocentro Causal Path (Emerald)
-          { from: 'node-f1', to: 'node-a1', route: 'r1', stroke: 'url(#laser-grad-r1)' },
-          { from: 'node-a1', to: 'node-a3', route: 'r1', stroke: 'url(#laser-grad-r1)' },
-          { from: 'node-a3', to: 'node-p1', route: 'r1', stroke: 'url(#laser-grad-r1)' },
-          { from: 'node-p1', to: 'node-p3', route: 'r1', stroke: 'url(#laser-grad-r1)' },
-          { from: 'node-p3', to: 'node-c1', route: 'r1', stroke: 'url(#laser-grad-r1)' },
-
-          // R2: Ciberseguridad Path (Blue)
-          { from: 'node-f2', to: 'node-a2', route: 'r2', stroke: 'url(#laser-grad-r2)' },
-          { from: 'node-a2', to: 'node-p2', route: 'r2', stroke: 'url(#laser-grad-r2)' },
-          { from: 'node-p2', to: 'node-c2', route: 'r2', stroke: 'url(#laser-grad-r2)' },
-
-          // R3: Educación Path (Amber)
-          { from: 'node-f3', to: 'node-a1', route: 'r3', stroke: 'url(#laser-grad-r3)' },
-          { from: 'node-a1', to: 'node-p4', route: 'r3', stroke: 'url(#laser-grad-r3)' },
-          { from: 'node-p4', to: 'node-c3', route: 'r3', stroke: 'url(#laser-grad-r3)' }
-        ];
-
-        const svgRect = svg.getBoundingClientRect();
-
-        connections.forEach(conn => {
-          const fromEl = document.getElementById(conn.from);
-          const toEl = document.getElementById(conn.to);
-
-          if (!fromEl || !toEl) return;
-
-          // Calculate center coordinates
-          const fromRect = fromEl.getBoundingClientRect();
-          const toRect = toEl.getBoundingClientRect();
-
-          const x1 = (fromRect.left + fromRect.width / 2) - svgRect.left;
-          const y1 = fromRect.top - svgRect.top; // Connect top of source
-          const x2 = (toRect.left + toRect.width / 2) - svgRect.left;
-          const y2 = (toRect.top + toRect.height) - svgRect.top; // Connect bottom of target
-
-          // Check route state for highlighting/dimming
-          const isActive = (activeRoute === 'all' || conn.route === activeRoute);
-          const opacity = isActive ? '0.85' : '0.07';
-          const strokeWidth = isActive ? '3.5' : '1.5';
-          const animClass = isActive ? 'laser-path' : '';
-
-          // Create SVG curve path
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          
-          // Draw smooth bezier curve
-          const controlDist = Math.abs(y2 - y1) * 0.45;
-          const d = `M ${x1} ${y1} C ${x1} ${y1 - controlDist}, ${x2} ${y2 + controlDist}, ${x2} ${y2}`;
-          
-          path.setAttribute('d', d);
-          path.setAttribute('stroke', conn.stroke);
-          path.setAttribute('stroke-width', strokeWidth);
-          path.setAttribute('fill', 'none');
-          path.setAttribute('stroke-linecap', 'round');
-          path.setAttribute('opacity', opacity);
-          
-          if (animClass) {
-            path.setAttribute('class', animClass);
-          }
-
-          svg.appendChild(path);
-        });
-      }
-
-      // UTILITY SYSTEM TOAST ALERTS
-      function showToast(text, title = "Alerta n8n Activada") {
-        const toast = document.getElementById('alert-toast');
-        const toastTitle = document.getElementById('alert-toast-title');
-        const toastText = document.getElementById('alert-toast-text');
-        
-        if (toast && toastText && toastTitle) {
-          toastTitle.textContent = title;
-          toastText.textContent = text;
-          toast.classList.remove('hidden');
-          setTimeout(() => {
-            toast.classList.add('hidden');
-          }, 4500);
-        }
-      }
-
-      // SYNC CONTROL PANEL INPUTS BACK FROM THE COMPUTED STATE
-      function syncInputsWithState() {
-        // Sync checkboxes according to decisions object
-        document.getElementById('audit-servidores').checked = decisions.audit_servidores;
-        document.getElementById('audit-seguridad').checked = decisions.audit_seguridad;
-        document.getElementById('audit-procesos').checked = decisions.audit_procesos;
-        
-        document.getElementById('dirigir-b1').checked = decisions.b1_ciso;
-        document.getElementById('dirigir-b2').checked = decisions.b2_azure;
-        document.getElementById('dirigir-b3').checked = decisions.b3_api;
-        document.getElementById('dirigir-b5').checked = decisions.b5_portal;
-        document.getElementById('dirigir-b7').checked = decisions.b7_datos;
-        document.getElementById('dirigir-b8').checked = decisions.b8_capacitacion;
-      }
-    </script>
+    <!-- CORE CLIENT JS LOGIC (Importación de Scripts Modulares de Gobierno TI) -->
+    <script src="../scripts/state.js"></script>
+    <script src="../scripts/charts.js"></script>
+    <script src="../scripts/bsc.js"></script>
+    <script src="../scripts/diagnostic.js"></script>
+    <script src="../scripts/navigation.js"></script>
 
   </body>
 </html>
