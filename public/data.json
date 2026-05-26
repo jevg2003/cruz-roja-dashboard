@@ -1,0 +1,258 @@
+{
+  "last_updated": "2026-05-26T13:11:23-05:00",
+  "top_kpis": {
+    "madurez_digital": { "value": 2.8, "target": 5.0, "status": "critical" },
+    "iso_27001": { "value": 45, "target": 90, "status": "critical" },
+    "disponibilidad_hemocentro": { "value": 99.1, "target": 99.8, "status": "success" },
+    "ejecucion_presupuesto": { "value": 67, "target": 100, "status": "warning" },
+    "ciso_designado": { "value": "NO", "status": "danger" },
+    "ingresos_hemocentro": { "value": "$771M COP", "status": "success" }
+  },
+  "perspectiva_financiera": {
+    "ingresos_totales": {
+      "amount": "$1.240M COP",
+      "subtitle": "Ingresos Totales 2024",
+      "description": "Hemocentro 62% - Educación 5% - Lotería/Otros 33%",
+      "progress": 100
+    },
+    "presupuesto_ti": {
+      "amount": "67%",
+      "subtitle": "Presupuesto TI Ejecutado",
+      "description": "Meta: desviación ≤ 10% | PETI 2026-2030",
+      "status_text": "En seguimiento",
+      "status": "warning"
+    },
+    "ahorro_makaia": {
+      "amount": "50-100%",
+      "subtitle": "Ahorro Makaia (Licencias)",
+      "description": "646 licencias Microsoft 365 - Programa Nonprofit",
+      "status_text": "Activo y renovado",
+      "status": "success"
+    },
+    "activos_tecnologicos": {
+      "amount": "$321M COP",
+      "subtitle": "Activos Tecnológicos (Valor Hist.)",
+      "description": "Servidores obsoletos > 5 años - Riesgo operativo",
+      "status_text": "Infraestructura en riesgo",
+      "status": "danger"
+    },
+    "fuentes_ingreso": [
+      { "name": "Hemocentro", "value": 62, "color": "#ff3344" },
+      { "name": "Lotería y Otros", "value": 33, "color": "#4b5563" },
+      { "name": "Educación", "value": 5, "color": "#ffab00" }
+    ],
+    "inversiones_peti": [
+      { "proyecto": "Infraestructura Cloud (B2)", "monto": "$80M", "prioridad": "Alta" },
+      { "proyecto": "API Gateway / Integración (B3)", "monto": "$55M", "prioridad": "Media" },
+      { "proyecto": "Analítica Institucional (B4)", "monto": "$60M", "prioridad": "Alta" },
+      { "proyecto": "Ciberseguridad / SOC (B1)", "monto": "$45M", "prioridad": "Crítica" },
+      { "proyecto": "Hemocentro 4.0 + Portal (B5)", "monto": "$75M", "prioridad": "Crítica" },
+      { "proyecto": "Capacitación Digital (B8)", "monto": "$15M", "prioridad": "Media" }
+    ],
+    "total_inversion_peti": "$330M"
+  },
+  "perspectiva_clientes": {
+    "hemocentro": {
+      "titulo": "Hemocentro — Motor Crítico de la Organización",
+      "descripcion": "Mayor generador de ingresos - 60% de los ingresos totales - Servicio 24/7",
+      "ingresos": "$771M COP",
+      "kpis": [
+        {
+          "id": "c1",
+          "name": "Disponibilidad Servicios",
+          "value": "99.1%",
+          "target": "Meta 99.8%",
+          "status": "success",
+          "action": "Migrar HeVa a Azure para alcanzar el 99.8% y eliminar riesgo de servidor físico obsoleto."
+        },
+        {
+          "id": "c2",
+          "name": "App Móvil Donantes",
+          "value": "0%",
+          "target": "Meta: Lanzar Q4 2028",
+          "status": "danger",
+          "action": "Proyecto Hemocentro 4.0 debe iniciarse en Q2 2027 usando Azure (F2) + datos donantes (F6)."
+        },
+        {
+          "id": "c3",
+          "name": "Trazabilidad Hemocomponentes",
+          "value": "72%",
+          "target": "Meta 100%",
+          "status": "warning",
+          "action": "API Gateway con estándar HL7/FHIR integra HeVa con hospitales aliados para trazabilidad total."
+        },
+        {
+          "id": "c4",
+          "name": "% Trámites Digitalizados",
+          "value": "30%",
+          "target": "Meta 90% en 2030",
+          "status": "danger",
+          "action": "Portal transaccional PSE + agendamiento online reduce carga manual y mejora experiencia donante."
+        }
+      ]
+    },
+    "educacion": {
+      "titulo": "Instituto de Educación y Estudiantes",
+      "ingresos": "$61M COP",
+      "portal_avance": "0%",
+      "status": "danger",
+      "status_text": "Riesgo alto",
+      "action": "SENA y plataformas gratuitas (Coursera, YouTube) son sustitutos directos. El portal educativo con PSE es un Quick Win que debe lanzarse en Q2 2028 para retener estudiantes y abrir nuevos mercados B2B sin requerir infraestructura adicional."
+    },
+    "hospitales_b2b": {
+      "titulo": "Pacientes y Hospitales Aliados (B2B)",
+      "confiabilidad": "70%",
+      "target": "Meta: 85% en 2028",
+      "status": "warning",
+      "status_text": "En desarrollo",
+      "action": "La certificación ISO 27001 (hoy en 45%) es el principal factor que hospitales y EPS evalúan para confiar servicios críticos de hemocomponentes a la Cruz Roja. Elevarla al 90% en 2027 genera ventaja competitiva directa."
+    },
+    "satisfaccion_soporte": {
+      "titulo": "KPI de Satisfacción de Usuarios TI",
+      "global_csat": { "value": 7.5, "max": 10, "target": 9.0, "status": "warning", "status_text": "En seguimiento", "action": "Mesa de ayuda con SLA formal + portal de autoservicio reduce tiempos de respuesta y mejora percepción." },
+      "tickets_positivos": { "value": 80, "target": 90, "status": "success", "status_text": "Estable", "action": "Reforzar capacitaciones de soporte de primer nivel y automatizar las encuestas en n8n." },
+      "confianza_digital": { "value": 70, "target": 90, "status": "warning", "status_text": "Construyendo", "action": "SOC + ISO 27001 + comunicación institucional sobre ciberseguridad elevan percepción de confianza." }
+    }
+  },
+  "perspectiva_procesos": {
+    "kpis": [
+      { "name": "Cumplimiento ISO 27001", "value": "45%", "target": "Meta 2026: 70%", "status": "danger", "status_text": "Crítico", "action": "Nombrar CISO, implementar política de escritorio limpio y DRP probado antes de Q2 2026." },
+      { "name": "% Cumplimiento RTO/RPO Servicios Críticos", "value": "40%", "target": "Meta 90%", "status": "danger", "status_text": "Sin DRP", "action": "Backups inmutables en Azure con retención 90 días. Prueba DRP semestral obligatoria." },
+      { "name": "% Integración Sistemas (API Gateway)", "value": "0%", "target": "Meta 100% en Q4 2027", "status": "danger", "status_text": "Islas", "action": "Proyecto B3: API Gateway con HL7/FHIR conecta Siesa ↔ HeVa ↔ Q-Symphony. Presupuesto: $55M." },
+      { "name": "Cumplimiento SLA Servicios TI", "value": "75%", "target": "Meta 95%", "status": "warning", "status_text": "Parcial", "action": "Mesa de ayuda con catálogo formal de servicios y asignación automática mediante triggers de n8n." }
+    ],
+    "radar_amenazas": [
+      {
+        "id": "A1",
+        "name": "Ransomware – Amenaza Crítica",
+        "weight": "25% importancia",
+        "description": "Sin CISO ni SOC, un ataque podría paralizar el Hemocentro y el Laboratorio. Sectores salud son el objetivo #1 a nivel global.",
+        "prescription": "Backups inmutables Azure + SOC + MFA como prioridad absoluta antes de cualquier digitalización nueva. Plazo: Q2 2026.",
+        "status": "danger"
+      },
+      {
+        "id": "D2",
+        "name": "Servidores físicos obsoletos (>5 años)",
+        "weight": "20% importancia",
+        "description": "Si falla un servidor local del Hemocentro o del Laboratorio, los servicios críticos de salud se detienen sin tiempo de recuperación definido.",
+        "prescription": "Migración progresiva Cloud First (Azure híbrido) – Proyecto B2, $80M. Plazo: Q2 2027.",
+        "status": "danger"
+      },
+      {
+        "id": "A2",
+        "name": "Sanciones Ley 1581 – Riesgo Legal",
+        "weight": "15% importancia",
+        "description": "Datos de pacientes, donantes y estudiantes sin protección adecuada (solo 45% ISO 27001) expone a sanciones millonarias y daño reputacional.",
+        "prescription": "Auditoría de datos personales + implementar MSPI + completar controles ISO 27001. Plazo: Q4 2026.",
+        "status": "warning"
+      },
+      {
+        "id": "A4",
+        "name": "Desintermediación EdTech (SENA, Coursera)",
+        "weight": "15% importancia",
+        "description": "Sin portal educativo, los ingresos de $61M del Instituto están en riesgo de migrar a plataformas gratuitas.",
+        "prescription": "Portal educativo con PSE como Quick Win Q2 2028. Diferenciador: certificaciones Cruz Roja con validez internacional.",
+        "status": "warning"
+      },
+      {
+        "id": "A3",
+        "name": "Dependencia tecnológica de HeVa y Siesa",
+        "weight": "15% importancia",
+        "description": "Alto costo de cambio. Si el proveedor sube precios o descontinúa el producto, la operación queda en riesgo.",
+        "prescription": "Evaluar OpenMRS como alternativa open-source. API Gateway reduce el lock-in al crear capa neutral.",
+        "status": "warning"
+      },
+      {
+        "id": "D4",
+        "name": "Sin CISO formal ni modelo de ciberseguridad",
+        "weight": "10% importancia",
+        "description": "La ausencia de un responsable de seguridad deja sin gobernanza la protección de datos clínicos y financieros.",
+        "prescription": "Designar CISO es el primer paso del PETI 2026-2030, antes de cualquier otro proyecto de digitalización.",
+        "status": "danger"
+      }
+    ]
+  },
+  "perspectiva_aprendizaje": {
+    "madurez_digital": {
+      "value": 2.8,
+      "target": 4.2,
+      "max": 5.0,
+      "status_text": "Brecha crítica",
+      "status": "danger",
+      "action": "Plan de microaprendizaje con Teams (B8) – capacitar personal de campo en apps institucionales sin salones presenciales."
+    },
+    "personal_certificado": {
+      "value": "70%",
+      "target": "95% ITIL/COBIT",
+      "description": "Certificaciones básicas: 70% | ITIL 4 avanzado: 20%",
+      "status_text": "Base",
+      "status": "warning",
+      "action": "Programa de recertificación ITIL 4 + COBIT 2019 con presupuesto $15M del PETI. Plazo Q1 2027."
+    },
+    "practicas_cobit": {
+      "value": "40%",
+      "target": "Meta: 80%",
+      "status_text": "Inicial",
+      "status": "danger",
+      "action": "Documentación en SharePoint + rutas de carrera TI para retener talento y reducir riesgo de rotación."
+    },
+    "roadmap_proyectos": [
+      { "id": "B7", "name": "Gobierno de Datos Institucional", "cronograma": "Q1 2026", "status": "EN EJECUCIÓN", "monto": "$12M", "color": "#ffab00", "description": "Políticas, roles, catálogo de datos y modelo formal de gestión." },
+      { "id": "B1", "name": "Ciberseguridad Humanitaria (SOC + DRP)", "cronograma": "Q2 2026", "status": "PRIORIDAD #1", "monto": "$45M", "color": "#ff3344", "description": "Centro de Operaciones de Seguridad + autenticación multifactor + DRP semestral." },
+      { "id": "B8", "name": "Capacitación Digital del Personal", "cronograma": "Q1 2027", "status": "PLANIFICADO", "monto": "$15M", "color": "#4b5563", "description": "Microaprendizaje con Teams. Elevar madurez de 2.8 a 4.2/5.0." },
+      { "id": "B2", "name": "Migración Cloud (Infraestructura Azure)", "cronograma": "Q2 2027", "status": "PLANIFICADO", "monto": "$80M", "color": "#4b5563", "description": "Migración de servidores locales obsoletos a nube híbrida de Azure." }
+    ],
+    "radar_chart": {
+      "labels": ["Disponibilidad Servicios", "Madurez Digital", "Trámites Digitales", "Integración Sistemas", "Cumplimiento ISO 27001", "Satisfacción Usuarios"],
+      "actual": [99.1, 56, 30, 0, 45, 75],
+      "target": [99.8, 84, 90, 100, 90, 90]
+    }
+  },
+  "prescripciones": {
+    "acciones_inmediatas": [
+      {
+        "id": "01",
+        "title": "Designar CISO y activar el SOC",
+        "badge": "P1",
+        "description": "Con solo 45% de cumplimiento ISO 27001 y ransomware como amenaza #1 (25% importancia), cualquier ataque detendría el Hemocentro. El CISO debe nombrarse antes de cualquier otro proyecto. Presupuesto: incluido en $45M de ciberseguridad."
+      },
+      {
+        "id": "02",
+        "title": "Implementar backups inmutables en Azure (DRP)",
+        "badge": "P1",
+        "description": "Los servidores físicos tienen más de 5 años y no existe DRP probado. Un fallo en el servidor del Hemocentro paraliza $771M de ingresos. Azure ya está operativo (B2) – solo se necesita activar retención inmutable a 90 días. Tiempo de implementación: 4-6 semanas."
+      },
+      {
+        "id": "03",
+        "title": "Establecer el Gobierno de Datos Institucional",
+        "badge": "P1",
+        "description": "Sin gobierno de datos no hay analítica, ni cumplimiento Ley 1581, ni integración posible. Es la base que habilita todos los demás proyectos del PETI. Costo: $12M. Plazo: Q1 2026."
+      }
+    ],
+    "acciones_estrategicas": [
+      {
+        "id": "04",
+        "title": "Migrar infraestructura a Azure (Cloud First)",
+        "badge": "P2",
+        "description": "Los servidores físicos obsoletos son el cuello de botella que impide alcanzar el 99.8% de disponibilidad que exige el Hemocentro. La migración progresiva con modelo pay-as-you-go elimina el riesgo sin CAPEX masivo inicial. Presupuesto: $80M."
+      },
+      {
+        "id": "05",
+        "title": "Construir el API Gateway con HL7/FHIR",
+        "badge": "P2",
+        "description": "Siesa, HeVa y Q-Symphony operan como islas. La integración es la palanca que habilita el dato único del paciente, la analítica institucional y la interoperabilidad con hospitales aliados. Sin este paso, los proyectos de IA y Analítica son inviables. Presupuesto: $55M."
+      },
+      {
+        "id": "06",
+        "title": "Programa de capacitación digital (madurez 2.8 → 4.2)",
+        "badge": "P2",
+        "description": "Sin apropiación tecnológica del personal, ningún sistema nuevo se usa correctamente. Microaprendizaje con Teams, sin salones presenciales, usando los smartphones que ya tienen. Presupuesto: $15M – la mejor relación costo/impacto del PETI."
+      }
+    ],
+    "foda": {
+      "diagnostico": "Los factores internos son débiles (score 0.8) mientras los externos son favorables (score 1.2). Esto ubica a la organización en el cuadrante DO: las oportunidades del entorno existen pero las debilidades internas impiden aprovecharlas.",
+      "debilidades": ["Sin CISO", "45% ISO 27001", "Servidores obsoletos", "Islas de datos", "Madurez 2.8"],
+      "oportunidades": ["Azure activo", "MAKAIA", "Alta demanda cursos", "HL7/FHIR", "Decreto 767"]
+    }
+  }
+}

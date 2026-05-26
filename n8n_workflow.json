@@ -1,0 +1,243 @@
+{
+  "name": "Cruz Roja Valle - Gobierno de TI Auto-Update",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": "cron",
+        "value": "0 8 * * 1"
+      },
+      "id": "c1f7b0e2-6cf7-4e78-9e5b-b9f1d0de1a42",
+      "name": "Cron (Cada Lunes 8:00 AM)",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.uptimerobot.com/v2/getMonitors",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "api_key",
+              "value": "ur_mock_key_cruz_roja_valle_12345"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e2837482-1273-4f81-a9f8-bcfd812731c2",
+      "name": "Fetch Uptime (Hemocentro API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        320,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_mock_spreadsheet_id_cruz_roja_valle_presupuesto",
+          "mode": "id"
+        },
+        "sheetName": "Ejecución Presupuestal",
+        "options": {}
+      },
+      "id": "a1827391-72a3-4819-b27a-cc372a819b1c",
+      "name": "Fetch Presupuesto TI (Google Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "formId": "1_mock_google_form_id_satisfaccion_voluntarios",
+        "options": {}
+      },
+      "id": "f2938401-ccab-4293-8a39-3829ad38291a",
+      "name": "Fetch CSAT Voluntarios (Google Forms)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        320,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fusionar los datos capturados y formatearlos para el Balanced Scorecard\nconst uptimeData = $items(\"Fetch Uptime (Hemocentro API)\")[0]?.json?.monitors?.[0] || { custom_uptime_ratio: \"99.1\" };\nconst presupuestoData = $items(\"Fetch Presupuesto TI (Google Sheets)\")[0]?.json || { porcentaje_ejecutado: 67 };\nconst csatData = $items(\"Fetch CSAT Voluntarios (Google Forms)\")[0]?.json || { promedio_satisfaccion: 7.5 };\n\n// Leer data.json actual\nlet currentData = $items(\"Read current data.json\")[0]?.json || {};\n\n// Actualizar en vivo las métricas dinámicas\ncurrentData.top_kpis.disponibilidad_hemocentro.value = parseFloat(uptimeData.custom_uptime_ratio);\ncurrentData.top_kpis.ejecucion_presupuesto.value = parseInt(presupuestoData.porcentaje_ejecutado);\ncurrentData.perspectiva_financiera.presupuesto_ti.amount = presupuestoData.porcentaje_ejecutado + \"%\";\ncurrentData.perspectiva_clientes.satisfaccion_soporte.global_csat.value = parseFloat(csatData.promedio_satisfaccion);\ncurrentData.last_updated = new Date().toISOString();\n\nreturn [{ json: currentData }];"
+      },
+      "id": "b1823791-231a-4d2a-82ab-239ab812c321",
+      "name": "Transform & Merge (BSC TI Logic)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fileContent": "={{ JSON.stringify($json) }}",
+        "fileName": "C:\\Users\\jevgd\\.gemini\antigravity\\scratch\\cruz-roja-dashboard\\public\\data.json"
+      },
+      "id": "d2938192-381a-4e2b-a192-3ab81928ab2c",
+      "name": "Write to data.json",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "type": "string"
+          },
+          "conditions": [
+            {
+              "id": "cond-1",
+              "leftValue": "={{ $json.top_kpis.disponibilidad_hemocentro.value }}",
+              "rightValue": 99.5,
+              "operator": "lt"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f2837192-817a-4b2a-a92c-fb918a28f8ac",
+      "name": "Check SLA Breach (Uptime < 99.5%)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "director.ti.valle@cruzroja.org.co",
+        "subject": "⚠️ ALERTA GOBIERNO DE TI: Caída de Disponibilidad en Hemocentro",
+        "message": "Estimado CIO,\n\nEl flujo de n8n ha detectado que la disponibilidad del Hemocentro es de {{ $json.top_kpis.disponibilidad_hemocentro.value }}%, lo cual es inferior al límite estratégico del 99.5%.\n\nPrescripción inmediata sugerida: Migrar base de datos HeVa a la infraestructura Cloud Híbrida de Azure y contactar al proveedor de contingencia.\n\nDashboard Estratégico CIO Valle.",
+        "options": {}
+      },
+      "id": "g9182c19-acbb-4e22-819a-ffba918c8192",
+      "name": "Alert Gmail (CIO Valle)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "filePath": "C:\\Users\\jevgd\\.gemini\antigravity\\scratch\\cruz-roja-dashboard\\public\\data.json"
+      },
+      "id": "c2938192-bc22-419b-a38c-fbcbcf1028ab",
+      "name": "Read current data.json",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        540,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Cron (Cada Lunes 8:00 AM)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Uptime (Hemocentro API)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Presupuesto TI (Google Sheets)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch CSAT Voluntarios (Google Forms)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Uptime (Hemocentro API)": {
+      "main": [
+        [
+          {
+            "node": "Read current data.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read current data.json": {
+      "main": [
+        [
+          {
+            "node": "Transform & Merge (BSC TI Logic)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform & Merge (BSC TI Logic)": {
+      "main": [
+        [
+          {
+            "node": "Write to data.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to data.json": {
+      "main": [
+        [
+          {
+            "node": "Check SLA Breach (Uptime < 99.5%)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check SLA Breach (Uptime < 99.5%)": {
+      "main": [
+        [
+          {
+            "node": "Alert Gmail (CIO Valle)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
