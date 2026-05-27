@@ -11,7 +11,7 @@ interface TabItem {
 }
 
 const tabsConfig: TabItem[] = [
-  { id: 'autodiagnostico', label: 'Autodiagnóstico IA', icon: 'fa-solid fa-brain', iconClass: 'text-cyan-300 animate-pulse' },
+  { id: 'autodiagnostico', label: 'Autodiagnóstico', icon: 'fa-solid fa-brain', iconClass: 'text-cyan-300 animate-pulse' },
   { id: 'mapa', label: 'Mapa BSC', icon: 'fa-solid fa-map-location-dot' },
   { id: 'financiero', label: 'Financiero', icon: 'fa-solid fa-chart-line' },
   { id: 'clientes', label: 'Clientes', icon: 'fa-solid fa-hand-holding-heart' },

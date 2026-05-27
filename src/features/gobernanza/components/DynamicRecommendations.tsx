@@ -19,7 +19,7 @@ export const DynamicRecommendations: React.FC = () => {
     alertText = `⚠️ **GOBERNANZA PARCIAL (Madurez ${average}/5.0):** Existen procesos de TI bien definidos (como convenios de ahorro y mesa de soporte básica), pero la digitalización de trámites no está integrada de manera segura. Hay debilidades en interoperabilidad de bases de datos. **Recomendación: migrar y proteger.**`;
     severity = "warning";
   } else {
-    alertText = `✅ **EXCELENCIA EN GOBIERNO TI (Madurez ${average}/5.0):** La Cruz Roja Seccional Valle se encuentra al día con el estándar ISO 38500 y mejores prácticas de COBIT. El Hemocentro está protegido, automatizado con n8n y posee convenios de ahorro Makaia renovados. **Gobernanza ejemplar y en mejora continua.**`;
+    alertText = `✅ **EXCELENCIA EN GOBIERNO TI (Madurez ${average}/5.0):** La Cruz Roja Seccional Valle se encuentra al día con el estándar ISO 38500 y mejores prácticas de COBIT. El Hemocentro está protegido, altamente automatizado y posee convenios de ahorro Makaia renovados. **Gobernanza ejemplar y en mejora continua.**`;
     severity = "success";
   }
 
@@ -41,7 +41,7 @@ export const DynamicRecommendations: React.FC = () => {
   }
 
   if (recsList.length === 0) {
-    recsList.push("🚀 Todas las dimensiones del Gobierno TI operan con un excelente nivel de madurez. Continúe con auditorías periódicas y monitoreando SLA con triggers de n8n.");
+    recsList.push("🚀 Todas las dimensiones del Gobierno TI operan con un excelente nivel de madurez. Continúe con auditorías periódicas y monitoreando SLA con triggers automatizados.");
   }
 
   // Theme alert backgrounds

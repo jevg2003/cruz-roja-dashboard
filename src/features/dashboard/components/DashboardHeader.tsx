@@ -1,14 +1,8 @@
 // src/features/dashboard/components/DashboardHeader.tsx
 import React from 'react';
-import { useDashboard } from '../context/DashboardContext';
 
 export const DashboardHeader: React.FC = () => {
-  const { aiAnalysis } = useDashboard();
-
-  // Extract a nice time representation if n8n has evaluated data
-  const syncTimeText = aiAnalysis
-    ? "Sincronizado con IA: Activo (Real-time)"
-    : "Sincronizado vía n8n: 13:25 (Local)";
+  const syncTimeText = "Evaluación TI local: Activo";
 
   return (
     <header className="glass-panel rounded-2xl p-5 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-brand-red-neon shadow-lg w-full">

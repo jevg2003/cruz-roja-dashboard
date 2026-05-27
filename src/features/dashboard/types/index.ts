@@ -1,5 +1,5 @@
 // src/features/dashboard/types/index.ts
-import type { DiagnosticScores, GeminiAiAnalysisResponse } from '../../diagnostic/types';
+import type { DiagnosticScores } from '../../diagnostic/types';
 
 export type TabType =
   | 'autodiagnostico'
@@ -42,6 +42,5 @@ export interface DashboardState {
   activeTab: TabType;
   decisions: Decisions;
   diagnosticScores: DiagnosticScores;
-  aiAnalysis: GeminiAiAnalysisResponse | null;
   toast: { message: string; title: string; visible: boolean } | null;
 }

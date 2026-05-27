@@ -1,14 +1,13 @@
 // src/features/dashboard/store/useDashboardStore.ts
 import { create } from 'zustand';
 import type { TabType, Decisions } from '../types';
-import type { DiagnosticScores, GeminiAiAnalysisResponse } from '../../diagnostic/types';
+import type { DiagnosticScores } from '../../diagnostic/types';
 
 export interface DashboardStoreState {
   // Primary State
   activeTab: TabType;
   decisions: Decisions;
   diagnosticScores: DiagnosticScores;
-  aiAnalysis: GeminiAiAnalysisResponse | null;
   toast: { message: string; title: string } | null;
 
   // Derived/Computed State
@@ -42,7 +41,6 @@ export interface DashboardStoreState {
   setActiveTab: (tab: TabType) => void;
   updateScore: (key: keyof DiagnosticScores, score: number) => void;
   updateDecision: (key: keyof Decisions, value: boolean) => void;
-  setAiResponse: (response: GeminiAiAnalysisResponse | null) => void;
   resetState: () => void;
   triggerToast: (message: string, title?: string) => void;
   closeToast: () => void;
@@ -76,8 +74,7 @@ const defaultDiagnosticScores: DiagnosticScores = {
 // Calculations Engine
 const computeDerivedState = (
   decisions: Decisions,
-  diagnosticScores: DiagnosticScores,
-  aiAnalysis: GeminiAiAnalysisResponse | null
+  diagnosticScores: DiagnosticScores
 ) => {
   // A. Computed digital maturity from diagnostics
   const scoreKeys = Object.keys(diagnosticScores) as (keyof DiagnosticScores)[];
@@ -196,32 +193,11 @@ const computeDerivedState = (
     directiveStatus = 'warning';
   }
 
-  // K. AI OVERRIDES APPLY (Gemini AI overrides from webhook)
-  let digitalMaturityFinal = computedMaturity;
-  let iso27001Final = currentISO;
-  let uptimeFinal = currentUptime;
-  let budgetFinal = budgetPercent;
-  let incomeFinal = finalIncome;
-
-  if (aiAnalysis) {
-    if (aiAnalysis.madurez_digital_evaluada !== undefined && aiAnalysis.madurez_digital_evaluada !== null) {
-      digitalMaturityFinal = parseFloat(aiAnalysis.madurez_digital_evaluada.toFixed(1));
-    }
-    if (aiAnalysis.iso_27001_evaluado !== undefined && aiAnalysis.iso_27001_evaluado !== null) {
-      iso27001Final = aiAnalysis.iso_27001_evaluado;
-    }
-    if (aiAnalysis.disponibilidad_hemocentro_evaluado !== undefined && aiAnalysis.disponibilidad_hemocentro_evaluado !== null) {
-      uptimeFinal = parseFloat(aiAnalysis.disponibilidad_hemocentro_evaluado.toFixed(2));
-    }
-    if (aiAnalysis.ejecucion_presupuesto_evaluado !== undefined && aiAnalysis.ejecucion_presupuesto_evaluado !== null) {
-      budgetFinal = aiAnalysis.ejecucion_presupuesto_evaluado;
-    }
-    if (aiAnalysis.ingresos_hemocentro_evaluado !== undefined && aiAnalysis.ingresos_hemocentro_evaluado !== null) {
-      const cleanedStr = aiAnalysis.ingresos_hemocentro_evaluado.replace(/[^0-9]/g, '');
-      const valNum = parseInt(cleanedStr);
-      if (!isNaN(valNum)) incomeFinal = valNum;
-    }
-  }
+  const digitalMaturityFinal = computedMaturity;
+  const iso27001Final = currentISO;
+  const uptimeFinal = currentUptime;
+  const budgetFinal = budgetPercent;
+  const incomeFinal = finalIncome;
 
   return {
     computedMaturity,
@@ -251,14 +227,13 @@ const computeDerivedState = (
   };
 };
 
-const initialDerived = computeDerivedState(defaultDecisions, defaultDiagnosticScores, null);
+const initialDerived = computeDerivedState(defaultDecisions, defaultDiagnosticScores);
 
 export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   // Primary state
   activeTab: 'autodiagnostico',
   decisions: defaultDecisions,
   diagnosticScores: defaultDiagnosticScores,
-  aiAnalysis: null,
   toast: null,
 
   // Derived state
@@ -270,18 +245,15 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     try {
       const savedDecs = localStorage.getItem('cruz_roja_decisions');
       const savedDiag = localStorage.getItem('cruz_roja_diagnostic');
-      const savedAI = localStorage.getItem('cruz_roja_ai_evaluated_data');
 
       const loadedDecs = savedDecs ? JSON.parse(savedDecs) : defaultDecisions;
       const loadedDiag = savedDiag ? JSON.parse(savedDiag) : defaultDiagnosticScores;
-      const loadedAI = savedAI ? JSON.parse(savedAI) : null;
 
-      const derived = computeDerivedState(loadedDecs, loadedDiag, loadedAI);
+      const derived = computeDerivedState(loadedDecs, loadedDiag);
 
       set({
         decisions: loadedDecs,
         diagnosticScores: loadedDiag,
-        aiAnalysis: loadedAI,
         ...derived,
       });
     } catch (e) {
@@ -292,7 +264,7 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   setActiveTab: (tab: TabType) => set({ activeTab: tab }),
 
   updateScore: (key: keyof DiagnosticScores, score: number) => {
-    const { diagnosticScores, decisions, aiAnalysis } = get();
+    const { diagnosticScores, decisions } = get();
     const nextScores = { ...diagnosticScores, [key]: score };
 
     if (typeof window !== 'undefined') {
@@ -319,7 +291,7 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       localStorage.setItem('cruz_roja_decisions', JSON.stringify(nextDecs));
     }
 
-    const derived = computeDerivedState(nextDecs, nextScores, aiAnalysis);
+    const derived = computeDerivedState(nextDecs, nextScores);
 
     set({
       diagnosticScores: nextScores,
@@ -329,36 +301,17 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   },
 
   updateDecision: (key: keyof Decisions, value: boolean) => {
-    const { decisions, diagnosticScores, aiAnalysis } = get();
+    const { decisions, diagnosticScores } = get();
     const nextDecs = { ...decisions, [key]: value };
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('cruz_roja_decisions', JSON.stringify(nextDecs));
     }
 
-    const derived = computeDerivedState(nextDecs, diagnosticScores, aiAnalysis);
+    const derived = computeDerivedState(nextDecs, diagnosticScores);
 
     set({
       decisions: nextDecs,
-      ...derived,
-    });
-  },
-
-  setAiResponse: (response: GeminiAiAnalysisResponse | null) => {
-    const { decisions, diagnosticScores } = get();
-
-    if (typeof window !== 'undefined') {
-      if (response) {
-        localStorage.setItem('cruz_roja_ai_evaluated_data', JSON.stringify(response));
-      } else {
-        localStorage.removeItem('cruz_roja_ai_evaluated_data');
-      }
-    }
-
-    const derived = computeDerivedState(decisions, diagnosticScores, response);
-
-    set({
-      aiAnalysis: response,
       ...derived,
     });
   },
@@ -367,22 +320,15 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     if (typeof window !== 'undefined') {
       localStorage.removeItem('cruz_roja_decisions');
       localStorage.removeItem('cruz_roja_diagnostic');
-      localStorage.removeItem('cruz_roja_ai_evaluated_data');
-      localStorage.removeItem('n8n_real_mode');
-      localStorage.removeItem('n8n_webhook_url');
-      localStorage.removeItem('n8n_recipient_email');
     }
 
-    const derived = computeDerivedState(defaultDecisions, defaultDiagnosticScores, null);
+    const derived = computeDerivedState(defaultDecisions, defaultDiagnosticScores);
 
     set({
       decisions: defaultDecisions,
       diagnosticScores: defaultDiagnosticScores,
-      aiAnalysis: null,
       ...derived,
     });
-
-    get().triggerToast('Diagnóstico, Consola n8n e indicadores de la Cruz Roja restablecidos.', 'Restablecer');
   },
 
   triggerToast: (message: string, title = 'Notificación') => {

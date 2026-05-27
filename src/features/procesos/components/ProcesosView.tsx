@@ -49,7 +49,7 @@ export const ProcesosView: React.FC = () => {
       target: "Meta 95%",
       status: diagnosticScores.mesa_ayuda >= 4 ? 'success' as const : diagnosticScores.mesa_ayuda >= 2 ? 'warning' as const : 'danger' as const,
       statusText: diagnosticScores.mesa_ayuda >= 4 ? 'Excelente' : diagnosticScores.mesa_ayuda >= 2 ? 'Parcial' : 'Bajo',
-      action: "Mesa de ayuda con catálogo formal de servicios y asignación automática mediante triggers de n8n."
+      action: "Mesa de ayuda con catálogo formal de servicios y asignación automática mediante triggers automatizados."
     }
   ];
 

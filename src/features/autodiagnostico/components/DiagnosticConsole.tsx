@@ -1,74 +1,40 @@
 // src/features/autodiagnostico/components/DiagnosticConsole.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { QuestionsGrid } from './QuestionsGrid';
-import { AiResultsPanel } from './AiResultsPanel';
-import { N8nModal } from './N8nModal';
 import { useDashboard } from '../../dashboard/context/DashboardContext';
-import type { N8nWebhookPayload, DiagnosticScoreKey, GeminiAiAnalysisResponse } from '../../diagnostic/types';
+import type { DiagnosticScoreKey } from '../../diagnostic/types';
 
 export const DiagnosticConsole: React.FC = () => {
   const {
     diagnosticScores,
-    aiAnalysis,
     updateScore,
     resetState,
     computedMaturity,
     directiveRating,
-    totalCost,
-    setAiResponse,
   } = useDashboard();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [n8nExecutionId, setN8nExecutionId] = useState<string>(
-    aiAnalysis ? 'EX_COMPLETED' : 'pendiente'
-  );
 
   const handleScoreChange = (key: DiagnosticScoreKey, score: number) => {
     updateScore(key, score);
   };
 
-  const handleReset = () => {
-    resetState();
-    setN8nExecutionId('pendiente');
-  };
-
-  const getPayload = (): N8nWebhookPayload => {
-    const recommendedProjects: string[] = [];
-
-    if (diagnosticScores.responsabilidad <= 2 || diagnosticScores.conformidad <= 2) {
-      recommendedProjects.push("B1 CISO");
-    }
-    if (diagnosticScores.servidores <= 2 || diagnosticScores.backups <= 2) {
-      recommendedProjects.push("B2 Azure Cloud");
-    }
-    if (diagnosticScores.interoperabilidad <= 2) {
-      recommendedProjects.push("B3 API Gateway");
-    }
-    if (diagnosticScores.canales_donantes <= 2 || diagnosticScores.portal_educativo <= 2) {
-      recommendedProjects.push("B5 Hemocentro 4.0");
-    }
-    if (diagnosticScores.interoperabilidad <= 2) {
-      recommendedProjects.push("B7 Gob. Datos");
-    }
-    if (diagnosticScores.apropiacion_digital <= 2) {
-      recommendedProjects.push("B8 Cap. Teams");
-    }
-
-    return {
+  const handleSaveJson = () => {
+    const dataToSave = {
       timestamp: new Date().toISOString(),
       empresa: "Cruz Roja Colombiana - Seccional Valle del Cauca",
       assessment_version: "ISO/IEC 38500 TI - 2026",
-      iso_38500_scores: diagnosticScores,
       computed_maturity: computedMaturity,
-      conformance_status: directiveRating === 'GOBERNANZA COMPLETA' ? 'GOBERNANZA COMPLETA' : directiveRating === 'GOBIERNO PARCIAL' ? 'GOBIERNO PARCIAL' : 'RIESGO CRÍTICO',
-      recommended_directives_peti: recommendedProjects,
-      estimated_investment_required: `$${totalCost}M COP`
+      conformance_status: directiveRating,
+      scores: diagnosticScores,
     };
-  };
-
-  const handleWebhookSuccess = (responseData: GeminiAiAnalysisResponse, execId: string) => {
-    setAiResponse(responseData);
-    setN8nExecutionId(execId);
+    const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `cruz-roja-diagnostico-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -81,7 +47,7 @@ export const DiagnosticConsole: React.FC = () => {
             <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider cyber-title">Autodiagnóstico de Gobernanza TI</h3>
           </div>
           <button
-            onClick={handleReset}
+            onClick={resetState}
             className="text-xs font-bold text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 bg-slate-800/80 px-2.5 py-1 rounded transition-all cursor-pointer flex items-center gap-1 flex-shrink-0"
           >
             <i className="fa-solid fa-rotate-left"></i> Restablecer
@@ -96,34 +62,36 @@ export const DiagnosticConsole: React.FC = () => {
       <QuestionsGrid scores={diagnosticScores} onScoreChange={handleScoreChange} />
 
       {/* Action Bar at the bottom */}
-      <div className="glass-panel p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+      <div className="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 w-full bg-slate-950/20 border border-slate-800/60">
         <div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block cyber-title">
-            <i className="fa-solid fa-robot text-brand-red"></i> Análisis IA Gemini + Envío de Correo Real
+          <span className="text-xs font-black text-cyan-400 uppercase tracking-wider block cyber-title flex items-center gap-1.5">
+            <i className="fa-solid fa-clipboard-check"></i> Resumen de Evaluación Activa
           </span>
-          <p className="text-xs text-slate-500 mt-1 font-semibold">
-            Gemini evalúa tus 10 respuestas, detecta brechas críticas, genera un plan priorizado y te lo envía por correo.
+          <p className="text-xs text-slate-400 mt-1 font-semibold">
+            Calificaciones persistidas localmente. Puedes guardar los resultados del diagnóstico actual en un archivo JSON local.
           </p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="w-full sm:w-auto py-3 px-6 rounded-xl text-xs font-bold uppercase tracking-wider border border-brand-red/40 bg-brand-red/10 hover:bg-brand-red/20 text-brand-red shadow-md hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-2"
-        >
-          <i className="fa-solid fa-robot"></i> Evaluar con IA Gemini y Enviar
-        </button>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="text-right hidden sm:block">
+            <span className="text-[10px] text-slate-500 font-bold uppercase block">Madurez Promedio</span>
+            <span className="text-xs font-black text-slate-200">{computedMaturity} / 5.0</span>
+          </div>
+          <div className="text-right hidden sm:block border-l border-slate-800 pl-3">
+            <span className="text-[10px] text-slate-500 font-bold uppercase block">Estado Directiva</span>
+            <span className={`text-xs font-black uppercase ${
+              directiveRating === 'GOBERNANZA COMPLETA' ? 'text-emerald-400' :
+              directiveRating === 'GOBIERNO PARCIAL' ? 'text-amber-400' :
+              'text-red-400'
+            }`}>{directiveRating}</span>
+          </div>
+          <button
+            onClick={handleSaveJson}
+            className="w-full sm:w-auto py-3 px-6 rounded-xl text-xs font-bold uppercase tracking-wider border border-cyan-500/50 bg-cyan-950/40 hover:bg-cyan-900/50 hover:text-white text-cyan-300 transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 shadow-md shadow-cyan-950/20"
+          >
+            <i className="fa-solid fa-floppy-disk"></i> Guardar en JSON
+          </button>
+        </div>
       </div>
-
-      {/* AI Analysis Results Panel */}
-      <AiResultsPanel analysis={aiAnalysis} executionId={n8nExecutionId} />
-
-      {/* n8n Webhook Modal */}
-      <N8nModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        scores={diagnosticScores}
-        payload={getPayload()}
-        onSuccess={handleWebhookSuccess}
-      />
     </div>
   );
 };
