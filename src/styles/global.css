@@ -261,19 +261,132 @@ div[class*="bg-cyan-950\/40"]  { background-color: #e0f2fe !important; color: #0
 /* ============================================================
    N8N MODAL — keep dark for readability (it's a console)
    ============================================================ */
+/* ============================================================
+   N8N MODAL — Light/White Theme to match the entire app
+   ============================================================ */
 #n8n-webhook-modal {
-  background-color: rgba(15,23,42,0.80) !important;
+  background-color: rgba(15, 23, 42, 0.40) !important; /* Soft dark backdrop overlay for focus */
+  backdrop-filter: blur(8px) !important;
 }
+
 #n8n-webhook-modal .glass-panel {
-  background: rgba(15,23,42,0.95) !important;
-  border-color: rgba(255,255,255,0.08) !important;
+  background: #ffffff !important; /* Pure white card background */
+  border-color: rgba(15, 23, 42, 0.08) !important; /* soft dark border */
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
 }
-#n8n-webhook-modal h3,
-#n8n-webhook-modal p,
-#n8n-webhook-modal span,
-#n8n-webhook-modal label { color: #e2e8f0 !important; }
-#n8n-webhook-modal pre  { color: #34d399 !important; }
-#n8n-response-payload   { color: #67e8f9 !important; }
+
+/* Header */
+#n8n-webhook-modal div.bg-cyan-950\/30 {
+  background-color: rgba(2, 132, 199, 0.05) !important; /* Soft light cyan tint */
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Body container */
+#n8n-webhook-modal div.bg-slate-950 {
+  background-color: #ffffff !important;
+}
+
+/* Inner cards and panels */
+#n8n-webhook-modal div.bg-slate-900\/40,
+#n8n-webhook-modal div.bg-slate-900\/20,
+#n8n-webhook-modal div.bg-slate-950\/45,
+#n8n-webhook-modal div.bg-slate-950\/85 {
+  background-color: rgba(248, 250, 252, 0.95) !important; /* Light slate card background */
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Tab toggle container */
+#n8n-webhook-modal div.bg-slate-950.border.border-slate-800 {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Code block container */
+#n8n-webhook-modal pre,
+#n8n-webhook-modal code {
+  background-color: #0f172a !important; /* Code is easier to read in dark even in light themes */
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Text overrides - Dark high-contrast colors for light modal */
+#n8n-webhook-modal h3 { color: #0f172a !important; }
+#n8n-webhook-modal p { color: #334155 !important; }
+#n8n-webhook-modal span { color: #475569 !important; }
+#n8n-webhook-modal label { color: #334155 !important; }
+#n8n-webhook-modal li { color: #334155 !important; }
+#n8n-webhook-modal i { color: #0284c7 !important; } /* Cyan icons by default */
+
+/* Status checklist icons and text */
+#n8n-webhook-modal .text-slate-500 {
+  color: #94a3b8 !important; /* Very faint slate for waiting */
+}
+#n8n-webhook-modal .text-cyan-400 {
+  color: #0284c7 !important; /* Nice dark cyan for active */
+}
+#n8n-webhook-modal .text-emerald-400 {
+  color: #059669 !important; /* Nice dark green for success */
+}
+#n8n-webhook-modal .text-red-500 {
+  color: #dc2626 !important; /* Bright dark red for error */
+}
+
+/* Icon specific overrides to preserve original colors */
+#n8n-webhook-modal .fa-circle-check,
+#n8n-webhook-modal .fa-check {
+  color: #10b981 !important;
+}
+#n8n-webhook-modal .fa-circle {
+  color: #94a3b8 !important;
+}
+#n8n-webhook-modal .fa-spinner {
+  color: #0284c7 !important;
+}
+
+/* Loader text */
+#n8n-exec-spinner span {
+  color: #0284c7 !important;
+}
+
+/* Matrícula/Madurez box */
+#n8n-exec-maturity {
+  color: #d32f2f !important; /* deep red */
+}
+#n8n-exec-cost {
+  color: #0284c7 !important; /* deep cyan */
+}
+
+/* Badges inside summary */
+#n8n-exec-status-badge {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+}
+
+/* Button overrides */
+#n8n-webhook-modal #n8n-toggle-executive {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+#n8n-webhook-modal #n8n-toggle-executive i {
+  color: #ffffff !important;
+}
+#n8n-webhook-modal #n8n-toggle-technical {
+  color: #64748b !important;
+}
+#n8n-webhook-modal #n8n-toggle-technical:hover {
+  color: #0f172a !important;
+}
+
+/* Close button overrides */
+#n8n-webhook-modal #close-n8n-webhook-modal {
+  color: #64748b !important;
+}
+#n8n-webhook-modal #close-n8n-webhook-modal:hover {
+  color: #0f172a !important;
+}
+
+#n8n-webhook-modal pre { color: #34d399 !important; }
+#n8n-response-payload { color: #67e8f9 !important; }
 
 /* ============================================================
    CONSOLA DE INTEGRACIÓN n8n — light panel
