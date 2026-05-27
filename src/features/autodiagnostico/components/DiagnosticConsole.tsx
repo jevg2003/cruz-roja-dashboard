@@ -68,7 +68,7 @@ export const DiagnosticConsole: React.FC = () => {
             <i className="fa-solid fa-clipboard-check"></i> Resumen de Evaluación Activa
           </span>
           <p className="text-xs text-slate-400 mt-1 font-semibold">
-            Calificaciones persistidas localmente. Puedes guardar los resultados del diagnóstico actual en un archivo JSON local.
+            Calificaciones persistidas localmente. Puedes guardar los resultados.
           </p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
