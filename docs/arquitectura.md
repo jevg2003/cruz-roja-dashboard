@@ -1,14 +1,43 @@
-# 2. Arquitectura de Software del Dashboard
+# 2. Arquitectura de Software
 
-El **Dashboard Estratégico CIO** de la Cruz Roja Valle del Cauca está construido siguiendo principios de arquitectura frontend moderna. Prioriza la velocidad de carga, la independencia de servidores backend complejos para la capa analítica de toma de decisiones y un motor reactivo de simulación prescriptiva que responde al instante.
+El **Dashboard Estratégico CIO** está construido con una arquitectura frontend moderna. Prioriza tres objetivos: carga rápida, operación simple y simulación instantánea.
 
-Este capítulo detalla los componentes del stack de software, la gestión del estado y el motor matemático implementado.
+La solución evita dependencias backend innecesarias en la capa analítica. También responde en tiempo real ante cambios del autodiagnóstico o del presupuesto.
 
----
+### Accesos rápidos
 
-## 💻 Stack Tecnológico Principal
+* **Aplicación en línea:** [cruz-roja-dashboard.vercel.app](https://cruz-roja-dashboard.vercel.app/)
+* **Repositorio:** [github.com/jevg2003/cruz-roja-dashboard](https://github.com/jevg2003/cruz-roja-dashboard)
 
-La solución fue diseñada con tecnologías robustas de alto rendimiento y cero coste de licenciamiento operativo (Convenio Makaia / Licencias Libres):
+<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption><p>Vista general del dashboard ejecutivo.</p></figcaption></figure>
+
+{% hint style="info" %}
+La arquitectura está pensada para soportar análisis ejecutivo en vivo. El sistema calcula escenarios sin depender de APIs de backend para cada interacción.
+{% endhint %}
+
+### Arquitectura en una mirada
+
+{% columns %}
+{% column %}
+#### Principios de diseño
+
+* **Rendimiento primero** para abrir rápido y responder al instante.
+* **Frontend autónomo** para reducir complejidad operativa.
+* **Estado reactivo** para simular decisiones en tiempo real.
+{% endcolumn %}
+
+{% column %}
+#### Resultado para la dirección
+
+* Menor latencia en sesiones de comité.
+* Menor coste operativo en producción.
+* Mayor claridad para evaluar escenarios `what-if`.
+{% endcolumn %}
+{% endcolumns %}
+
+### Stack tecnológico principal
+
+La solución combina herramientas de alto rendimiento y bajo coste operativo. Esto encaja con el convenio Makaia y el enfoque de licencias libres.
 
 ```mermaid
 graph TD
@@ -19,48 +48,86 @@ graph TD
     D --> F[Local Storage - Persistence]
 ```
 
-### 1. Astro (Framework de Integración)
-Se utiliza como motor de base para estructurar las rutas y servir el contenido con un rendimiento excepcional. Astro nos permite:
-* **Generación Estática (SSG)**: El esqueleto de la aplicación se compila de forma estática en tiempo de compilación (`npm run build`), lo que elimina la necesidad de un servidor web dinámico de Node.js o bases de datos pesadas en producción.
-* **Islands Architecture**: El layout base, fuentes y CDNs se cargan de forma puramente estática. Solo las partes interactivas (el dashboard reactivo completo) se hidratan como islas activas de React (`client:load`), logrando un tiempo de carga inicial instantáneo.
-* **Optimización SEO Integrada**: Metadata, títulos descriptivos estructurados y etiquetas de accesibilidad optimizados automáticamente para la directiva de la Cruz Roja.
+{% tabs %}
+{% tab title="Astro" %}
+#### Astro como motor base
 
-### 2. React (Componentización Interactiva)
-La lógica del Cuadro de Mando Integral y la consola de autodiagnóstico están desarrolladas como componentes modulares de React. Esto facilita:
-* Reutilización de componentes como tarjetas de KPI, paneles de perspectiva e interruptores de decisiones.
-* Renderizado ágil de tablas y gráficos dinámicos en base al estado activo.
+Astro estructura rutas y entrega contenido con alto rendimiento.
 
-### 3. Zustand (Gestión del Estado Ultra-Ligera)
-En lugar de implementar frameworks pesados o complejos como Redux o flujos unidireccionales lentos de React Context para toda la lógica, la aplicación utiliza **Zustand**. 
-* Zustand provee un almacenamiento centralizado de variables (`useDashboardStore.ts`) accesible desde cualquier subvista del dashboard.
-* La persistencia en `LocalStorage` está acoplada nativamente a Zustand, permitiendo que las calificaciones de autodiagnóstico y las decisiones directivas del CIO se mantengan guardadas en el navegador del usuario de forma automática ante recargas de página.
+* **SSG** compila el esqueleto en `build`.
+* **Islands Architecture** hidrata solo la parte interactiva.
+* **SEO y accesibilidad** quedan integrados desde la base.
+{% endtab %}
 
-### 4. Tailwind CSS (Sistema de Diseño Estético)
-Toda la interfaz visual utiliza clases de utilidad de Tailwind CSS con una paleta de diseño premium "Cyber-Dark" y "Light-Clean", adaptada para lectura ejecutiva:
-* **Glow Borders & Glassmorphism**: Paneles semi-translúcidos con bordes brillantes que representan los estados críticos (Rojo Neón), de advertencia (Ámbar) y estables (Verde Esmeralda).
-* **Fuentes Premium**: Uso de tipografías legibles como Inter y Outfit para la información administrativa y tipografía monoespaciada para los KPIs ejecutivos.
+{% tab title="React" %}
+#### React para la capa interactiva
 
----
+El Cuadro de Mando Integral y la consola de autodiagnóstico viven en componentes modulares.
 
-## ⚙️ El Motor de Simulación en Cliente (Derived State)
+* Reutiliza tarjetas de KPI y paneles ejecutivos.
+* Renderiza tablas y gráficos según el estado activo.
+{% endtab %}
 
-Uno de los logros arquitectónicos clave de este dashboard es el **Motor de Simulación Integrado** en `useDashboardStore.ts`. En lugar de forzar llamadas API al servidor cada vez que el CIO modifica un puntaje de autodiagnóstico o aprueba un presupuesto, **toda la matemática de interdependencia se calcula en milisegundos en el hilo principal del cliente**.
+{% tab title="Zustand" %}
+#### Zustand para el estado global
 
-### Lógica de Dependencias y Cálculo
+Zustand centraliza la lógica en `useDashboardStore.ts`.
 
-Cuando se modifica una dimensión (ej. Ciberseguridad), el motor recalcula instantáneamente:
-1. **Madurez Digital Promedio**: Promedio simple de las 10 dimensiones ISO 38500.
-2. **Presupuesto Consolidado**: Suma acumulada de costes de iniciativas aprobadas.
-3. **Uptime del Hemocentro**: 
-   $$\text{Uptime} = \min(99.8\%, 98.0\% + (\text{Servidores} \times 0.4\%) + (\text{Backups} \times 0.7\%) + (\text{B2 Azure} \rightarrow 99.8\%))$$
-4. **Cumplimiento ISO 27001**: Elevado dinámicamente según control de CISO y conformidad legal.
-5. **Cumplimiento de SLA y CSAT**: Métricas resultantes del nivel del sistema de mesa de ayuda.
-6. **Estado de Directiva de Gobierno**: Clasificaciones inteligentes como `GOBERNANZA COMPLETA`, `GOBIERNO PARCIAL`, `SOBRE-PRESUPUESTO` o `INCUMPLIMIENTO RIESGO`.
+* Expone el estado a cualquier subvista.
+* Persiste decisiones y calificaciones en `LocalStorage`.
+* Evita la sobrecarga de soluciones más pesadas.
+{% endtab %}
 
+{% tab title="Tailwind CSS" %}
+#### Tailwind CSS para el sistema visual
+
+La interfaz usa una estética ejecutiva y contemporánea.
+
+* Paneles con efecto visual tipo `glassmorphism`.
+* Bordes de estado para criticidad, alerta y estabilidad.
+* Tipografías legibles para lectura directiva.
+{% endtab %}
+{% endtabs %}
+
+### Motor de simulación en cliente
+
+Uno de los componentes más valiosos del dashboard es el motor de simulación integrado en `useDashboardStore.ts`.
+
+Cada cambio se procesa en el navegador. No necesita una llamada al servidor para recalcular resultados.
+
+#### Qué recalcula al instante
+
+Cuando cambia una dimensión, como Ciberseguridad, el sistema actualiza de inmediato:
+
+1. **Madurez digital promedio** de las 10 dimensiones ISO 38500.
+2. **Presupuesto consolidado** de las iniciativas aprobadas.
+3. **Uptime del Hemocentro** con base en infraestructura y backups.
+4. **Cumplimiento ISO 27001** según controles y conformidad.
+5. **SLA y CSAT** según la madurez de la mesa de ayuda.
+6. **Estado de gobierno** con salidas como `GOBERNANZA COMPLETA` o `INCUMPLIMIENTO RIESGO`.
+
+#### Fórmula clave de disponibilidad
+
+$$
+\text{Uptime} = \min(99.8\%, 98.0\% + (\text{Servidores} \times 0.4\%) + (\text{Backups} \times 0.7\%) + (\text{B2 Azure} \rightarrow 99.8\%))
+$$
+
+{% code title="useDashboardStore.ts" lineNumbers="true" %}
 ```typescript
 // Fragmento del motor de cálculo en cliente
 const derived = computeDerivedState(loadedDecs, loadedDiag, loadedAI);
 set({ decisions: loadedDecs, diagnosticScores: loadedDiag, ...derived });
 ```
+{% endcode %}
 
-Esta reactividad inmediata (latencia < 1ms) ofrece una experiencia de usuario sumamente fluida. El CIO puede jugar con escenarios hipotéticos en vivo durante las juntas directivas ("What-If analysis") sin sufrir por retrasos de red o caídas de APIs backend.
+{% hint style="success" %}
+La latencia es menor a 1 ms. Esto permite simular decisiones en vivo durante juntas directivas.
+{% endhint %}
+
+### Impacto operativo
+
+Esta arquitectura permite que el CIO pruebe escenarios sin fricción.
+
+* Ajusta puntajes y presupuestos en tiempo real.
+* Visualiza consecuencias sin esperar respuestas de red.
+* Reduce el riesgo de interrupciones por servicios externos.
