@@ -1,11 +1,14 @@
 // src/features/integral/components/IntegralDashboardView.tsx
 import React, { useRef } from 'react';
 import { useDashboard } from '../../dashboard/context/DashboardContext';
+import { getMaturityLevelName } from '../../dashboard/store/useDashboardStore';
 import type { DashboardType } from '../../dashboard/types';
 
 export const IntegralDashboardView: React.FC = () => {
   const {
     digitalMaturityFinal,
+    digitalMaturityLevel,
+    overallMaturityLevel,
     totalCost,
     budgetFinal,
     directiveRating,
@@ -15,7 +18,9 @@ export const IntegralDashboardView: React.FC = () => {
     updateDataGov,
     updateAIGov,
     setActiveDashboard,
-    triggerToast
+    triggerToast,
+    saveCheckpoint,
+    restoreCheckpoint
   } = useDashboard();
 
   // Referencias para Teledirigir (Scroll suave)
@@ -213,8 +218,35 @@ export const IntegralDashboardView: React.FC = () => {
     aiGov.aiDriftStatus === 'Alerta' ? { label: 'Alerta / Re-entrenar', style: 'bg-amber-50 border-amber-250 text-amber-600 glow-amber' } :
     { label: 'Crítico / Pausado', style: 'bg-red-50 border-red-250 text-brand-red glow-red animate-pulse' };
 
+  // Helper values for DAMA status styling
+  const damaDetails =
+    dataGov.dataMaturity >= 4.0 ? { label: 'Óptimo / Normal', style: 'bg-emerald-50 border-emerald-250 text-emerald-600 glow-green' } :
+    dataGov.dataMaturity >= 2.5 ? { label: 'Advertencia / Mejora', style: 'bg-amber-50 border-amber-250 text-amber-700 glow-amber' } :
+    { label: 'Crítico / Silos', style: 'bg-red-50 border-red-250 text-brand-red glow-red animate-pulse' };
+
   return (
     <div className="w-full space-y-6 animate-fadeIn">
+      {/* Dynamic Actions Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl glass-panel border border-slate-200/50 bg-white/40 shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+          <p className="text-xs text-slate-500 font-medium font-sans">
+            Ajusta los indicadores interactivos. Los cambios se recalculan en tiempo real en memoria y se pueden guardar permanentemente.
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            restoreCheckpoint();
+            triggerToast('Valores restaurados al último guardado.', 'Restablecer ↺');
+          }}
+          type="button"
+          className="flex items-center justify-center gap-2 text-xs font-black text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 px-4.5 py-2.5 rounded-xl transition-all cursor-pointer shadow-sm select-none active:scale-95 shrink-0"
+        >
+          <i className="fa-solid fa-arrow-rotate-left text-slate-500"></i>
+          Restablecer al Último Guardado
+        </button>
+      </div>
+
       {/* ======================= EXECUTIVE SUMMARY GRID ======================= */}
       <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
         
@@ -240,16 +272,19 @@ export const IntegralDashboardView: React.FC = () => {
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
               <span className="text-2xl font-black cyber-value text-slate-900">{overallMaturity}</span>
-              <span className="text-[10px] text-slate-400 font-bold font-mono">/ 5.0</span>
+              <span className="text-[9px] text-slate-400 font-bold font-mono">/ 5.0</span>
+              <span className="text-[8px] text-slate-500 font-extrabold uppercase mt-0.5 tracking-wider">
+                {overallMaturityLevel.split(': ')[1]}
+              </span>
             </div>
           </div>
-          <span className={`text-xs font-bold px-3 py-1 rounded-full border mt-2 uppercase tracking-wider text-center
+          <span className={`text-[10px] font-bold px-3 py-1.5 rounded-full border mt-2 uppercase tracking-wider text-center
             ${overallStatus === 'success' ? 'bg-emerald-50 border-emerald-250 text-emerald-600 glow-green' : 
               overallStatus === 'warning' ? 'bg-amber-50 border-amber-250 text-amber-600 glow-amber' : 
               'bg-red-50 border-red-250 text-brand-red glow-red'
             }
           `}>
-            {overallStatusText}
+            {overallMaturityLevel} • {overallStatusText}
           </span>
         </div>
 
@@ -260,8 +295,13 @@ export const IntegralDashboardView: React.FC = () => {
               <span className="text-[10px] text-brand-red font-bold uppercase tracking-wider cyber-title">GOBIERNO de TI</span>
               <i className="fa-solid fa-scale-balanced text-brand-red text-sm"></i>
             </div>
-            <h3 className="text-2xl font-black text-slate-900 cyber-value">{digitalMaturityFinal}</h3>
-            <p className="text-[10px] text-slate-500 mt-1">Capacidad Crítica y Gobierno TI (ISO 38500)</p>
+            <h3 className="text-3xl font-black text-slate-900 cyber-value leading-none">{digitalMaturityFinal}</h3>
+            <div className="flex flex-col items-start gap-1.5 mt-3">
+              <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-red-50 text-brand-red border border-red-200 uppercase tracking-wider block w-fit font-mono">
+                {digitalMaturityLevel}
+              </span>
+              <p className="text-[10px] text-slate-500 font-medium">Capacidad Crítica y Gobierno TI (ISO 38500)</p>
+            </div>
           </div>
           <div className="w-full bg-slate-100 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-200/50">
             <div
@@ -278,8 +318,13 @@ export const IntegralDashboardView: React.FC = () => {
               <span className="text-[10px] text-cyan-600 font-bold uppercase tracking-wider cyber-title">Gobierno de Datos</span>
               <i className="fa-solid fa-database text-cyan-600 text-sm"></i>
             </div>
-            <h3 className="text-2xl font-black text-slate-900 cyber-value">{dataGov.dataMaturity}</h3>
-            <p className="text-[10px] text-slate-500 mt-1">Gobernanza de Contenido (DAMA-DMBOK2)</p>
+            <h3 className="text-3xl font-black text-slate-900 cyber-value leading-none">{dataGov.dataMaturity}</h3>
+            <div className="flex flex-col items-start gap-1.5 mt-3">
+              <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-600 border border-cyan-200 uppercase tracking-wider block w-fit font-mono">
+                {dataGov.dataMaturityLevel || getMaturityLevelName(dataGov.dataMaturity)}
+              </span>
+              <p className="text-[10px] text-slate-500 font-medium">Gobernanza de Contenido (DAMA-DMBOK2)</p>
+            </div>
           </div>
           <div className="w-full bg-slate-100 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-200/50">
             <div
@@ -296,8 +341,13 @@ export const IntegralDashboardView: React.FC = () => {
               <span className="text-[10px] text-purple-600 font-bold uppercase tracking-wider cyber-title">Gobierno de IA</span>
               <i className="fa-solid fa-robot text-purple-600 text-sm"></i>
             </div>
-            <h3 className="text-2xl font-black text-slate-900 cyber-value">{aiGov.aiMaturity}</h3>
-            <p className="text-[10px] text-slate-500 mt-1">Gobernanza Ética y Algoritmos (ISO 42001)</p>
+            <h3 className="text-3xl font-black text-slate-900 cyber-value leading-none">{aiGov.aiMaturity}</h3>
+            <div className="flex flex-col items-start gap-1.5 mt-3">
+              <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-purple-50 text-purple-600 border border-purple-200 uppercase tracking-wider block w-fit font-mono">
+                {aiGov.aiMaturityLevel || getMaturityLevelName(aiGov.aiMaturity)}
+              </span>
+              <p className="text-[10px] text-slate-500 font-medium">Gobernanza Ética y Algoritmos (ISO 42001)</p>
+            </div>
           </div>
           <div className="w-full bg-slate-100 h-2.5 rounded-full mt-4 overflow-hidden border border-slate-200/50">
             <div
@@ -404,6 +454,78 @@ export const IntegralDashboardView: React.FC = () => {
                 </div>
                 {renderValueSelector(dataGov.dataPrivacyCompliance, (val) => updateDataGov({ dataPrivacyCompliance: val }), true, 10, 100, 'cyan')}
               </div>
+
+              {/* DAMA ROADMAP CHECKLIST */}
+              <div className="border-t border-slate-100/80 pt-4 mt-2 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-[11px] font-extrabold text-cyan-700 uppercase tracking-wider font-mono">
+                    Hitos de Gobierno de Datos (DAMA-DMBOK2)
+                  </h5>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-800 font-extrabold font-mono">
+                    {
+                      (dataGov.dataReqCommittee ? 1 : 0) +
+                      (dataGov.dataReqAuditoria1581 ? 1 : 0) +
+                      (dataGov.dataReqDisenoDRP ? 1 : 0) +
+                      (dataGov.dataReqInventarioCriticidad ? 1 : 0) +
+                      (dataGov.dataReqPlanIntegracion ? 1 : 0) +
+                      (dataGov.dataReqGlosarioNegocio ? 1 : 0) +
+                      (dataGov.dataReqControlesDuplicidad ? 1 : 0) +
+                      (dataGov.dataReqAuditoriasCalidad ? 1 : 0)
+                    }/8 Entregables
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-500 leading-relaxed">
+                  Completa los entregables de la Hoja de Ruta DAMA de la Seccional para formalizar la gestión del activo de información e incrementar la madurez:
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+                  {[
+                    { key: 'dataReqCommittee', label: '1. Comité de Datos', desc: 'Constitución formal y directiva', tag: 'DAMA Gobierno' },
+                    { key: 'dataReqAuditoria1581', label: '2. Auditoría Ley 1581', desc: 'Evaluar base de datos HeVa (Sinc. Auditoría)', tag: 'MinTIC Legal' },
+                    { key: 'dataReqDisenoDRP', label: '3. Diseño DRP Cloud', desc: 'Blindaje ransomware (Sinc. Azure B2)', tag: 'ISO 22301' },
+                    { key: 'dataReqInventarioCriticidad', label: '4. Inventario Criticidad', desc: 'Activos en Hemocentro y Finanzas', tag: 'Metadatos' },
+                    { key: 'dataReqPlanIntegracion', label: '5. Plan de Integración API', desc: 'HeVa - Siesa 8.5 - Q-Symphony (Sinc. B3)', tag: 'HL7 / FHIR' },
+                    { key: 'dataReqGlosarioNegocio', label: '6. Glosario Único', desc: 'Términos unificados de la Seccional', tag: 'Semántica' },
+                    { key: 'dataReqControlesDuplicidad', label: '7. Controles Automatizados', desc: 'Anti-duplicados de donantes', tag: 'Calidad' },
+                    { key: 'dataReqAuditoriasCalidad', label: '8. Auditoría Calidad PETI', desc: 'Auditorías de calidad (Sinc. B8)', tag: 'PETI 2030' },
+                  ].map((req) => {
+                    const isChecked = dataGov[req.key as keyof typeof dataGov] as boolean;
+                    return (
+                      <div 
+                        key={req.key}
+                        onClick={() => updateDataGov({ [req.key]: !isChecked })}
+                        className={`flex items-start gap-2.5 p-2 rounded-xl border transition-all cursor-pointer select-none ${
+                          isChecked 
+                            ? 'bg-cyan-50/40 border-cyan-200 shadow-sm shadow-cyan-500/5' 
+                            : 'bg-white hover:bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border mt-0.5 transition-all ${
+                          isChecked 
+                            ? 'bg-cyan-600 border-cyan-600 text-white font-black' 
+                            : 'bg-slate-50 border-slate-300 text-transparent'
+                        }`}>
+                          <i className="fa-solid fa-check text-[9px]"></i>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className={`text-[10.5px] font-extrabold truncate ${isChecked ? 'text-cyan-900' : 'text-slate-700'}`}>
+                              {req.label}
+                            </span>
+                            <span className={`text-[7.5px] font-extrabold px-1 rounded font-mono ${
+                              isChecked ? 'bg-cyan-100 text-cyan-700 font-bold' : 'bg-slate-100 text-slate-400'
+                            }`}>
+                              {req.tag}
+                            </span>
+                          </div>
+                          <span className="text-[9px] text-slate-400 block truncate">{req.desc}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
 
             {/* DYNAMIC DAMA DATA GOVERNANCE TREND ANALYZER SECTION */}
@@ -553,6 +675,77 @@ export const IntegralDashboardView: React.FC = () => {
                 {renderValueSelector(aiGov.aiInventoryCount, (val) => updateAIGov({ aiInventoryCount: val }), false, 0, 5, 'purple')}
               </div>
 
+              {/* EU AI ACT COMPLIANCE CHECKLIST */}
+              <div className="border-t border-slate-100/80 pt-4 mt-2 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-[11px] font-extrabold text-purple-700 uppercase tracking-wider font-mono">
+                    Requisitos EU AI Act (Anexo III - Alto Riesgo)
+                  </h5>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-extrabold font-mono">
+                    {
+                      (aiGov.aiReqRiskManagement ? 1 : 0) +
+                      (aiGov.aiReqDataQuality ? 1 : 0) +
+                      (aiGov.aiReqTechnicalDoc ? 1 : 0) +
+                      (aiGov.aiReqLogging ? 1 : 0) +
+                      (aiGov.aiReqTransparency ? 1 : 0) +
+                      (aiGov.aiReqHumanOversight ? 1 : 0) +
+                      (aiGov.aiReqCybersecurity ? 1 : 0) +
+                      (aiGov.aiReqConformity ? 1 : 0)
+                    }/8 Requisitos
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-500 leading-relaxed">
+                  HemoAI Analytics procesa datos de salud y está sujeto a cumplimiento obligatorio bajo el Reglamento de la UE. Completa los requisitos para elevar la madurez institucional de forma segura:
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+                  {[
+                    { key: 'aiReqRiskManagement', label: '1. Sistema Gestión Riesgos', desc: 'Según NIST AI RMF', tag: 'NIST AI' },
+                    { key: 'aiReqDataQuality', label: '2. Gobierno de Datos', desc: 'Datos de entrenamiento (Sinc. B7)', tag: 'DAMA-DMBOK' },
+                    { key: 'aiReqTechnicalDoc', label: '3. Doc. Técnica Completa', desc: 'Modelo, arquitectura y entrenamiento', tag: 'ISO 42001' },
+                    { key: 'aiReqLogging', label: '4. Logging y Trazabilidad', desc: 'Auditoría automática de decisiones', tag: 'ITIL v4' },
+                    { key: 'aiReqTransparency', label: '5. Transparencia / Explicabilidad', desc: 'Explicar lógica de priorización', tag: 'ACM Ethics' },
+                    { key: 'aiReqHumanOversight', label: '6. Supervisión Humana', desc: 'Protocolo de validación clínica', tag: 'POL-IA-03' },
+                    { key: 'aiReqCybersecurity', label: '7. Ciberseguridad SOC', desc: 'Cifrado robusto y blindaje (Sinc. B1)', tag: 'ISO 27001' },
+                    { key: 'aiReqConformity', label: '8. Eval. de Conformidad', desc: 'Auditoría independiente pre-despliegue', tag: 'Pre-GoLive' },
+                  ].map((req) => {
+                    const isChecked = aiGov[req.key as keyof typeof aiGov] as boolean;
+                    return (
+                      <div 
+                        key={req.key}
+                        onClick={() => updateAIGov({ [req.key]: !isChecked })}
+                        className={`flex items-start gap-2.5 p-2 rounded-xl border transition-all cursor-pointer select-none ${
+                          isChecked 
+                            ? 'bg-purple-50/40 border-purple-200 shadow-sm shadow-purple-500/5' 
+                            : 'bg-white hover:bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border mt-0.5 transition-all ${
+                          isChecked 
+                            ? 'bg-purple-600 border-purple-600 text-white font-black' 
+                            : 'bg-slate-50 border-slate-300 text-transparent'
+                        }`}>
+                          <i className="fa-solid fa-check text-[9px]"></i>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className={`text-[10.5px] font-extrabold truncate ${isChecked ? 'text-purple-900' : 'text-slate-700'}`}>
+                              {req.label}
+                            </span>
+                            <span className={`text-[7.5px] font-extrabold px-1 rounded font-mono ${
+                              isChecked ? 'bg-purple-100 text-purple-700 font-bold' : 'bg-slate-100 text-slate-400'
+                            }`}>
+                              {req.tag}
+                            </span>
+                          </div>
+                          <span className="text-[9px] text-slate-400 block truncate">{req.desc}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -643,6 +836,19 @@ export const IntegralDashboardView: React.FC = () => {
                   <p className="text-red-400 font-bold">⚡ DIRECTIVA: Pausar de inmediato el despliegue automático MLOps.</p>
                 </div>
               )}
+
+              {/* Dynamic HemoAI Checklist and Compliance warnings */}
+              {(!aiGov.aiReqHumanOversight || !aiGov.aiReqCybersecurity || !aiGov.aiReqRiskManagement || !aiGov.aiReqConformity || aiGov.aiExplainability < 80 || aiGov.aiBiasAudit < 80) && (
+                <div className="p-2.5 bg-slate-900/50 border border-slate-800 text-[9.5px] font-mono leading-normal rounded-xl space-y-1 text-slate-300">
+                  <span className="text-[8.5px] font-bold text-amber-500 block uppercase">▲ ALERTAS DE CONFORMIDAD DE IA ACT:</span>
+                  {!aiGov.aiReqHumanOversight && <p className="text-amber-400 font-bold">🚨 ALERTA CLÍNICA: ¡Supervisión humana desactivada! (POL-IA-03).</p>}
+                  {!aiGov.aiReqCybersecurity && <p className="text-brand-red font-bold">🚨 BRECHA DE SEGURIDAD: Ciberseguridad SOC inactiva (POL-IA-05).</p>}
+                  {!aiGov.aiReqRiskManagement && <p className="text-amber-300">▲ NIST AI RMF: Sistema de gestión de riesgos no documentado.</p>}
+                  {!aiGov.aiReqConformity && <p className="text-amber-300">▲ AUDITORÍA: Evaluación de conformidad pre-despliegue pendiente.</p>}
+                  {aiGov.aiExplainability < 80 && <p className="text-purple-400">▲ TRANSPARENCY: Explicabilidad deficiente ({aiGov.aiExplainability}%). Integrar SHAP/LIME.</p>}
+                  {aiGov.aiBiasAudit < 80 && <p className="text-amber-400">▲ SESGO DE EQUIDAD: Sesgo demográfico detectado en Cali ({aiGov.aiBiasAudit}%).</p>}
+                </div>
+              )}
             </div>
 
             {/* DYNAMIC DATA GOVERNANCE DAMA SUBPANEL (Reacts directly to Data values) */}
@@ -651,22 +857,55 @@ export const IntegralDashboardView: React.FC = () => {
                 <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest cyber-title">
                   Consola de Gobierno de Datos (DAMA-DMBOK2)
                 </h5>
-                <span className="text-[8px] font-bold text-slate-400 font-mono">DAMA-Valle v1.0</span>
+                <span className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded border ${damaDetails.style}`}>
+                  {damaDetails.label}
+                </span>
               </div>
               
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl text-[9.5px] font-mono leading-normal space-y-1.5">
-                {dataGov.dataQuality >= 80 ? (
-                  <p className="text-emerald-400 font-medium">✓ Calidad HeVa-Siesa al ${dataGov.dataQuality}%. Operación con duplicidad al 0.5% en Cali.</p>
-                ) : (
-                  <p className="text-red-400 font-medium">✗ Silos HeVa-Siesa: Pérdida potencial en facturación por duplicados y datos incongruentes (${dataGov.dataQuality}% de calidad).</p>
-                )}
+              {/* Render ONLY the normal state logs */}
+              {dataGov.dataMaturity >= 4.0 && (
+                <div className="p-3 bg-emerald-950/20 border border-emerald-900/40 text-emerald-300 rounded-xl text-[9.5px] font-mono leading-normal space-y-1">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                    <span>DAMA STATUS: NORMAL (GOBERNANZA PLENA)</span>
+                  </div>
+                  <p>• Madurez = {dataGov.dataMaturity} / 5.0 (Óptimo, Fase 2 DAMA superada)</p>
+                  <p>• Calidad de Datos HeVa = {dataGov.dataQuality}% (Límite anti-duplicados activo)</p>
+                  <p>• Catálogo Anjana Data = {dataGov.dataCatalogedAssets}% (Metadatos e integraciones estables)</p>
+                  <p>• Cumplimiento Ley 1581 = {dataGov.dataPrivacyCompliance}% (Cifrado AES-256 habilitado)</p>
+                  <p className="text-emerald-400 italic">✓ Datos estables, linaje de datos verificado y listos para analítica de IA.</p>
+                </div>
+              )}
 
-                {dataGov.dataPrivacyCompliance >= 80 ? (
-                  <p className="text-emerald-400 font-medium">✓ Privacidad robusta (${dataGov.dataPrivacyCompliance}%). Consentimientos clínicos inmutables conformes a Ley 1581.</p>
-                ) : (
-                  <p className="text-amber-400 font-medium">⚠ Ley 1581: Consentimientos incompletos en historias HeVa. Riesgo de sanciones regulatorias de la SIC.</p>
-                )}
-              </div>
+              {/* Render ONLY the alerta/mejora state logs */}
+              {dataGov.dataMaturity >= 2.5 && dataGov.dataMaturity < 4.0 && (
+                <div className="p-3 bg-amber-950/20 border border-amber-900/40 text-amber-300 rounded-xl text-[9.5px] font-mono leading-normal space-y-1">
+                  <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+                    <span>DAMA STATUS: MEJORA REQUERIDA (PROCESO INFORMAL)</span>
+                  </div>
+                  <p>• Madurez = {dataGov.dataMaturity} / 5.0 (Reactivo, brecha de integración)</p>
+                  <p>• Calidad de Datos HeVa = {dataGov.dataQuality}% (Duplicados parciales en Cali)</p>
+                  <p>• Catálogo Anjana Data = {dataGov.dataCatalogedAssets}% (Inventario de criticidad pendiente)</p>
+                  <p>• Cumplimiento Ley 1581 = {dataGov.dataPrivacyCompliance}% (Fuga de consentimientos en HeVa)</p>
+                  <p className="text-amber-400 italic">⚠ Se sugiere activar el Plan de Integración HeVa-Siesa y controles anti-duplicidad.</p>
+                </div>
+              )}
+
+              {/* Render ONLY the critico state logs */}
+              {dataGov.dataMaturity < 2.5 && (
+                <div className="p-3 bg-red-950/30 border border-red-900/40 text-red-300 rounded-xl text-[9.5px] font-mono leading-normal space-y-1 animate-pulse">
+                  <div className="flex items-center gap-1.5 text-red-500 font-bold">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+                    <span>DAMA STATUS: CRITICAL SILOS (DESCONECTADO)</span>
+                  </div>
+                  <p>• Madurez = {dataGov.dataMaturity} / 5.0 (Falla crítica, silos operativos)</p>
+                  <p>• Calidad de Datos = {dataGov.dataQuality}% (Pérdida potencial en facturación de Cali)</p>
+                  <p>• Catálogo Anjana Data = {dataGov.dataCatalogedAssets}% (Fragmentación de metadatos)</p>
+                  <p>• Ley 1581 = {dataGov.dataPrivacyCompliance}% (Exposición de historias clínicas HeVa)</p>
+                  <p className="text-red-400 font-bold">⚡ DIRECTIVA DAMA: Constituir el Comité de Datos y auditar de inmediato la base HeVa.</p>
+                </div>
+              )}
             </div>
 
             {/* DYNAMIC AI SUGGESTIONS SUBPANEL (Fortalezas y Debilidades de la Gobernanza) */}
@@ -992,6 +1231,30 @@ export const IntegralDashboardView: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ======================= SAVE SETTINGS BANNER (Manual Save Checkpoint) ======================= */}
+      <div className="glass-panel p-5 rounded-2xl border border-slate-200/80 shadow-md bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
+        <div className="space-y-1">
+          <h4 className="text-sm font-black cyber-title uppercase tracking-wider text-slate-100 flex items-center gap-2">
+            <i className="fa-solid fa-cloud-arrow-up text-brand-red animate-pulse"></i>
+            Guardar Configuración de Gobernanza
+          </h4>
+          <p className="text-[10px] text-slate-400 max-w-xl">
+            Registra de forma persistente tu autodiagnóstico, hitos completados y ajustes de gobernanza como el último punto de control guardado. Se cargará de forma automática al abrir la aplicación.
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            saveCheckpoint();
+            triggerToast('Configuración y punto de control guardados correctamente.', 'Guardado Exitoso ✓');
+          }}
+          type="button"
+          className="flex items-center justify-center gap-2 text-xs font-black text-white bg-brand-red hover:bg-brand-red-neon hover:shadow-lg hover:shadow-brand-red/20 px-6 py-3 rounded-xl transition-all cursor-pointer select-none active:scale-95 shrink-0"
+        >
+          <i className="fa-solid fa-floppy-disk"></i>
+          Guardar Cambios
+        </button>
+      </div>
     </div>
   );
 };
