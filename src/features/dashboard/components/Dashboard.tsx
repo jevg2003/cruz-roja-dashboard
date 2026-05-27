@@ -4,8 +4,9 @@ import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import DashboardHeader from './DashboardHeader';
 import MetricStrip from './MetricStrip';
 import NavigationTabs from './NavigationTabs';
+import DashboardSwitcher from './DashboardSwitcher';
 
-// Subviews
+// Subviews (Dashboard 1)
 import DiagnosticConsole from '../../autodiagnostico/components/DiagnosticConsole';
 import BscMap from '../../bsc-map/components/BscMap';
 import FinancieroView from '../../financiero/components/FinancieroView';
@@ -15,14 +16,17 @@ import AprendizajeView from '../../aprendizaje/components/AprendizajeView';
 import GobernanzaView from '../../gobernanza/components/GobernanzaView';
 import PrescripcionView from '../../prescripcion/components/PrescripcionView';
 
+// Subviews (Dashboard 2)
+import IntegralDashboardView from '../../integral/components/IntegralDashboardView';
+
 const DashboardContent: React.FC = () => {
-  const { activeTab, toast, initialize } = useDashboard();
+  const { activeDashboard, activeTab, toast, initialize } = useDashboard();
 
   React.useEffect(() => {
     initialize();
   }, [initialize]);
 
-  // Dynamically render active tab view
+  // Dynamically render active tab view for Dashboard 1 (IT Governance)
   const renderActiveView = () => {
     switch (activeTab) {
       case 'autodiagnostico':
@@ -47,38 +51,35 @@ const DashboardContent: React.FC = () => {
   };
 
   return (
-    <div className="w-full px-4 md:px-8 py-6 max-w-7xl mx-auto space-y-6 relative">
+    <div className="w-full px-2 md:px-6 py-4 max-w-none space-y-6 relative">
       {/* 1. Header Section */}
       <DashboardHeader />
 
-      {/* 2. Unifying Top Metric Strip */}
-      <MetricStrip />
+      {/* 2. Switcher Selector (Pill Switcher) */}
+      <DashboardSwitcher />
 
-      {/* 3. Navigation Tabs */}
-      <NavigationTabs />
+      {/* 3. Conditional Dashboard Rendering with Fade-in Transition */}
+      <div key={activeDashboard} className="w-full animate-fadeIn transition-all duration-300">
+        {activeDashboard === 'strategic_ti' ? (
+          <>
+            {/* 3a. Unifying Top Metric Strip */}
+            <MetricStrip />
 
-      {/* 4. Active Viewport Content */}
-      <main className="w-full">
-        {renderActiveView()}
-      </main>
+            {/* 3b. Navigation Tabs */}
+            <NavigationTabs />
 
-      {/* 5. Custom Toast Notifications */}
-      {toast && (
-        <div
-          id="alert-toast"
-          className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-red-950/95 border-2 border-red-500/80 px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3.5 max-w-md animate-bounce"
-        >
-          <i className="fa-solid fa-bell text-red-500 text-xl animate-ping"></i>
-          <div>
-            <h5 className="text-xs font-bold text-slate-100 uppercase tracking-wider cyber-title">
-              {toast.title}
-            </h5>
-            <p className="text-[10px] text-slate-300 mt-1">
-              {toast.message}
-            </p>
-          </div>
-        </div>
-      )}
+            {/* 3c. Active Viewport Content */}
+            <main className="w-full">
+              {renderActiveView()}
+            </main>
+          </>
+        ) : (
+          /* Dashboard 2: Dashboard Estratégico Integral (TI + Datos + IA) */
+          <main className="w-full">
+            <IntegralDashboardView />
+          </main>
+        )}
+      </div>
     </div>
   );
 };
@@ -91,3 +92,4 @@ export const Dashboard: React.FC = () => {
   );
 };
 export default Dashboard;
+

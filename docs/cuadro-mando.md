@@ -40,7 +40,9 @@ graph TD
 ### A. Hemocentro (Servicio Crítico 24/7)
 * **Disponibilidad de Servicios**: Actualmente en **99.1%** (Meta: 99.8%). Cada 0.1% de caída por debajo de la meta representa pérdidas de confianza y recursos vitales.
 * **Trazabilidad de Hemocomponentes**: En **72%** (Meta: 100%). Se busca integrar mediante APIs el flujo del hemocomponente desde la donación hasta el despacho hospitalario.
+* **Predicción de Donación (HemoAI Analytics)**: Implementación de la solución de Machine Learning predictivo **HemoAI Analytics** para prever patrones de abastecimiento. Al clasificar como sistema de *Alto Riesgo* bajo el EU AI Act, se rige por las directivas éticas de la norma **ISO 42001:2023** y el monitoreo de desvío de datos (**Drift PSI**).
 * **Trámites Digitales**: Solo el **30%** de trámites y agendamientos son digitales. La meta para 2030 es alcanzar el **90%** mediante el proyecto de Portal Transaccional PSE.
+
 
 ### B. Instituto de Educación
 * **Progreso de Digitalización**: Actualmente en **0% (Falla / Riesgo Alto)**. El Instituto se encuentra bajo amenaza por sustitutos EdTech gratuitos. Requiere la activación urgente de un portal educativo con pasarela de pago PSE.

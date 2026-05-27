@@ -1,6 +1,8 @@
 // src/features/dashboard/types/index.ts
 import type { DiagnosticScores } from '../../diagnostic/types';
 
+export type DashboardType = 'strategic_ti' | 'integral_ti_datos_ia';
+
 export type TabType =
   | 'autodiagnostico'
   | 'mapa'
@@ -38,9 +40,28 @@ export interface TopKpis {
   ingresos_hemocentro: Metric;
 }
 
+export interface DataGovernanceState {
+  dataMaturity: number;
+  dataQuality: number;
+  dataCatalogedAssets: number;
+  dataPrivacyCompliance: number;
+}
+
+export interface AIGovernanceState {
+  aiMaturity: number;
+  aiExplainability: number;
+  aiBiasAudit: number;
+  aiDriftStatus: 'Normal' | 'Alerta' | 'Crítico';
+  aiInventoryCount: number;
+}
+
 export interface DashboardState {
+  activeDashboard: DashboardType;
   activeTab: TabType;
   decisions: Decisions;
   diagnosticScores: DiagnosticScores;
   toast: { message: string; title: string; visible: boolean } | null;
+  dataGov: DataGovernanceState;
+  aiGov: AIGovernanceState;
 }
+

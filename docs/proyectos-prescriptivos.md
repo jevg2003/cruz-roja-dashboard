@@ -35,8 +35,12 @@ Estas iniciativas se enfocan en mitigar riesgos catastróficos que amenazan de f
   *Causa:* Servidores físicos con más de 5 años y DRP no probado.  
   *Prescripción:* Un fallo físico de hardware en Cali paralizará la distribución de hemocomponentes. Se debe activar la retención inmutable a 90 días en la nube híbrida de Azure de forma urgente (plazo de implementación: 4 a 6 semanas).
 * **Establecer el Gobierno de Datos Institucional ($12M COP)**:  
-  *Causa:* Nivel de interoperabilidad deficiente.  
-  *Prescripción:* Sin un gobierno de datos formal no hay analítica posible ni cumplimiento de la Ley 1581 (MSPI). Debe iniciarse en Q1 2026.
+  *Causa:* Nivel de interoperabilidad deficiente en HeVa - Siesa 8.5.  
+  *Prescripción:* Sin un gobierno de datos formal (DAMA-DMBOK2) no hay analítica confiable ni cumplimiento de la Ley 1581 (MSPI). Debe iniciarse en Q1 2026.
+* **Gobernanza del Sistema Predictivo HemoAI Analytics (ISO 42001)**:  
+  *Causa:* Ejecución de modelos de Machine Learning en el Hemocentro sin controles formalizados de sesgo ni interpretabilidad (SHAP/LIME).  
+  *Prescripción:* El Comité de IA debe estructurar el Sistema de Gestión (SGAI) bajo la norma ISO 42001:2023, activando Fairlearn para auditar la equidad del modelo de priorización y evitar el desvío de datos (Drift PSI).
+
 
 ---
 

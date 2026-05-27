@@ -1,16 +1,20 @@
 // src/features/dashboard/store/useDashboardStore.ts
 import { create } from 'zustand';
-import type { TabType, Decisions } from '../types';
+import type { TabType, Decisions, DashboardType, DataGovernanceState, AIGovernanceState } from '../types';
 import type { DiagnosticScores } from '../../diagnostic/types';
+import type { DiagnosticScores as DiagnosticScoresType } from '../../diagnostic/types';
 
 export interface DashboardStoreState {
   // Primary State
+  activeDashboard: DashboardType;
   activeTab: TabType;
   decisions: Decisions;
   diagnosticScores: DiagnosticScores;
   toast: { message: string; title: string } | null;
+  dataGov: DataGovernanceState;
+  aiGov: AIGovernanceState;
 
-  // Derived/Computed State
+  // Derived/Computed State (Dashboard 1)
   computedMaturity: number;
   digitalMaturityFinal: number;
   totalCost: number;
@@ -38,9 +42,12 @@ export interface DashboardStoreState {
 
   // Actions
   initialize: () => void;
+  setActiveDashboard: (db: DashboardType) => void;
   setActiveTab: (tab: TabType) => void;
   updateScore: (key: keyof DiagnosticScores, score: number) => void;
   updateDecision: (key: keyof Decisions, value: boolean) => void;
+  updateDataGov: (data: Partial<DataGovernanceState>) => void;
+  updateAIGov: (ai: Partial<AIGovernanceState>) => void;
   resetState: () => void;
   triggerToast: (message: string, title?: string) => void;
   closeToast: () => void;
@@ -60,18 +67,33 @@ const defaultDecisions: Decisions = {
 
 const defaultDiagnosticScores: DiagnosticScores = {
   responsabilidad: 2,
-  conformidad: 2,
+  conformidad: 3,
   servidores: 2,
   backups: 2,
   interoperabilidad: 2,
-  canales_donantes: 2,
-  portal_educativo: 2,
-  apropiacion_digital: 2,
-  mesa_ayuda: 2,
-  convenios_makaia: 2,
+  canales_donantes: 3,
+  portal_educativo: 3,
+  apropiacion_digital: 3,
+  mesa_ayuda: 4,
+  convenios_makaia: 4,
 };
 
-// Calculations Engine
+const defaultDataGov: DataGovernanceState = {
+  dataMaturity: 2.4,
+  dataQuality: 72,
+  dataCatalogedAssets: 60,
+  dataPrivacyCompliance: 65,
+};
+
+const defaultAIGov: AIGovernanceState = {
+  aiMaturity: 1.8,
+  aiExplainability: 55,
+  aiBiasAudit: 50,
+  aiDriftStatus: 'Alerta',
+  aiInventoryCount: 3,
+};
+
+// Calculations Engine for Dashboard 1 (IT Governance)
 const computeDerivedState = (
   decisions: Decisions,
   diagnosticScores: DiagnosticScores
@@ -227,14 +249,50 @@ const computeDerivedState = (
   };
 };
 
+const computeDataMaturity = (dataQuality: number, dataCatalog: number, dataPrivacy: number) => {
+  return parseFloat(((dataQuality / 20) + (dataCatalog / 20) + (dataPrivacy / 20)) / 3).toFixed(1);
+};
+
+const computeAIMaturity = (aiExplain: number, aiBias: number, aiDrift: 'Normal' | 'Alerta' | 'Crítico') => {
+  const driftVal = aiDrift === 'Normal' ? 5 : aiDrift === 'Alerta' ? 3 : 1;
+  return parseFloat(((aiExplain / 20) + (aiBias / 20) + driftVal) / 3).toFixed(1);
+};
+
+// Pure recalculation helper (no sticky overrides)
+const syncGobernanzaWithDecisions = (
+  decisions: Decisions,
+  dataGov: DataGovernanceState,
+  aiGov: AIGovernanceState
+) => {
+  const nextData = { ...dataGov };
+  const nextAI = { ...aiGov };
+
+  nextData.dataMaturity = parseFloat(computeDataMaturity(
+    nextData.dataQuality,
+    nextData.dataCatalogedAssets,
+    nextData.dataPrivacyCompliance
+  ));
+
+  nextAI.aiMaturity = parseFloat(computeAIMaturity(
+    nextAI.aiExplainability,
+    nextAI.aiBiasAudit,
+    nextAI.aiDriftStatus
+  ));
+
+  return { nextData, nextAI };
+};
+
 const initialDerived = computeDerivedState(defaultDecisions, defaultDiagnosticScores);
 
 export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   // Primary state
+  activeDashboard: 'strategic_ti',
   activeTab: 'autodiagnostico',
   decisions: defaultDecisions,
   diagnosticScores: defaultDiagnosticScores,
   toast: null,
+  dataGov: defaultDataGov,
+  aiGov: defaultAIGov,
 
   // Derived state
   ...initialDerived,
@@ -245,15 +303,25 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     try {
       const savedDecs = localStorage.getItem('cruz_roja_decisions');
       const savedDiag = localStorage.getItem('cruz_roja_diagnostic');
+      const savedDash = localStorage.getItem('cruz_roja_active_dashboard') as DashboardType | null;
+      const savedData = localStorage.getItem('cruz_roja_datagov');
+      const savedAI = localStorage.getItem('cruz_roja_aigov');
 
       const loadedDecs = savedDecs ? JSON.parse(savedDecs) : defaultDecisions;
       const loadedDiag = savedDiag ? JSON.parse(savedDiag) : defaultDiagnosticScores;
+      const loadedDash = savedDash ? savedDash : 'strategic_ti';
+      const loadedData = savedData ? JSON.parse(savedData) : defaultDataGov;
+      const loadedAI = savedAI ? JSON.parse(savedAI) : defaultAIGov;
 
+      const { nextData, nextAI } = syncGobernanzaWithDecisions(loadedDecs, loadedData, loadedAI);
       const derived = computeDerivedState(loadedDecs, loadedDiag);
 
       set({
+        activeDashboard: loadedDash,
         decisions: loadedDecs,
         diagnosticScores: loadedDiag,
+        dataGov: nextData,
+        aiGov: nextAI,
         ...derived,
       });
     } catch (e) {
@@ -261,25 +329,44 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     }
   },
 
+  setActiveDashboard: (db: DashboardType) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cruz_roja_active_dashboard', db);
+    }
+    set({ activeDashboard: db });
+  },
+
   setActiveTab: (tab: TabType) => set({ activeTab: tab }),
 
   updateScore: (key: keyof DiagnosticScores, score: number) => {
-    const { diagnosticScores, decisions } = get();
+    const { diagnosticScores, decisions, dataGov, aiGov } = get();
     const nextScores = { ...diagnosticScores, [key]: score };
+    const nextData = { ...dataGov };
+    const nextAI = { ...aiGov };
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cruz_roja_diagnostic', JSON.stringify(nextScores));
+    // Sincronizar de forma directa D1 -> D2
+    if (key === 'interoperabilidad') {
+      nextData.dataQuality = score * 20;
+    }
+    if (key === 'conformidad') {
+      nextData.dataPrivacyCompliance = score * 20;
+    }
+    if (key === 'apropiacion_digital') {
+      nextAI.aiExplainability = score * 20;
+    }
+    if (key === 'responsabilidad') {
+      nextAI.aiBiasAudit = score * 20;
+    }
+    if (key === 'servidores') {
+      nextAI.aiDriftStatus = score >= 4 ? 'Normal' : score === 3 ? 'Alerta' : 'Crítico';
     }
 
-    // Auto-directives checklist updates based on score
+    // Recalcular decisiones de D1
     const nextDecs = { ...decisions };
-    
-    // Evaluar step 1 checklists
     nextDecs.audit_servidores = nextScores.servidores <= 3;
     nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3;
     nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
 
-    // Dirigir step 2 project checklists
     nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3;
     nextDecs.b2_azure = nextScores.servidores >= 3 && nextScores.backups >= 3;
     nextDecs.b3_api = nextScores.interoperabilidad >= 3;
@@ -287,8 +374,23 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     nextDecs.b7_datos = nextScores.interoperabilidad >= 4;
     nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3;
 
+    // Recalcular madurez en D2
+    nextData.dataMaturity = parseFloat(computeDataMaturity(
+      nextData.dataQuality,
+      nextData.dataCatalogedAssets,
+      nextData.dataPrivacyCompliance
+    ));
+    nextAI.aiMaturity = parseFloat(computeAIMaturity(
+      nextAI.aiExplainability,
+      nextAI.aiBiasAudit,
+      nextAI.aiDriftStatus
+    ));
+
     if (typeof window !== 'undefined') {
+      localStorage.setItem('cruz_roja_diagnostic', JSON.stringify(nextScores));
       localStorage.setItem('cruz_roja_decisions', JSON.stringify(nextDecs));
+      localStorage.setItem('cruz_roja_datagov', JSON.stringify(nextData));
+      localStorage.setItem('cruz_roja_aigov', JSON.stringify(nextAI));
     }
 
     const derived = computeDerivedState(nextDecs, nextScores);
@@ -296,23 +398,191 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     set({
       diagnosticScores: nextScores,
       decisions: nextDecs,
+      dataGov: nextData,
+      aiGov: nextAI,
       ...derived,
     });
   },
 
   updateDecision: (key: keyof Decisions, value: boolean) => {
-    const { decisions, diagnosticScores } = get();
+    const { decisions, diagnosticScores, dataGov, aiGov } = get();
     const nextDecs = { ...decisions, [key]: value };
+    const nextData = { ...dataGov };
+    const nextAI = { ...aiGov };
+    const nextScores = { ...diagnosticScores };
+
+    // Apply soft boosts ONLY when a decision is explicitly toggled by user
+    if (key === 'b7_datos') {
+      if (value) {
+        nextData.dataQuality = Math.max(nextData.dataQuality, 92);
+        nextData.dataCatalogedAssets = Math.max(nextData.dataCatalogedAssets, 95);
+        nextScores.interoperabilidad = 5;
+      } else {
+        nextData.dataQuality = Math.min(nextData.dataQuality, 60);
+        nextScores.interoperabilidad = 3;
+      }
+    }
+    if (key === 'b1_ciso') {
+      if (value) {
+        nextData.dataPrivacyCompliance = Math.max(nextData.dataPrivacyCompliance, 90);
+        nextScores.conformidad = 5;
+      } else {
+        nextData.dataPrivacyCompliance = Math.min(nextData.dataPrivacyCompliance, 40);
+        nextScores.conformidad = 2;
+      }
+    }
+    if (key === 'b8_capacitacion') {
+      if (value) {
+        nextAI.aiExplainability = Math.max(nextAI.aiExplainability, 85);
+        nextAI.aiBiasAudit = Math.max(nextAI.aiBiasAudit, 80);
+        nextScores.apropiacion_digital = 4;
+        nextScores.responsabilidad = 4;
+      } else {
+        nextAI.aiExplainability = Math.min(nextAI.aiExplainability, 40);
+        nextAI.aiBiasAudit = Math.min(nextAI.aiBiasAudit, 40);
+        nextScores.apropiacion_digital = 2;
+        nextScores.responsabilidad = 2;
+      }
+    }
+    if (key === 'b2_azure') {
+      if (value) {
+        nextAI.aiDriftStatus = 'Normal';
+        nextScores.servidores = 5;
+        nextScores.backups = Math.max(3, nextScores.backups);
+      } else {
+        nextAI.aiDriftStatus = 'Alerta';
+        nextScores.servidores = 3;
+      }
+    }
+
+    // Recalcular madurez en D2
+    nextData.dataMaturity = parseFloat(computeDataMaturity(
+      nextData.dataQuality,
+      nextData.dataCatalogedAssets,
+      nextData.dataPrivacyCompliance
+    ));
+    nextAI.aiMaturity = parseFloat(computeAIMaturity(
+      nextAI.aiExplainability,
+      nextAI.aiBiasAudit,
+      nextAI.aiDriftStatus
+    ));
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('cruz_roja_decisions', JSON.stringify(nextDecs));
+      localStorage.setItem('cruz_roja_datagov', JSON.stringify(nextData));
+      localStorage.setItem('cruz_roja_aigov', JSON.stringify(nextAI));
+      localStorage.setItem('cruz_roja_diagnostic', JSON.stringify(nextScores));
     }
 
-    const derived = computeDerivedState(nextDecs, diagnosticScores);
+    const derived = computeDerivedState(nextDecs, nextScores);
 
     set({
       decisions: nextDecs,
+      diagnosticScores: nextScores,
+      dataGov: nextData,
+      aiGov: nextAI,
       ...derived,
+    });
+  },
+
+  updateDataGov: (data: Partial<DataGovernanceState>) => {
+    const { dataGov, diagnosticScores, decisions } = get();
+    const nextDataGov = { ...dataGov, ...data };
+    const nextScores = { ...diagnosticScores };
+
+    // Sincronizar de forma directa D2 -> D1
+    if (data.dataQuality !== undefined) {
+      nextScores.interoperabilidad = Math.max(1, Math.min(5, Math.round(data.dataQuality / 20)));
+    }
+    if (data.dataPrivacyCompliance !== undefined) {
+      nextScores.conformidad = Math.max(1, Math.min(5, Math.round(data.dataPrivacyCompliance / 20)));
+    }
+
+    // Recalcular decisiones
+    const nextDecs = { ...decisions };
+    nextDecs.audit_servidores = nextScores.servidores <= 3;
+    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3;
+    nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
+
+    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3;
+    nextDecs.b2_azure = nextScores.servidores >= 3 && nextScores.backups >= 3;
+    nextDecs.b3_api = nextScores.interoperabilidad >= 3;
+    nextDecs.b5_portal = nextScores.canales_donantes >= 3 && nextScores.portal_educativo >= 3;
+    nextDecs.b7_datos = nextScores.interoperabilidad >= 4;
+    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3;
+
+    // Recalcular madurez de datos
+    nextDataGov.dataMaturity = parseFloat(computeDataMaturity(
+      nextDataGov.dataQuality,
+      nextDataGov.dataCatalogedAssets,
+      nextDataGov.dataPrivacyCompliance
+    ));
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cruz_roja_datagov', JSON.stringify(nextDataGov));
+      localStorage.setItem('cruz_roja_diagnostic', JSON.stringify(nextScores));
+      localStorage.setItem('cruz_roja_decisions', JSON.stringify(nextDecs));
+    }
+
+    const derived = computeDerivedState(nextDecs, nextScores);
+
+    set({ 
+      dataGov: nextDataGov,
+      diagnosticScores: nextScores,
+      decisions: nextDecs,
+      ...derived
+    });
+  },
+
+  updateAIGov: (ai: Partial<AIGovernanceState>) => {
+    const { aiGov, diagnosticScores, decisions } = get();
+    const nextAIGov = { ...aiGov, ...ai };
+    const nextScores = { ...diagnosticScores };
+
+    // Sincronizar de forma directa D2 -> D1
+    if (ai.aiExplainability !== undefined) {
+      nextScores.apropiacion_digital = Math.max(1, Math.min(5, Math.round(ai.aiExplainability / 20)));
+    }
+    if (ai.aiBiasAudit !== undefined) {
+      nextScores.responsabilidad = Math.max(1, Math.min(5, Math.round(ai.aiBiasAudit / 20)));
+    }
+    if (ai.aiDriftStatus !== undefined) {
+      nextScores.servidores = ai.aiDriftStatus === 'Normal' ? 5 : ai.aiDriftStatus === 'Alerta' ? 3 : 1;
+    }
+
+    // Recalcular decisiones
+    const nextDecs = { ...decisions };
+    nextDecs.audit_servidores = nextScores.servidores <= 3;
+    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3;
+    nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
+
+    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3;
+    nextDecs.b2_azure = nextScores.servidores >= 3 && nextScores.backups >= 3;
+    nextDecs.b3_api = nextScores.interoperabilidad >= 3;
+    nextDecs.b5_portal = nextScores.canales_donantes >= 3 && nextScores.portal_educativo >= 3;
+    nextDecs.b7_datos = nextScores.interoperabilidad >= 4;
+    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3;
+
+    // Recalcular madurez de IA
+    nextAIGov.aiMaturity = parseFloat(computeAIMaturity(
+      nextAIGov.aiExplainability,
+      nextAIGov.aiBiasAudit,
+      nextAIGov.aiDriftStatus
+    ));
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cruz_roja_aigov', JSON.stringify(nextAIGov));
+      localStorage.setItem('cruz_roja_diagnostic', JSON.stringify(nextScores));
+      localStorage.setItem('cruz_roja_decisions', JSON.stringify(nextDecs));
+    }
+
+    const derived = computeDerivedState(nextDecs, nextScores);
+
+    set({ 
+      aiGov: nextAIGov,
+      diagnosticScores: nextScores,
+      decisions: nextDecs,
+      ...derived
     });
   },
 
@@ -320,13 +590,19 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     if (typeof window !== 'undefined') {
       localStorage.removeItem('cruz_roja_decisions');
       localStorage.removeItem('cruz_roja_diagnostic');
+      localStorage.removeItem('cruz_roja_active_dashboard');
+      localStorage.removeItem('cruz_roja_datagov');
+      localStorage.removeItem('cruz_roja_aigov');
     }
 
     const derived = computeDerivedState(defaultDecisions, defaultDiagnosticScores);
 
     set({
+      activeDashboard: 'strategic_ti',
       decisions: defaultDecisions,
       diagnosticScores: defaultDiagnosticScores,
+      dataGov: defaultDataGov,
+      aiGov: defaultAIGov,
       ...derived,
     });
   },
@@ -337,3 +613,5 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
 
   closeToast: () => set({ toast: null }),
 }));
+
+
