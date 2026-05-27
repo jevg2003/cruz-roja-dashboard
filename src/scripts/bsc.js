@@ -1,5 +1,32 @@
 // bsc.js - Mapa Balance Scorecard e Interacciones Láser SVG (ISO 38500)
 
+// MAPEO NODO BSC → PRINCIPIOS ISO 38500
+const bscISOMapping = {
+  "f1":  ["actuacion", "conformidad"],
+  "f2":  ["adquisicion", "actuacion"],
+  "f3":  ["adquisicion"],
+  "a1":  ["comportamiento_humano", "estrategia"],
+  "a2":  ["responsabilidad", "conformidad"],
+  "a3":  ["estrategia", "comportamiento_humano"],
+  "p1":  ["adquisicion", "actuacion"],
+  "p2":  ["conformidad", "responsabilidad"],
+  "p3":  ["estrategia", "actuacion"],
+  "p4":  ["estrategia", "adquisicion"],
+  "c1":  ["actuacion", "conformidad"],
+  "c2":  ["conformidad", "responsabilidad"],
+  "c3":  ["estrategia", "comportamiento_humano"]
+};
+
+// Nombres y colores de principios para el tooltip
+const isoPrincipioMeta = {
+  responsabilidad:       { nombre: "Responsabilidad",       color: "text-cyan-400",   icon: "fa-user-shield" },
+  estrategia:            { nombre: "Estrategia",            color: "text-blue-400",   icon: "fa-chess" },
+  adquisicion:           { nombre: "Adquisición",           color: "text-purple-400", icon: "fa-cart-shopping" },
+  actuacion:             { nombre: "Actuación",             color: "text-emerald-400",icon: "fa-gauge-high" },
+  conformidad:           { nombre: "Conformidad",           color: "text-red-400",    icon: "fa-file-shield" },
+  comportamiento_humano: { nombre: "Comport. Humano",       color: "text-amber-400",  icon: "fa-people-group" }
+};
+
 // DETALLES Y AUDITORÍA DE OBJETIVOS ESTRATÉGICOS DEL BSC
 const bscObjectives = {
   "c1": { title: "Elevar experiencia del donante y disponibilidad Hemocentro 24/7", perspective: "Clientes y Beneficiarios", value: "99.1% disp.", target: "Meta: 99.8%", impact: "El Hemocentro representa el 60% de los ingresos totales de la organización ($771M COP). Su disponibilidad 24/7 es crítica para el abastecimiento hospitalario en el Valle.", action: "Aprobar Proyecto B2 (Azure) para garantizar migración, elevando la disponibilidad al 99.8% en la consola de dirección.", path: "R1 - Hemocentro" },
@@ -53,6 +80,46 @@ window.initBscInteractions = function() {
           activeVal = window.appState.perspectiva_procesos.kpis[2].value;
         }
         document.getElementById('details-value').textContent = activeVal;
+
+        // MEJORA 3: Mostrar principios ISO 38500 que respaldan este nodo
+        const isoPrincs = bscISOMapping[objId] || [];
+        const isoPrincEl = document.getElementById('details-iso-principles');
+        if (isoPrincEl) {
+          if (isoPrincs.length > 0) {
+            const scores = typeof window.calcPrincipioScores === 'function' ? window.calcPrincipioScores() : {};
+            isoPrincEl.innerHTML = `
+              <div class="mt-3 pt-2.5 border-t border-slate-800">
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-2 cyber-title">
+                  <i class="fa-solid fa-scale-balanced text-brand-red-neon mr-1"></i> Principios ISO 38500 que respaldan este objetivo:
+                </span>
+                <div class="flex flex-wrap gap-1.5">
+                  ${isoPrincs.map(pid => {
+                    const meta = isoPrincipioMeta[pid];
+                    if (!meta) return '';
+                    const sc = scores[pid] || 0;
+                    const pct = Math.round((sc / 5) * 100);
+                    const barCol = pct >= 70 ? 'bg-emerald-500' : pct >= 40 ? 'bg-amber-500' : 'bg-red-500';
+                    return `
+                      <div class="bg-slate-900/60 border border-slate-800 px-2 py-1.5 rounded-lg flex items-center gap-1.5 min-w-[120px]">
+                        <i class="fa-solid ${meta.icon} ${meta.color} text-[10px]"></i>
+                        <div class="flex-1 min-w-0">
+                          <span class="text-[9px] font-bold ${meta.color} block">${meta.nombre}</span>
+                          <div class="w-full bg-slate-800 h-1 rounded-full mt-0.5">
+                            <div class="${barCol} h-full rounded-full" style="width:${pct}%"></div>
+                          </div>
+                        </div>
+                        <span class="text-[8.5px] font-mono font-bold text-slate-400">${pct}%</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+            isoPrincEl.classList.remove('hidden');
+          } else {
+            isoPrincEl.classList.add('hidden');
+          }
+        }
 
         detailsBox.classList.remove('hidden');
         detailsBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

@@ -65,7 +65,7 @@ import '../styles/global.css';
         <main class="xl:col-span-8 space-y-6 w-full">
           
           <!-- TOP METRIC STRIP (Now wider and responsive) -->
-          <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
+          <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 w-full">
             <!-- Madurez Digital -->
             <div class="glass-panel p-4.5 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-madurez">
               <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Madurez Digital</span>
@@ -108,6 +108,14 @@ import '../styles/global.css';
               <div class="flex items-baseline gap-1 mt-1.5">
                 <span class="cyber-value text-3xl font-black text-emerald-400" id="strip-ingresos-val">$771M</span>
                 <span class="text-xs text-slate-500">COP</span>
+              </div>
+            </div>
+            <!-- MEJORA 5: Gobierno ISO 38500 (Score Global) -->
+            <div class="glass-panel p-4.5 rounded-xl border-b-2 border-red-500/50 flex flex-col justify-between" id="strip-iso38500">
+              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Gobierno ISO 38500</span>
+              <div class="flex items-baseline gap-1 mt-1.5">
+                <span class="cyber-value text-3xl font-black text-red-500" id="strip-iso38500-val">0.0</span>
+                <span class="text-xs text-slate-500">/5</span>
               </div>
             </div>
           </section>
@@ -505,6 +513,8 @@ import '../styles/global.css';
                       </div>
                     </div>
                   </div>
+                  <!-- MEJORA 3: Principios ISO 38500 vinculados al nodo BSC -->
+                  <div id="details-iso-principles" class="hidden"></div>
                 </div>
                 <div class="absolute -right-20 -bottom-20 w-44 h-44 bg-neon-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
               </div>
@@ -899,8 +909,47 @@ import '../styles/global.css';
                 </p>
               </div>
 
+              <!-- ======================================================= -->
+              <!-- MEJORA 1: 6 PRINCIPIOS ISO/IEC 38500:2024             -->
+              <!-- ======================================================= -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="cyber-title text-sm font-black text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-brand-red-neon"></i>
+                    Los 6 Principios ISO/IEC 38500:2024 — Cruz Roja Valle del Cauca
+                  </h4>
+                  <span class="text-[10px] text-slate-400 font-mono hidden sm:block">Calculado en tiempo real desde el Autodiagnóstico</span>
+                </div>
+                <!-- Grid de 6 tarjetas — poblado por renderPrincipiosISO() en charts.js -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="principios-iso-grid">
+                  <!-- Skeleton de carga -->
+                  <div class="glass-panel p-4 rounded-xl border border-slate-800/60 h-48 animate-pulse bg-slate-900/20"></div>
+                  <div class="glass-panel p-4 rounded-xl border border-slate-800/60 h-48 animate-pulse bg-slate-900/20"></div>
+                  <div class="glass-panel p-4 rounded-xl border border-slate-800/60 h-48 animate-pulse bg-slate-900/20"></div>
+                  <div class="glass-panel p-4 rounded-xl border border-slate-800/60 h-48 animate-pulse bg-slate-900/20"></div>
+                  <div class="glass-panel p-4 rounded-xl border border-slate-800/60 h-48 animate-pulse bg-slate-900/20"></div>
+                  <div class="glass-panel p-4 rounded-xl border border-slate-800/60 h-48 animate-pulse bg-slate-900/20"></div>
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- MEJORA 2: RADAR CHART ISO 38500 — 6 PRINCIPIOS          -->
+              <!-- ======================================================= -->
+              <div class="glass-panel p-5 rounded-2xl border-t-2 border-brand-red-neon shadow-lg bg-slate-950/20">
+                <div class="flex items-center justify-between border-b border-slate-800/60 pb-3 mb-4">
+                  <h4 class="cyber-title text-xs font-black text-brand-red-neon uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-chart-simple text-brand-red-neon"></i>
+                    Radar de Madurez ISO 38500 — 6 Principios
+                  </h4>
+                  <span class="text-[10px] text-slate-400 font-mono">Actualización en tiempo real al cambiar el diagnóstico</span>
+                </div>
+                <div class="relative" style="height: 320px;">
+                  <canvas id="chart-iso-radar"></canvas>
+                </div>
+              </div>
+
               <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-start">
-                
+
                 <!-- Left Sub-column: Directives checklist (3 columns) -->
                 <div class="lg:col-span-8 space-y-6">
                   

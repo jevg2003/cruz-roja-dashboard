@@ -386,6 +386,32 @@ window.recalculateAndRender = function() {
   if (typeof window.renderDashboard === 'function') {
     window.renderDashboard();
   }
+
+  // MEJORA 2: Renderizar el radar de los 6 principios ISO 38500
+  if (typeof window.renderISO38500RadarChart === 'function') {
+    window.renderISO38500RadarChart();
+  }
+
+  // MEJORA 1: Renderizar tarjetas de 6 principios ISO 38500
+  if (typeof window.renderPrincipiosISO === 'function') {
+    window.renderPrincipiosISO();
+  }
+
+  // MEJORA 5: Actualizar tile ISO 38500 Global en la barra superior de KPIs
+  if (typeof window.calcISO38500GlobalScore === 'function') {
+    const isoGlobal = window.calcISO38500GlobalScore();
+    const isoGlobalEl = document.getElementById('strip-iso38500-val');
+    const isoGlobalTile = document.getElementById('strip-iso38500');
+    if (isoGlobalEl) {
+      isoGlobalEl.textContent = isoGlobal.toFixed(1);
+      const colorClass = isoGlobal >= 3.5 ? 'text-emerald-400' : isoGlobal >= 2.0 ? 'text-amber-400' : 'text-red-500 animate-pulse';
+      isoGlobalEl.className = `cyber-value text-3xl font-black ${colorClass}`;
+    }
+    if (isoGlobalTile) {
+      const borderClass = isoGlobal >= 3.5 ? 'border-emerald-500/50' : isoGlobal >= 2.0 ? 'border-amber-500/50' : 'border-red-500/50';
+      isoGlobalTile.className = `glass-panel p-4.5 rounded-xl border-b-2 ${borderClass} flex flex-col justify-between`;
+    }
+  }
 };
 
 // Sincronizador de la interfaz con las variables de estado

@@ -247,70 +247,189 @@ window.updateQuestionScore = function(key, score) {
   window.updateDiagnosticRecommendations();
 };
 
-// CÁLCULO DE RECOMENDACIONES DICTADAS POR LA IA EN CALIENTE
+// CÁLCULO DE RECOMENDACIONES DICTADAS POR LA IA EN CALIENTE (MEJORA 4)
 window.updateDiagnosticRecommendations = function() {
   const recsBox = document.getElementById('diagnostic-ai-recommendations');
   if (!recsBox) return;
 
+  // --- 1. Score Global ISO 38500 por principios ponderados ---
+  const principioScores = typeof window.calcPrincipioScores === 'function'
+    ? window.calcPrincipioScores()
+    : null;
+
+  const globalISO = typeof window.calcISO38500GlobalScore === 'function'
+    ? window.calcISO38500GlobalScore()
+    : null;
+
+  // Fallback: promedio simple de las 10 preguntas
   let score = 0;
   const keys = Object.keys(window.diagnosticScores);
   keys.forEach(k => score += window.diagnosticScores[k]);
   const average = parseFloat((score / keys.length).toFixed(1));
 
+  const isoScore = globalISO !== null ? globalISO : average;
+
+  // --- 2. Identificar el principio más débil ---
+  let weakestPrincipio = null;
+  let weakestScore = Infinity;
+  const principioNames = {
+    responsabilidad:       "Responsabilidad",
+    estrategia:            "Estrategia",
+    adquisicion:           "Adquisición",
+    actuacion:             "Actuación",
+    conformidad:           "Conformidad",
+    comportamiento_humano: "Comportamiento Humano"
+  };
+  const principioCRMap = {
+    responsabilidad:       { principio: "Independencia · Unidad", accion: "Contratar CISO (Proyecto B1) y establecer el Comité de Gobierno TI." },
+    estrategia:            { principio: "Humanidad · Universalidad", accion: "Completar la interoperabilidad HL7/FHIR (B3) y el portal educativo (B5)." },
+    adquisicion:           { principio: "Independencia · Voluntariado", accion: "Gestionar convenio MAKAIA al 100% y priorizar adquisiciones con ROI humanitario." },
+    actuacion:             { principio: "Humanidad · Unidad", accion: "Implementar DRP en Azure (B2) y formalizar SLAs de soporte TI." },
+    conformidad:           { principio: "Imparcialidad · Neutralidad", accion: "Auditoría de datos personales + plan ISO 27001 al 90% antes de Q4 2026." },
+    comportamiento_humano: { principio: "Voluntariado · Humanidad", accion: "Aprobar Plan de Microaprendizaje vía Teams (B8) para médicos y voluntarios." }
+  };
+
+  if (principioScores) {
+    Object.entries(principioScores).forEach(([pid, val]) => {
+      if (val < weakestScore) {
+        weakestScore = val;
+        weakestPrincipio = pid;
+      }
+    });
+  }
+
+  // --- 3. Estado del ciclo EDM (Evaluar → Dirigir → Monitorear) ---
+  const evalTotal = 3;
+  const evalDone = [
+    window.decisions && window.decisions.audit_servidores,
+    window.decisions && window.decisions.audit_seguridad,
+    window.decisions && window.decisions.audit_procesos
+  ].filter(Boolean).length;
+
+  const dirTotal = 6;
+  const dirDone = [
+    window.decisions && window.decisions.b1_ciso,
+    window.decisions && window.decisions.b2_azure,
+    window.decisions && window.decisions.b3_api,
+    window.decisions && window.decisions.b5_portal,
+    window.decisions && window.decisions.b7_datos,
+    window.decisions && window.decisions.b8_capacitacion
+  ].filter(Boolean).length;
+
+  // Monitorear = promedio de scores >= 3
+  const monitorScore = average;
+  const monitorPct = Math.round((monitorScore / 5) * 100);
+
+  // --- 4. Generar alerta principal ---
   let alertText = "";
   let severity = "danger";
-  let recsList = [];
 
-  // Categorizar según promedio
-  if (average < 2.5) {
-    alertText = `🚨 **ESTADO CRÍTICO DE GOBIERNO TI (Madurez ${average}/5.0):** La Cruz Roja Valle se encuentra en zona de supervivencia operativa. La carencia de gobierno formal de seguridad (CISO) y la obsolescencia física ponen en alto riesgo de secuestro de datos clínicos e ingresos. **Se requiere dirigir directivas PETI urgentes en los próximos 90 días.**`;
+  if (isoScore < 2.5) {
+    alertText = `🚨 **ESTADO CRÍTICO DE GOBIERNO TI (ISO 38500: ${isoScore.toFixed(1)}/5.0):** La Cruz Roja Valle se encuentra en zona de supervivencia operativa. La carencia de gobierno formal de seguridad (CISO) y la obsolescencia física ponen en alto riesgo los datos clínicos e ingresos. **Se requiere dirigir directivas PETI urgentes en los próximos 90 días.**`;
     severity = "danger";
-  } else if (average < 4.0) {
-    alertText = `⚠️ **GOBERNANZA PARCIAL (Madurez ${average}/5.0):** Existen procesos de TI bien definidos (como convenios de ahorro y mesa de soporte básica), pero la digitalización de trámites no está integrada de manera segura. Hay debilidades en interoperabilidad de bases de datos. **Recomendación: migrar y proteger.**`;
+  } else if (isoScore < 4.0) {
+    alertText = `⚠️ **GOBERNANZA PARCIAL ISO 38500 (Score: ${isoScore.toFixed(1)}/5.0):** Existen procesos de TI bien definidos (convenios de ahorro y mesa de soporte básica), pero la digitalización de trámites no está integrada de manera segura. Hay debilidades en interoperabilidad. **Recomendación: migrar y proteger.**`;
     severity = "warning";
   } else {
-    alertText = `✅ **EXCELENCIA EN GOBIERNO TI (Madurez ${average}/5.0):** La Cruz Roja Seccional Valle se encuentra al día con el estándar ISO 38500 y mejores prácticas de COBIT. El Hemocentro está protegido, automatizado con n8n y posee convenios de ahorro Makaia renovados. **Gobernanza ejemplar y en mejora continua.**`;
+    alertText = `✅ **EXCELENCIA EN GOBIERNO TI ISO 38500 (Score: ${isoScore.toFixed(1)}/5.0):** La Cruz Roja Seccional Valle se encuentra al día con el estándar y mejores prácticas de COBIT. El Hemocentro está protegido, automatizado con n8n y posee convenios de ahorro Makaia renovados. **Gobernanza ejemplar y en mejora continua.**`;
     severity = "success";
   }
 
-  // Recomendaciones específicas causa-raíz
+  // --- 5. Recomendaciones por principio más débil y causa-raíz ---
+  let recsList = [];
+
+  if (weakestPrincipio && weakestScore < 3.5) {
+    const wName = principioNames[weakestPrincipio] || weakestPrincipio;
+    const wCR = principioCRMap[weakestPrincipio];
+    const wPct = Math.round((weakestScore / 5) * 100);
+    recsList.push(`⚠️ **Principio más débil: "${wName}" (${wPct}%)** — Vulnera el principio de **${wCR ? wCR.principio : ''}** de la Cruz Roja. Tiene implicaciones humanitarias directas. Acción: ${wCR ? wCR.accion : 'Revisar procesos de gobierno TI.'}`);
+  }
+
   if (window.diagnosticScores.responsabilidad <= 2 || window.diagnosticScores.conformidad <= 2) {
-    recsList.push("🛡️ **Ciberseguridad:** Contratar de inmediato al Oficial CISO y activar el SOC Valle (Proyecto B1) para blindarse contra ataques de Ransomware y evitar multas millonarias de Ley 1581.");
+    recsList.push("🛡️ **Conformidad/Responsabilidad en riesgo:** Solo el 45% de cumplimiento ISO 27001 vulnera el principio de Neutralidad: los datos de 646 usuarios, donantes y pacientes podrían ser comprometidos. Acción: Proyecto B1 CISO + SOC ($45M, Q2 2026).");
   }
   if (window.diagnosticScores.servidores <= 2 || window.diagnosticScores.backups <= 2) {
-    recsList.push("☁️ **Resiliencia Cloud:** Migrar HeVa de servidor físico obsoleto a Azure Cloud híbrido (Proyecto B2) y configurar backups inmutables DRP.");
+    recsList.push("☁️ **Actuación en riesgo:** Migrar HeVa de servidor físico obsoleto a Azure Cloud híbrido (Proyecto B2) y configurar backups inmutables DRP. Meta: disponibilidad 99.8%.");
   }
   if (window.diagnosticScores.interoperabilidad <= 2) {
-    recsList.push("🔗 **Interoperabilidad:** Desarrollar el API Gateway HL7/FHIR (Proyecto B3) para terminar con las islas de datos Siesa ↔ HeVa.");
+    recsList.push("🔗 **Estrategia en riesgo:** Desarrollar el API Gateway HL7/FHIR (Proyecto B3, $55M) para terminar con las islas de datos Siesa ↔ HeVa y habilitar el dato único del paciente.");
   }
   if (window.diagnosticScores.canales_donantes <= 2 || window.diagnosticScores.portal_educativo <= 2) {
-    recsList.push("📱 **Digitalización de Canales:** Ejecutar el plan transaccional PSE e inaugurar la App del Hemocentro (Proyecto B5) para retener alumnos del Instituto y captar donantes.");
+    recsList.push("📱 **Adquisición/Estrategia:** Ejecutar el plan transaccional PSE e inaugurar la App del Hemocentro (Proyecto B5) para retener alumnos del Instituto ($61M) y captar donantes.");
   }
   if (window.diagnosticScores.apropiacion_digital <= 2) {
-    recsList.push("🎓 **Adopción Digital:** Diseñar planes de microaprendizaje vía Teams (Proyecto B8) para capacitar en ciberseguridad al voluntariado de primera respuesta.");
+    recsList.push("🎓 **Comportamiento Humano:** Diseñar planes de microaprendizaje vía Teams (Proyecto B8, $15M) para capacitar en ciberseguridad al voluntariado. Meta: madurez 4.2/5.0.");
   }
 
   if (recsList.length === 0) {
     recsList.push("🚀 Todas las dimensiones del Gobierno TI operan con un excelente nivel de madurez. Continúe con auditorías periódicas y monitoreando SLA con triggers de n8n.");
   }
 
-  // Generar HTML de la alerta
-  let bgCol = "bg-red-950/20 border-red-900/40 text-red-450";
-  if (severity === "warning") bgCol = "bg-amber-950/20 border-amber-900/40 text-amber-405";
-  if (severity === "success") bgCol = "bg-emerald-950/20 border-emerald-900/40 text-emerald-405";
-
   // Parsear negritas de Markdown a HTML strong
   const formatText = text => text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
+  // --- 6. Colores según severidad ---
+  let bgCol = "bg-red-950/20 border-red-900/40 text-red-400";
+  if (severity === "warning") bgCol = "bg-amber-950/20 border-amber-900/40 text-amber-400";
+  if (severity === "success") bgCol = "bg-emerald-950/20 border-emerald-900/40 text-emerald-400";
+
+  const evalPct  = Math.round((evalDone / evalTotal) * 100);
+  const dirPct   = Math.round((dirDone / dirTotal) * 100);
+  const evalBar  = evalPct >= 67 ? 'bg-emerald-500' : evalPct >= 33 ? 'bg-amber-500' : 'bg-red-500';
+  const dirBar   = dirPct >= 67 ? 'bg-emerald-500' : dirPct >= 33 ? 'bg-amber-500' : 'bg-red-500';
+  const monBar   = monitorPct >= 67 ? 'bg-emerald-500' : monitorPct >= 33 ? 'bg-amber-500' : 'bg-red-500';
+
   recsBox.innerHTML = `
-    <div class="border p-5 rounded-2xl ${bgCol} shadow-inner bg-slate-950/25">
-      <p class="text-sm md:text-base leading-relaxed font-semibold">${formatText(alertText)}</p>
+    <!-- Alerta principal -->
+    <div class="border p-4 rounded-2xl ${bgCol} shadow-inner bg-slate-950/25">
+      <p class="text-sm leading-relaxed font-semibold">${formatText(alertText)}</p>
     </div>
-    <div class="space-y-4">
-      <h5 class="text-xs font-bold text-slate-300 uppercase tracking-wider cyber-title block mt-6">Plano de Acción IA Sugerido:</h5>
-      <ul class="text-sm text-slate-200 space-y-3">
+
+    <!-- Score global ISO 38500 -->
+    <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider cyber-title">Puntuación Global ISO 38500</span>
+        <span class="font-mono text-lg font-black ${severity === 'success' ? 'text-emerald-400' : severity === 'warning' ? 'text-amber-400' : 'text-red-500'}">${isoScore.toFixed(1)} <span class="text-xs text-slate-500">/ 5.0</span></span>
+      </div>
+      <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-700 ${severity === 'success' ? 'bg-emerald-500' : severity === 'warning' ? 'bg-amber-500' : 'bg-red-500'}" style="width: ${Math.round((isoScore/5)*100)}%"></div>
+      </div>
+    </div>
+
+    <!-- Ciclo EDM -->
+    <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-4 space-y-3">
+      <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider cyber-title block">Estado Ciclo Evaluar → Dirigir → Monitorear</span>
+      <div class="space-y-2">
+        <div>
+          <div class="flex justify-between text-[10px] font-bold mb-1">
+            <span class="text-cyan-400">1. EVALUAR (Auditorías)</span>
+            <span class="font-mono ${evalPct >= 67 ? 'text-emerald-400' : 'text-amber-400'}">${evalDone}/${evalTotal} — ${evalPct}%</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="h-full ${evalBar} rounded-full transition-all" style="width:${evalPct}%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-[10px] font-bold mb-1">
+            <span class="text-brand-red-neon">2. DIRIGIR (Proyectos PETI)</span>
+            <span class="font-mono ${dirPct >= 67 ? 'text-emerald-400' : 'text-amber-400'}">${dirDone}/${dirTotal} — ${dirPct}%</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="h-full ${dirBar} rounded-full transition-all" style="width:${dirPct}%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-[10px] font-bold mb-1">
+            <span class="text-neon-green">3. MONITOREAR (Madurez KPIs)</span>
+            <span class="font-mono ${monitorPct >= 67 ? 'text-emerald-400' : 'text-amber-400'}">${monitorPct}%</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="h-full ${monBar} rounded-full transition-all" style="width:${monitorPct}%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recomendaciones -->
+    <div class="space-y-3">
+      <h5 class="text-xs font-bold text-slate-300 uppercase tracking-wider cyber-title block">Plan de Acción por Principio ISO:</h5>
+      <ul class="text-sm text-slate-200 space-y-2.5">
         ${recsList.map(li => `
-          <li class="bg-slate-950/40 border border-slate-850 p-4.5 rounded-xl shadow-sm leading-relaxed">
+          <li class="bg-slate-950/40 border border-slate-850 p-3.5 rounded-xl shadow-sm leading-relaxed text-[11.5px]">
             ${formatText(li)}
           </li>
         `).join('')}

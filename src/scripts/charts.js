@@ -2,7 +2,296 @@
 
 window.charts = {
   income: null,
-  radar: null
+  radar: null,
+  isoRadar: null
+};
+
+// ============================================================
+// DEFINICIÓN DE LOS 6 PRINCIPIOS ISO/IEC 38500:2024
+// ============================================================
+const principiosISO38500Def = [
+  {
+    id: "responsabilidad",
+    nombre: "Responsabilidad",
+    icono: "fa-user-shield",
+    textColor: "text-cyan-400",
+    borderColor: "border-cyan-500/50",
+    bgColor: "bg-cyan-950/10",
+    barColor: "bg-cyan-500",
+    descripcion: "Roles y responsabilidades claras para TI en la organización.",
+    aplicacion_cr: "Designación formal del CISO, definición de roles en el PETI y gobernanza del Comité de TI de la Cruz Roja Valle.",
+    score_key: "responsabilidad",
+    kpi_key: "ciso_designado",
+    meta: "CISO designado + SOC activo Q2 2026",
+    principio_cr: "Independencia · Unidad",
+    valor_cr: "Justicia"
+  },
+  {
+    id: "estrategia",
+    nombre: "Estrategia",
+    icono: "fa-chess",
+    textColor: "text-blue-400",
+    borderColor: "border-blue-500/50",
+    bgColor: "bg-blue-950/10",
+    barColor: "bg-blue-500",
+    descripcion: "Estrategia de TI alineada con la estrategia empresarial.",
+    aplicacion_cr: "El PETI 2026–2030 alinea los 8 proyectos con la misión humanitaria. BSC con 3 rutas causales (Hemocentro, Ciberseguridad, Educación).",
+    score_key: "interoperabilidad",
+    kpi_key: "ejecucion_presupuesto",
+    meta: "Madurez digital 4.2/5.0 al 2030",
+    principio_cr: "Humanidad · Universalidad",
+    valor_cr: "Dignidad · Solidaridad"
+  },
+  {
+    id: "adquisicion",
+    nombre: "Adquisición",
+    icono: "fa-cart-shopping",
+    textColor: "text-purple-400",
+    borderColor: "border-purple-500/50",
+    bgColor: "bg-purple-950/10",
+    barColor: "bg-purple-500",
+    descripcion: "Decisiones de adquisición de TI válidas y transparentes.",
+    aplicacion_cr: "Convenio MAKAIA (ahorro 50–100% licencias), priorización de proyectos B1–B8 con criterios de ROI humanitario y presupuesto de $330M.",
+    score_key: "convenios_makaia",
+    kpi_key: "ejecucion_presupuesto",
+    meta: "Desviación presupuestal ≤ 10% en PETI",
+    principio_cr: "Independencia · Voluntariado",
+    valor_cr: "Justicia"
+  },
+  {
+    id: "actuacion",
+    nombre: "Actuación",
+    icono: "fa-gauge-high",
+    textColor: "text-emerald-400",
+    borderColor: "border-emerald-500/50",
+    bgColor: "bg-emerald-950/10",
+    barColor: "bg-emerald-500",
+    descripcion: "Idoneidad de TI para el propósito y soporte del negocio.",
+    aplicacion_cr: "Disponibilidad 24/7 del Hemocentro ($771M), SLA de servicios TI y nivel de satisfacción del personal médico y administrativo.",
+    score_key: "backups",
+    kpi_key: "disponibilidad_hemocentro",
+    meta: "Disponibilidad 99.8% y SLA 95%",
+    principio_cr: "Humanidad · Unidad · Voluntariado",
+    valor_cr: "Solidaridad · Igualdad"
+  },
+  {
+    id: "conformidad",
+    nombre: "Conformidad",
+    icono: "fa-file-shield",
+    textColor: "text-red-400",
+    borderColor: "border-red-500/50",
+    bgColor: "bg-red-950/10",
+    barColor: "bg-red-500",
+    descripcion: "Cumplimiento de leyes, reglamentos y políticas internas.",
+    aplicacion_cr: "Ley 1581 (protección datos pacientes/donantes), ISO 27001 (actualmente 45%), Decreto 767/2022 de Transformación Digital.",
+    score_key: "conformidad",
+    kpi_key: "iso_27001",
+    meta: "ISO 27001 al 90% en 2027",
+    principio_cr: "Imparcialidad · Neutralidad",
+    valor_cr: "Dignidad"
+  },
+  {
+    id: "comportamiento_humano",
+    nombre: "Comportamiento Humano",
+    icono: "fa-people-group",
+    textColor: "text-amber-400",
+    borderColor: "border-amber-500/50",
+    bgColor: "bg-amber-950/10",
+    barColor: "bg-amber-500",
+    descripcion: "Respeto por el comportamiento humano en las decisiones de TI.",
+    aplicacion_cr: "Programa de capacitación digital B8 ($15M), microaprendizaje con Teams para médicos y voluntarios, gestión del cambio.",
+    score_key: "apropiacion_digital",
+    kpi_key: "madurez_digital",
+    meta: "Madurez digital 4.2/5.0 y cero Shadow IT",
+    principio_cr: "Voluntariado · Humanidad",
+    valor_cr: "Igualdad · Solidaridad"
+  }
+];
+
+// ============================================================
+// HELPER: Calcular scores por principio (0-5)
+// ============================================================
+window.calcPrincipioScores = function() {
+  const ds = window.diagnosticScores || {};
+  const kpis = window.appState ? window.appState.top_kpis : null;
+
+  const cisoVal = kpis && kpis.ciso_designado.value === "SÍ" ? 5 : 0;
+  const isoVal  = kpis ? Math.min(5, (kpis.iso_27001.value / 100) * 5) : 0;
+  const uptimeVal = kpis ? Math.min(5, Math.max(0, (kpis.disponibilidad_hemocentro.value - 95) * (5 / 5))) : 0;
+  const presupVal = kpis ? Math.min(5, (kpis.ejecucion_presupuesto.value / 100) * 5) : 0;
+  const madurezVal = kpis ? Math.min(5, kpis.madurez_digital.value) : 0;
+
+  return {
+    responsabilidad:      parseFloat(((ds.responsabilidad || 0) * 0.7 + cisoVal * 0.3).toFixed(2)),
+    estrategia:           parseFloat((((ds.interoperabilidad || 0) + (ds.canales_donantes || 0) + (ds.portal_educativo || 0)) / 3 * 0.7 + presupVal * 0.3).toFixed(2)),
+    adquisicion:          parseFloat((((ds.servidores || 0) + (ds.convenios_makaia || 0)) / 2 * 0.7 + presupVal * 0.3).toFixed(2)),
+    actuacion:            parseFloat((((ds.backups || 0) + (ds.mesa_ayuda || 0)) / 2 * 0.7 + uptimeVal * 0.3).toFixed(2)),
+    conformidad:          parseFloat(((ds.conformidad || 0) * 0.7 + isoVal * 0.3).toFixed(2)),
+    comportamiento_humano: parseFloat(((ds.apropiacion_digital || 0) * 0.7 + madurezVal * 0.3).toFixed(2))
+  };
+};
+
+// ============================================================
+// HELPER: Score ISO 38500 Global (promedio de 6 principios)
+// ============================================================
+window.calcISO38500GlobalScore = function() {
+  const scores = window.calcPrincipioScores();
+  const vals = Object.values(scores);
+  return parseFloat((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2));
+};
+
+// ============================================================
+// MEJORA 1: Renderizar tarjetas de 6 Principios ISO 38500
+// ============================================================
+window.renderPrincipiosISO = function() {
+  const grid = document.getElementById('principios-iso-grid');
+  if (!grid) return;
+
+  const scores = window.calcPrincipioScores();
+
+  grid.innerHTML = principiosISO38500Def.map(p => {
+    const rawScore = scores[p.id] || 0;
+    const pct = Math.min(100, Math.round((rawScore / 5) * 100));
+
+    let badgeText, badgeCls;
+    if (pct >= 70) {
+      badgeText = 'CUMPLE';
+      badgeCls = 'bg-emerald-950/60 text-emerald-400 border-emerald-900/40';
+    } else if (pct >= 40) {
+      badgeText = 'EN PROCESO';
+      badgeCls = 'bg-amber-950/60 text-amber-400 border-amber-900/40';
+    } else {
+      badgeText = 'BRECHA';
+      badgeCls = 'bg-red-950/60 text-red-500 border-red-900/40';
+    }
+
+    const barColorClass = pct >= 70 ? 'bg-emerald-500' : pct >= 40 ? 'bg-amber-500' : 'bg-red-500';
+
+    return `
+      <div class="glass-panel p-4 rounded-xl ${p.bgColor} border ${p.borderColor} flex flex-col justify-between space-y-3 hover:scale-[1.01] transition-all duration-200">
+        <div>
+          <div class="flex justify-between items-start gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid ${p.icono} ${p.textColor} text-sm"></i>
+              <span class="text-xs font-black ${p.textColor} uppercase tracking-wider cyber-title">${p.nombre}</span>
+            </div>
+            <span class="text-[8.5px] font-bold px-1.5 py-0.5 rounded border ${badgeCls} uppercase flex-shrink-0">${badgeText}</span>
+          </div>
+          <p class="text-[10.5px] text-slate-400 leading-relaxed">${p.descripcion}</p>
+          <p class="text-[10px] text-slate-500 mt-1.5 leading-relaxed italic">${p.aplicacion_cr}</p>
+          <div class="mt-2 flex flex-wrap gap-1">
+            <span class="text-[8.5px] font-bold bg-red-950/40 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded">🔴 ${p.principio_cr}</span>
+            <span class="text-[8.5px] font-bold bg-slate-900/60 border border-slate-800 text-slate-400 px-1.5 py-0.5 rounded">${p.valor_cr}</span>
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-[9px] font-bold font-mono">
+            <span class="text-slate-400">Cumplimiento</span>
+            <span class="${p.textColor}">${rawScore.toFixed(1)} / 5.0 (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700 ${barColorClass}" style="width: ${pct}%"></div>
+          </div>
+          <span class="text-[9px] text-slate-500 font-mono block">Meta: ${p.meta}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+// ============================================================
+// MEJORA 2: Radar de los 6 Principios ISO 38500
+// ============================================================
+window.renderISO38500RadarChart = function() {
+  const canvas = document.getElementById('chart-iso-radar');
+  if (!canvas) return;
+  if (!window.diagnosticScores) return;
+
+  const scores = window.calcPrincipioScores();
+  const labels = ['Responsabilidad', 'Estrategia', 'Adquisición', 'Actuación', 'Conformidad', 'Comport. Humano'];
+  const dataValues = [
+    Math.round((scores.responsabilidad / 5) * 100),
+    Math.round((scores.estrategia / 5) * 100),
+    Math.round((scores.adquisicion / 5) * 100),
+    Math.round((scores.actuacion / 5) * 100),
+    Math.round((scores.conformidad / 5) * 100),
+    Math.round((scores.comportamiento_humano / 5) * 100)
+  ];
+
+  // Destruir chart anterior para evitar "Canvas already in use"
+  const existingChart = Chart.getChart(canvas);
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
+  const ctx = canvas.getContext('2d');
+  window.charts.isoRadar = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Madurez Actual 2026',
+          data: dataValues,
+          fill: true,
+          backgroundColor: 'rgba(200, 16, 46, 0.15)',
+          borderColor: 'rgba(200, 16, 46, 0.85)',
+          pointBackgroundColor: '#C8102E',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: '#C8102E',
+          pointRadius: 4,
+          borderWidth: 2
+        },
+        {
+          label: 'Meta ISO 38500 (100%)',
+          data: [100, 100, 100, 100, 100, 100],
+          fill: true,
+          backgroundColor: 'rgba(0, 230, 118, 0.04)',
+          borderColor: 'rgba(0, 230, 118, 0.45)',
+          pointBackgroundColor: '#00e676',
+          pointBorderColor: '#fff',
+          borderDash: [5, 4],
+          pointRadius: 3,
+          borderWidth: 1.5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#475569',
+            font: { family: 'Outfit', size: 10, weight: 'bold' },
+            padding: 16
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return ` ${context.dataset.label}: ${context.raw}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        r: {
+          grid: { color: 'rgba(15, 23, 42, 0.09)' },
+          angleLines: { color: 'rgba(15, 23, 42, 0.09)' },
+          pointLabels: {
+            color: '#334155',
+            font: { family: 'Outfit', size: 9, weight: 'bold' }
+          },
+          ticks: { display: false },
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  });
 };
 
 window.renderCharts = function() {
