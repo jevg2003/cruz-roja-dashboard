@@ -7,3 +7,4 @@
 * [4. Cuadro de Mando Integral (BSC)](cuadro-mando.md)
 * [5. Integración con n8n](integracion-n8n.md)
 * [6. Motor de Prescripción y FODA](proyectos-prescriptivos.md)
+* [7. Guardado Manual y Niveles de Madurez](guardado-manual-niveles.md)
