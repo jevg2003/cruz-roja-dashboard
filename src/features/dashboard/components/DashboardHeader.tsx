@@ -1,8 +1,22 @@
 // src/features/dashboard/components/DashboardHeader.tsx
 import React from 'react';
 
+const getSpanishDate = () => {
+  const months = [
+    "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+    "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+  ];
+  const date = new Date();
+  return `${months[date.getMonth()]} ${date.getFullYear()}`;
+};
+
 export const DashboardHeader: React.FC = () => {
   const syncTimeText = "Evaluación TI local: Activo";
+  const [currentDateText, setCurrentDateText] = React.useState(getSpanishDate);
+
+  React.useEffect(() => {
+    setCurrentDateText(getSpanishDate());
+  }, []);
 
   return (
     <header className="glass-panel rounded-2xl p-5 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-brand-red-neon shadow-lg w-full">
@@ -28,7 +42,12 @@ export const DashboardHeader: React.FC = () => {
       <div className="flex flex-col items-end text-right">
         <div className="flex items-center gap-2 bg-red-50 px-3.5 py-1.5 rounded-full border border-red-200 shadow-sm">
           <span className="w-2.5 h-2.5 bg-brand-red rounded-full animate-ping"></span>
-          <span className="text-xs font-mono font-bold tracking-widest text-brand-red cyber-title">ABRIL 2026</span>
+          <span 
+            className="text-xs font-mono font-bold tracking-widest text-brand-red cyber-title"
+            suppressHydrationWarning={true}
+          >
+            {currentDateText}
+          </span>
         </div>
         <span className="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-2" id="sync-status">
           {syncTimeText}

@@ -77,10 +77,19 @@ export const ProcesosView: React.FC = () => {
       id: "A2",
       name: "Sanciones Ley 1581 – Riesgo Legal",
       weight: "15% importancia",
-      description: "Datos de pacientes, donantes y estudiantes sin protección adecuada (solo 45% ISO 27001) expone a sanciones millonarias y daño reputacional.",
-      prescription: "Auditoría de datos personales + implementar MSPI + completar controles ISO 27001. Plazo: Q4 2026.",
+      description: "Datos de pacientes, donantes y estudiantes sin protección adecuada expone a sanciones de la SIC y daño reputacional.",
+      prescription: "Completar controles de acceso, enmascaramiento de datos clínicos y auditoría de seguridad. Plazo: Q4 2026.",
       status: "warning",
-      mitigated: decisions.audit_seguridad && decisions.b1_ciso
+      mitigated: decisions.audit_seguridad && decisions.b1_ciso && (diagnosticScores.seguridad_datos ?? 2) >= 3
+    },
+    {
+      id: "A5",
+      name: "Incumplimiento del AI Act (Regulación de IA)",
+      weight: "10% importancia",
+      description: "Operar HemoAI Analytics sin supervisión humana, comité ético o registro de riesgos infringe las regulaciones del AI Act (Anexo III).",
+      prescription: "Aprobar auditoría de IA, formalizar el Comité de Gobernanza y habilitar protocolo de validación humana. Plazo: Q1 2027.",
+      status: "danger",
+      mitigated: decisions.audit_ia && decisions.b8_capacitacion && (diagnosticScores.supervision_humana_ia ?? 2) >= 3 && (diagnosticScores.comite_inventario_ia ?? 1) >= 3
     },
     {
       id: "A4",

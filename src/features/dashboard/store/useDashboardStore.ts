@@ -13,6 +13,13 @@ export interface DashboardStoreState {
   toast: { message: string; title: string } | null;
   dataGov: DataGovernanceState;
   aiGov: AIGovernanceState;
+  aiResponses: {
+    general: string | null;
+    seguridad: string | null;
+    datos: string | null;
+    ia: string | null;
+  };
+  lastAIRequestTime: number | null;
 
   // Derived/Computed State (Dashboard 1)
   computedMaturity: number;
@@ -55,6 +62,8 @@ export interface DashboardStoreState {
   resetState: () => void;
   triggerToast: (message: string, title?: string) => void;
   closeToast: () => void;
+  setAIResponse: (focus: 'general' | 'seguridad' | 'datos' | 'ia', response: string | null) => void;
+  setLastAIRequestTime: (time: number) => void;
 }
 
 export const getMaturityLevelName = (score: number): string => {
@@ -70,6 +79,8 @@ const defaultDecisions: Decisions = {
   audit_servidores: false,
   audit_seguridad: false,
   audit_procesos: false,
+  audit_datos: false,
+  audit_ia: false,
   b1_ciso: false,
   b2_azure: false,
   b3_api: false,
@@ -89,6 +100,17 @@ const defaultDiagnosticScores: DiagnosticScores = {
   apropiacion_digital: 3,
   mesa_ayuda: 4,
   convenios_makaia: 4,
+  soporte_ejecutivo: 2,
+  entrega_servicios: 2,
+  planificacion_estrategica: 2,
+  roles_datos: 2,
+  datos_maestros: 2,
+  calidad_datos: 2,
+  seguridad_datos: 2,
+  comite_inventario_ia: 1,
+  transparencia_explicabilidad_ia: 2,
+  equidad_monitoreo_sesgos: 2,
+  supervision_humana_ia: 2,
 };
 
 const defaultDataGov: DataGovernanceState = {
@@ -124,6 +146,13 @@ const defaultAIGov: AIGovernanceState = {
   aiReqConformity: false,         // 8. Evaluación de conformidad pre-despliegue
 };
 
+const defaultAIResponses = {
+  general: null,
+  seguridad: null,
+  datos: null,
+  ia: null,
+};
+
 // Calculations Engine for Dashboard 1 (IT Governance)
 const computeDerivedState = (
   decisions: Decisions,
@@ -131,12 +160,26 @@ const computeDerivedState = (
   dataMaturity = 2.4,
   aiMaturity = 1.8
 ) => {
-  // A. Computed digital maturity from diagnostics
-  const scoreKeys = Object.keys(diagnosticScores) as (keyof DiagnosticScores)[];
-  const totalScoresSum = scoreKeys.reduce((acc, key) => acc + ((diagnosticScores[key] as number) ?? 2), 0);
-  let computedMaturity = parseFloat((totalScoresSum / scoreKeys.length).toFixed(1));
+  // A. Computed digital maturity from diagnostics (IT Governance keys only to prevent double counting)
+  const itKeys: (keyof DiagnosticScores)[] = [
+    'responsabilidad',
+    'conformidad',
+    'servidores',
+    'backups',
+    'interoperabilidad',
+    'canales_donantes',
+    'portal_educativo',
+    'apropiacion_digital',
+    'mesa_ayuda',
+    'convenios_makaia',
+    'soporte_ejecutivo',
+    'entrega_servicios',
+    'planificacion_estrategica'
+  ];
+  const totalScoresSum = itKeys.reduce((acc, key) => acc + ((diagnosticScores[key] as number) ?? 2), 0);
+  let computedMaturity = parseFloat((totalScoresSum / itKeys.length).toFixed(1));
 
-  // B. Budget execution spent calculation
+  // B. Budget execution spent calculation (Projects + Required Audits)
   let totalCost = 60; // vigentes
   if (decisions.b1_ciso) totalCost += 45;
   if (decisions.b2_azure) totalCost += 80;
@@ -144,6 +187,13 @@ const computeDerivedState = (
   if (decisions.b5_portal) totalCost += 75;
   if (decisions.b7_datos) totalCost += 12;
   if (decisions.b8_capacitacion) totalCost += 15;
+
+  // Add audit costs if required (penalizes poor governance)
+  if (decisions.audit_servidores) totalCost += 5;
+  if (decisions.audit_seguridad) totalCost += 8;
+  if (decisions.audit_procesos) totalCost += 5;
+  if (decisions.audit_datos) totalCost += 10;
+  if (decisions.audit_ia) totalCost += 12;
 
   const budgetPercent = Math.round((totalCost / 330) * 100);
 
@@ -225,7 +275,12 @@ const computeDerivedState = (
   }
 
   // J. ISO 38500 Directive Rating
-  const totalEvaluations = (decisions.audit_servidores ? 1 : 0) + (decisions.audit_seguridad ? 1 : 0) + (decisions.audit_procesos ? 1 : 0);
+  const totalEvaluations = 
+    (decisions.audit_servidores ? 1 : 0) + 
+    (decisions.audit_seguridad ? 1 : 0) + 
+    (decisions.audit_procesos ? 1 : 0) + 
+    (decisions.audit_datos ? 1 : 0) + 
+    (decisions.audit_ia ? 1 : 0);
   const totalDirections = (decisions.b1_ciso ? 1 : 0) + (decisions.b2_azure ? 1 : 0) + (decisions.b3_api ? 1 : 0) + (decisions.b5_portal ? 1 : 0) + (decisions.b7_datos ? 1 : 0) + (decisions.b8_capacitacion ? 1 : 0);
 
   let directiveRating = 'EVALUANDO';
@@ -413,6 +468,8 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   toast: null,
   dataGov: defaultDataGov,
   aiGov: defaultAIGov,
+  aiResponses: defaultAIResponses,
+  lastAIRequestTime: null,
 
   // Derived state
   ...initialDerived,
@@ -437,12 +494,16 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       const savedDash = localStorage.getItem('cruz_roja_active_dashboard') as DashboardType | null;
       const savedData = localStorage.getItem('cruz_roja_datagov');
       const savedAI = localStorage.getItem('cruz_roja_aigov');
+      const savedAIResponses = localStorage.getItem('cruz_roja_ai_responses');
+      const savedLastAIRequestTime = localStorage.getItem('cruz_roja_last_ai_request_time');
 
       const loadedDecs = savedDecs ? JSON.parse(savedDecs) : defaultDecisions;
       const loadedDiag = savedDiag ? JSON.parse(savedDiag) : defaultDiagnosticScores;
       const loadedDash = savedDash ? savedDash : 'strategic_ti';
       const loadedData = savedData ? JSON.parse(savedData) : defaultDataGov;
       const loadedAI = savedAI ? JSON.parse(savedAI) : defaultAIGov;
+      const loadedAIResponses = savedAIResponses ? JSON.parse(savedAIResponses) : defaultAIResponses;
+      const loadedLastAIRequestTime = savedLastAIRequestTime ? Number(savedLastAIRequestTime) : null;
 
       const { nextData, nextAI } = syncGobernanzaWithDecisions(loadedDecs, loadedData, loadedAI);
       const derived = computeDerivedState(loadedDecs, loadedDiag, nextData.dataMaturity, nextAI.aiMaturity);
@@ -453,6 +514,8 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
         diagnosticScores: loadedDiag,
         dataGov: nextData,
         aiGov: nextAI,
+        aiResponses: loadedAIResponses,
+        lastAIRequestTime: loadedLastAIRequestTime,
         ...derived,
       });
     } catch (e) {
@@ -475,7 +538,7 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     const nextData = { ...dataGov };
     const nextAI = { ...aiGov };
 
-    // Sincronizar de forma directa D1 -> D2
+    // Sincronizar de forma directa D1 -> D2 (incluye los originales para compatibilidad y los nuevos dedicados)
     if (key === 'interoperabilidad') {
       nextData.dataQuality = score * 20;
     }
@@ -492,18 +555,60 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       nextAI.aiDriftStatus = score >= 4 ? 'Normal' : score === 3 ? 'Alerta' : 'Crítico';
     }
 
+    // Nuevos mapeos específicos
+    if (key === 'calidad_datos') {
+      nextData.dataQuality = score * 20;
+    }
+    if (key === 'seguridad_datos') {
+      nextData.dataPrivacyCompliance = score * 20;
+    }
+    if (key === 'transparencia_explicabilidad_ia') {
+      nextAI.aiExplainability = score * 20;
+    }
+    if (key === 'equidad_monitoreo_sesgos') {
+      nextAI.aiBiasAudit = score * 20;
+    }
+    if (key === 'roles_datos') {
+      nextData.dataReqCommittee = score >= 3;
+    }
+    if (key === 'datos_maestros') {
+      nextData.dataReqGlosarioNegocio = score >= 3;
+      nextData.dataReqControlesDuplicidad = score >= 3;
+    }
+    if (key === 'comite_inventario_ia') {
+      nextAI.aiInventoryCount = score;
+      nextAI.aiReqRiskManagement = score >= 3;
+    }
+    if (key === 'supervision_humana_ia') {
+      nextAI.aiReqHumanOversight = score >= 3;
+    }
+    if (key === 'planificacion_estrategica') {
+      nextData.dataReqInventarioCriticidad = score >= 3;
+      nextAI.aiReqTechnicalDoc = score >= 3;
+    }
+    if (key === 'entrega_servicios') {
+      nextAI.aiReqLogging = score >= 3;
+    }
+
     // Recalcular decisiones de D1
     const nextDecs = { ...decisions };
     nextDecs.audit_servidores = nextScores.servidores <= 3;
-    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3;
+    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3 || nextScores.seguridad_datos <= 3;
     nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
 
-    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3;
+    // Auditorías requeridas automáticas de Datos e IA cuando el promedio sea < 3
+    const averageDataGov = (nextScores.roles_datos + nextScores.datos_maestros + nextScores.calidad_datos + nextScores.seguridad_datos) / 4;
+    nextDecs.audit_datos = averageDataGov < 3.0;
+
+    const averageAIGov = (nextScores.comite_inventario_ia + nextScores.transparencia_explicabilidad_ia + nextScores.equidad_monitoreo_sesgos + nextScores.supervision_humana_ia) / 4;
+    nextDecs.audit_ia = averageAIGov < 3.0;
+
+    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3 && nextScores.seguridad_datos >= 3;
     nextDecs.b2_azure = nextScores.servidores >= 3 && nextScores.backups >= 3;
-    nextDecs.b3_api = nextScores.interoperabilidad >= 3;
+    nextDecs.b3_api = nextScores.interoperabilidad >= 3 || nextScores.datos_maestros >= 3;
     nextDecs.b5_portal = nextScores.canales_donantes >= 3 && nextScores.portal_educativo >= 3;
-    nextDecs.b7_datos = nextScores.interoperabilidad >= 4;
-    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3;
+    nextDecs.b7_datos = nextScores.interoperabilidad >= 4 || nextScores.roles_datos >= 3;
+    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3 || nextScores.supervision_humana_ia >= 3;
 
     // Recalcular madurez en D2
     nextData.dataMaturity = parseFloat(computeDataMaturity(
@@ -554,24 +659,30 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     const nextAI = { ...aiGov };
     const nextScores = { ...diagnosticScores };
 
-    // Apply soft boosts ONLY when a decision is explicitly toggled by user
+    // Aplicar boosts suaves sólo cuando el usuario activa/desactiva decisiones de forma explícita
     if (key === 'b7_datos') {
       if (value) {
         nextData.dataQuality = Math.max(nextData.dataQuality, 92);
         nextData.dataCatalogedAssets = Math.max(nextData.dataCatalogedAssets, 95);
         nextScores.interoperabilidad = 5;
+        nextScores.roles_datos = 5;
+        nextScores.calidad_datos = 5;
       } else {
         nextData.dataQuality = Math.min(nextData.dataQuality, 60);
         nextScores.interoperabilidad = 3;
+        nextScores.roles_datos = 2;
+        nextScores.calidad_datos = 2;
       }
     }
     if (key === 'b1_ciso') {
       if (value) {
         nextData.dataPrivacyCompliance = Math.max(nextData.dataPrivacyCompliance, 90);
         nextScores.conformidad = 5;
+        nextScores.seguridad_datos = 5;
       } else {
         nextData.dataPrivacyCompliance = Math.min(nextData.dataPrivacyCompliance, 40);
         nextScores.conformidad = 2;
+        nextScores.seguridad_datos = 2;
       }
     }
     if (key === 'b8_capacitacion') {
@@ -580,11 +691,15 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
         nextAI.aiBiasAudit = Math.max(nextAI.aiBiasAudit, 80);
         nextScores.apropiacion_digital = 4;
         nextScores.responsabilidad = 4;
+        nextScores.supervision_humana_ia = 4;
+        nextScores.transparencia_explicabilidad_ia = 4;
       } else {
         nextAI.aiExplainability = Math.min(nextAI.aiExplainability, 40);
         nextAI.aiBiasAudit = Math.min(nextAI.aiBiasAudit, 40);
         nextScores.apropiacion_digital = 2;
         nextScores.responsabilidad = 2;
+        nextScores.supervision_humana_ia = 2;
+        nextScores.transparencia_explicabilidad_ia = 2;
       }
     }
     if (key === 'b2_azure') {
@@ -616,6 +731,18 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
     if (key === 'b8_capacitacion') {
       nextData.dataReqAuditoriasCalidad = value;
     }
+
+    // Recalcular decisiones
+    nextDecs.audit_servidores = nextScores.servidores <= 3;
+    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3 || nextScores.seguridad_datos <= 3;
+    nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
+
+    // Auditorías requeridas automáticas de Datos e IA cuando el promedio sea < 3
+    const averageDataGov = (nextScores.roles_datos + nextScores.datos_maestros + nextScores.calidad_datos + nextScores.seguridad_datos) / 4;
+    nextDecs.audit_datos = averageDataGov < 3.0;
+
+    const averageAIGov = (nextScores.comite_inventario_ia + nextScores.transparencia_explicabilidad_ia + nextScores.equidad_monitoreo_sesgos + nextScores.supervision_humana_ia) / 4;
+    nextDecs.audit_ia = averageAIGov < 3.0;
 
     // Recalcular madurez en D2
     nextData.dataMaturity = parseFloat(computeDataMaturity(
@@ -686,25 +813,40 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       nextDecs.b8_capacitacion = data.dataReqAuditoriasCalidad;
     }
 
-    // Sincronizar de forma directa D2 -> D1 sliders
+    // Sincronizar de forma directa D2 -> D1 sliders y checkboxes
     if (data.dataQuality !== undefined) {
       nextScores.interoperabilidad = Math.max(1, Math.min(5, Math.round(data.dataQuality / 20)));
+      nextScores.calidad_datos = Math.max(1, Math.min(5, Math.round(data.dataQuality / 20)));
     }
     if (data.dataPrivacyCompliance !== undefined) {
       nextScores.conformidad = Math.max(1, Math.min(5, Math.round(data.dataPrivacyCompliance / 20)));
+      nextScores.seguridad_datos = Math.max(1, Math.min(5, Math.round(data.dataPrivacyCompliance / 20)));
+    }
+    if (data.dataReqCommittee !== undefined) {
+      nextScores.roles_datos = data.dataReqCommittee ? 5 : 2;
+    }
+    if (data.dataReqGlosarioNegocio !== undefined) {
+      nextScores.datos_maestros = data.dataReqGlosarioNegocio ? 5 : 2;
     }
 
     // Recalcular decisiones
     nextDecs.audit_servidores = nextScores.servidores <= 3;
-    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3;
+    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3 || nextScores.seguridad_datos <= 3;
     nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
 
-    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3;
+    // Auditorías requeridas automáticas de Datos e IA cuando el promedio sea < 3
+    const averageDataGov = (nextScores.roles_datos + nextScores.datos_maestros + nextScores.calidad_datos + nextScores.seguridad_datos) / 4;
+    nextDecs.audit_datos = averageDataGov < 3.0;
+
+    const averageAIGov = (nextScores.comite_inventario_ia + nextScores.transparencia_explicabilidad_ia + nextScores.equidad_monitoreo_sesgos + nextScores.supervision_humana_ia) / 4;
+    nextDecs.audit_ia = averageAIGov < 3.0;
+
+    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3 && nextScores.seguridad_datos >= 3;
     nextDecs.b2_azure = nextScores.servidores >= 3 && nextScores.backups >= 3;
-    nextDecs.b3_api = nextScores.interoperabilidad >= 3;
+    nextDecs.b3_api = nextScores.interoperabilidad >= 3 || nextScores.datos_maestros >= 3;
     nextDecs.b5_portal = nextScores.canales_donantes >= 3 && nextScores.portal_educativo >= 3;
-    nextDecs.b7_datos = nextScores.interoperabilidad >= 4;
-    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3;
+    nextDecs.b7_datos = nextScores.interoperabilidad >= 4 || nextScores.roles_datos >= 3;
+    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3 || nextScores.supervision_humana_ia >= 3;
 
     // Recalcular madurez de datos
     nextDataGov.dataMaturity = parseFloat(computeDataMaturity(
@@ -746,9 +888,13 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
         nextData.dataQuality = Math.max(nextData.dataQuality, 92);
         nextData.dataCatalogedAssets = Math.max(nextData.dataCatalogedAssets, 95);
         nextScores.interoperabilidad = 5;
+        nextScores.roles_datos = 5;
+        nextScores.calidad_datos = 5;
       } else {
         nextData.dataQuality = Math.min(nextData.dataQuality, 60);
         nextScores.interoperabilidad = 3;
+        nextScores.roles_datos = 2;
+        nextScores.calidad_datos = 2;
       }
     }
 
@@ -757,34 +903,51 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       if (ai.aiReqCybersecurity) {
         nextData.dataPrivacyCompliance = Math.max(nextData.dataPrivacyCompliance, 90);
         nextScores.conformidad = 5;
+        nextScores.seguridad_datos = 5;
       } else {
         nextData.dataPrivacyCompliance = Math.min(nextData.dataPrivacyCompliance, 40);
         nextScores.conformidad = 2;
+        nextScores.seguridad_datos = 2;
       }
     }
 
-    // Direct synchronization D2 -> D1 sliders
+    // Direct synchronization D2 -> D1 sliders y checkboxes
     if (ai.aiExplainability !== undefined) {
       nextScores.apropiacion_digital = Math.max(1, Math.min(5, Math.round(ai.aiExplainability / 20)));
+      nextScores.transparencia_explicabilidad_ia = Math.max(1, Math.min(5, Math.round(ai.aiExplainability / 20)));
     }
     if (ai.aiBiasAudit !== undefined) {
       nextScores.responsabilidad = Math.max(1, Math.min(5, Math.round(ai.aiBiasAudit / 20)));
+      nextScores.equidad_monitoreo_sesgos = Math.max(1, Math.min(5, Math.round(ai.aiBiasAudit / 20)));
     }
     if (ai.aiDriftStatus !== undefined) {
       nextScores.servidores = ai.aiDriftStatus === 'Normal' ? 5 : ai.aiDriftStatus === 'Alerta' ? 3 : 1;
     }
+    if (ai.aiReqHumanOversight !== undefined) {
+      nextScores.supervision_humana_ia = ai.aiReqHumanOversight ? 5 : 2;
+    }
+    if (ai.aiInventoryCount !== undefined) {
+      nextScores.comite_inventario_ia = ai.aiInventoryCount;
+    }
 
     // Recalcular decisiones
     nextDecs.audit_servidores = nextScores.servidores <= 3;
-    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3;
+    nextDecs.audit_seguridad = nextScores.responsabilidad <= 3 || nextScores.conformidad <= 3 || nextScores.seguridad_datos <= 3;
     nextDecs.audit_procesos = nextScores.apropiacion_digital <= 3 || nextScores.mesa_ayuda <= 3;
 
-    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3;
+    // Auditorías requeridas automáticas de Datos e IA cuando el promedio sea < 3
+    const averageDataGov = (nextScores.roles_datos + nextScores.datos_maestros + nextScores.calidad_datos + nextScores.seguridad_datos) / 4;
+    nextDecs.audit_datos = averageDataGov < 3.0;
+
+    const averageAIGov = (nextScores.comite_inventario_ia + nextScores.transparencia_explicabilidad_ia + nextScores.equidad_monitoreo_sesgos + nextScores.supervision_humana_ia) / 4;
+    nextDecs.audit_ia = averageAIGov < 3.0;
+
+    nextDecs.b1_ciso = nextScores.responsabilidad >= 3 && nextScores.conformidad >= 3 && nextScores.seguridad_datos >= 3;
     nextDecs.b2_azure = nextScores.servidores >= 3 && nextScores.backups >= 3;
-    nextDecs.b3_api = nextScores.interoperabilidad >= 3;
+    nextDecs.b3_api = nextScores.interoperabilidad >= 3 || nextScores.datos_maestros >= 3;
     nextDecs.b5_portal = nextScores.canales_donantes >= 3 && nextScores.portal_educativo >= 3;
-    nextDecs.b7_datos = nextScores.interoperabilidad >= 4;
-    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3;
+    nextDecs.b7_datos = nextScores.interoperabilidad >= 4 || nextScores.roles_datos >= 3;
+    nextDecs.b8_capacitacion = nextScores.apropiacion_digital >= 3 || nextScores.supervision_humana_ia >= 3;
 
     // Recalcular madurez de datos
     nextData.dataMaturity = parseFloat(computeDataMaturity(
@@ -830,12 +993,14 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   },
 
   saveCheckpoint: () => {
-    const { decisions, diagnosticScores, dataGov, aiGov } = get();
+    const { decisions, diagnosticScores, dataGov, aiGov, aiResponses, lastAIRequestTime } = get();
     if (typeof window !== 'undefined') {
       localStorage.setItem('cruz_roja_decisions', JSON.stringify(decisions));
       localStorage.setItem('cruz_roja_diagnostic', JSON.stringify(diagnosticScores));
       localStorage.setItem('cruz_roja_datagov', JSON.stringify(dataGov));
       localStorage.setItem('cruz_roja_aigov', JSON.stringify(aiGov));
+      localStorage.setItem('cruz_roja_ai_responses', JSON.stringify(aiResponses));
+      localStorage.setItem('cruz_roja_last_ai_request_time', String(lastAIRequestTime));
     }
   },
 
@@ -846,11 +1011,15 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       const savedDiag = localStorage.getItem('cruz_roja_diagnostic');
       const savedData = localStorage.getItem('cruz_roja_datagov');
       const savedAI = localStorage.getItem('cruz_roja_aigov');
+      const savedAIResponses = localStorage.getItem('cruz_roja_ai_responses');
+      const savedLastAIRequestTime = localStorage.getItem('cruz_roja_last_ai_request_time');
 
       const loadedDecs = savedDecs ? JSON.parse(savedDecs) : defaultDecisions;
       const loadedDiag = savedDiag ? JSON.parse(savedDiag) : defaultDiagnosticScores;
       const loadedData = savedData ? JSON.parse(savedData) : defaultDataGov;
       const loadedAI = savedAI ? JSON.parse(savedAI) : defaultAIGov;
+      const loadedAIResponses = savedAIResponses ? JSON.parse(savedAIResponses) : defaultAIResponses;
+      const loadedLastAIRequestTime = savedLastAIRequestTime ? Number(savedLastAIRequestTime) : null;
 
       const { nextData, nextAI } = syncGobernanzaWithDecisions(loadedDecs, loadedData, loadedAI);
       const derived = computeDerivedState(loadedDecs, loadedDiag, nextData.dataMaturity, nextAI.aiMaturity);
@@ -860,6 +1029,8 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
         diagnosticScores: loadedDiag,
         dataGov: nextData,
         aiGov: nextAI,
+        aiResponses: loadedAIResponses,
+        lastAIRequestTime: loadedLastAIRequestTime,
         ...derived,
       });
     } catch (e) {
@@ -874,6 +1045,8 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       localStorage.removeItem('cruz_roja_active_dashboard');
       localStorage.removeItem('cruz_roja_datagov');
       localStorage.removeItem('cruz_roja_aigov');
+      localStorage.removeItem('cruz_roja_ai_responses');
+      localStorage.removeItem('cruz_roja_last_ai_request_time');
     }
 
     const derived = computeDerivedState(defaultDecisions, defaultDiagnosticScores, defaultDataGov.dataMaturity, defaultAIGov.aiMaturity);
@@ -884,6 +1057,8 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
       diagnosticScores: defaultDiagnosticScores,
       dataGov: defaultDataGov,
       aiGov: defaultAIGov,
+      aiResponses: defaultAIResponses,
+      lastAIRequestTime: null,
       ...derived,
     });
   },
@@ -893,6 +1068,21 @@ export const useDashboardStore = create<DashboardStoreState>((set, get) => ({
   },
 
   closeToast: () => set({ toast: null }),
+
+  setAIResponse: (focus: 'general' | 'seguridad' | 'datos' | 'ia', response: string | null) => {
+    const nextResponses = { ...get().aiResponses, [focus]: response };
+    set({ aiResponses: nextResponses });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cruz_roja_ai_responses', JSON.stringify(nextResponses));
+    }
+  },
+
+  setLastAIRequestTime: (time: number) => {
+    set({ lastAIRequestTime: time });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cruz_roja_last_ai_request_time', String(time));
+    }
+  },
 }));
 
 

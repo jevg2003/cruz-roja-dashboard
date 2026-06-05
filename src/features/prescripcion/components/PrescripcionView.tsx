@@ -35,12 +35,24 @@ export const PrescripcionView: React.FC = () => {
         desc: "Sin un gobierno de datos formal no hay interoperabilidad posible ni cumplimiento de la Ley 1581 (MSPI). Costo de consultoría: $12M."
       });
     }
+    if (decisions.audit_datos) {
+      list.push({
+        title: "Ejecutar Auditoría DAMA de Gobierno de Datos",
+        desc: "La madurez de datos es insuficiente (< 3.0). Se requiere auditar de inmediato la calidad de HeVa-Siesa y controles de enmascaramiento clínico. Costo: $10M."
+      });
+    }
+    if (decisions.audit_ia) {
+      list.push({
+        title: "Ejecutar Auditoría de Conformidad de IA (AI Act / ISO 42001)",
+        desc: "La gobernanza del modelo HemoAI Analytics presenta debilidades críticas (< 3.0). Es obligatorio auditar sesgos y supervisión humana. Costo: $12M."
+      });
+    }
 
     if (list.length === 0) {
       return [
         {
           title: "Acciones inmediatas completadas con éxito",
-          desc: "Todas las directivas P1 han sido aprobadas e implementadas. El Gobierno de TI está blindado en infraestructura y seguridad."
+          desc: "Todas las directivas P1 han sido aprobadas e implementadas. El Gobierno de TI, Datos e IA está blindado en infraestructura, cumplimiento y seguridad."
         }
       ];
     }

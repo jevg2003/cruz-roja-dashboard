@@ -80,13 +80,35 @@ export const GobernanzaView: React.FC = () => {
                   </div>
 
                   {/* Question C */}
-                  <div className="flex items-center justify-between text-slate-350">
+                  <div className="flex items-center justify-between border-b border-slate-900 pb-2.5 text-slate-350">
                     <div>
                       <span className="font-bold block text-[13px]">Auditar Voluntarios</span>
                       <span className="text-[11px] text-slate-400 block leading-normal mt-0.5">Mide brechas de apropiación digital.</span>
                     </div>
                     <span className={getBadgeClass(decisions.audit_procesos)}>
                       {decisions.audit_procesos ? "REQUERIDO" : "NO REQUERIDO"}
+                    </span>
+                  </div>
+
+                  {/* Question D */}
+                  <div className="flex items-center justify-between border-b border-slate-900 pb-2.5 text-slate-350">
+                    <div>
+                      <span className="font-bold block text-[13px]">Auditar Gobierno de Datos</span>
+                      <span className="text-[11px] text-slate-400 block leading-normal mt-0.5">Requerido si madurez DAMA es &lt; 3.</span>
+                    </div>
+                    <span className={getBadgeClass(decisions.audit_datos)}>
+                      {decisions.audit_datos ? "REQUERIDO" : "NO REQUERIDO"}
+                    </span>
+                  </div>
+
+                  {/* Question E */}
+                  <div className="flex items-center justify-between text-slate-350">
+                    <div>
+                      <span className="font-bold block text-[13px]">Auditar Gobierno de IA</span>
+                      <span className="text-[11px] text-slate-400 block leading-normal mt-0.5">Requerido si madurez de IA es &lt; 3.</span>
+                    </div>
+                    <span className={getBadgeClass(decisions.audit_ia)}>
+                      {decisions.audit_ia ? "REQUERIDO" : "NO REQUERIDO"}
                     </span>
                   </div>
                 </div>

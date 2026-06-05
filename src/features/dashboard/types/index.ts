@@ -17,6 +17,8 @@ export interface Decisions {
   audit_servidores: boolean;
   audit_seguridad: boolean;
   audit_procesos: boolean;
+  audit_datos: boolean;
+  audit_ia: boolean;
   b1_ciso: boolean;
   b2_azure: boolean;
   b3_api: boolean;

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { Dashboard } from '../features/dashboard/components/Dashboard';
+import { AIResponseCard } from '../features/ai/components/AIResponseCard';
 ---
 
 <html lang="es">
@@ -18,14 +19,18 @@ import { Dashboard } from '../features/dashboard/components/Dashboard';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js" is:inline></script>
   </head>
-  <body class="bg-cyber-dark text-slate-100 min-h-screen overflow-y-auto w-full max-w-none px-0 mx-0">
-    
+  <body class="bg-cyber-dark text-slate-100 min-h-screen overflow-y-auto w-full max-w-none px-0 mx-0 flex flex-col">
     
     <!-- Top Glowing Border Line -->
     <div class="h-1 w-full bg-gradient-to-r from-brand-red via-neon-amber to-neon-green"></div>
 
     <!-- Central React Island Entry Point -->
     <Dashboard client:load />
+
+    <!-- AI Generator Card Entry Point -->
+    <div class="max-w-7xl mx-auto w-full px-4 mb-16">
+      <AIResponseCard client:load />
+    </div>
 
   </body>
 </html>

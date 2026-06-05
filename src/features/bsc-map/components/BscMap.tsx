@@ -132,8 +132,13 @@ export const BscMap: React.FC = () => {
 
       const x1 = fromRect.left + fromRect.width / 2 - svgRect.left;
       const y1 = fromRect.top - svgRect.top;
-      const x2 = toRect.left + toRect.width / 2 - svgRect.left;
+      let x2 = toRect.left + toRect.width / 2 - svgRect.left;
       const y2 = toRect.top + toRect.height - svgRect.top;
+
+      // Prevent perfectly vertical lines from breaking SVG linear gradient rendering (zero-width bounding box)
+      if (Math.abs(x1 - x2) < 1) {
+        x2 += 1;
+      }
 
       const isActive = activeRoute === 'all' || conn.route === activeRoute;
       const opacity = isActive ? '0.85' : '0.07';
